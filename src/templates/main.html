@@ -1,0 +1,415 @@
+{% extends 'base.html' %}
+<head>
+{% block include %}
+{{ super() }}
+<title>HOME 首页</title>
+{% endblock %}
+
+</head>
+{% block body %}
+<body onload="ChangeToMain()">
+<div class="main" id="main-box">
+    <div id="contentwrap"  class="contentwrap">
+        <ul class="tab">
+            <li id="li_GLM" class="li current" onclick="toGLM()"><span>GLM</span></li>
+            <li id="li_GPT" class="li" onclick="toGPT()"><span>GPT</span></li>
+            <li id="li_SD" class="li" onclick="toSD()"><span>StableDiffusion</span></li>
+            <li id="li_WIG" class="li" onclick="toWIG()"><span>Widgets</span></li>
+        </ul>
+
+        <div class="dialogbox_container" id="DeaftBox">
+            <div class="content">
+                {% for history in historys %}
+                {% if loop.last  == True %}
+                    <div class="item item-right"><div class="bubble bubble-right">{{history[0]}}</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>
+                    <div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left"><p id="text" data-text="{{history[1] |safe}}"></div></div>
+                {% else %}
+                    <div class="item item-right"><div class="bubble bubble-right">{{history[0]}}</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>
+                    <div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left" >{{ history[1] |safe}}</div></div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="input-area">
+                <form href="/" method="POST">
+                    <input name="inputInfo">
+                    <button onclick="startSpeechRecognition()">开始语音识别</button>
+                    <p id="transcript"></p >
+                    <div class="button-area">
+                        <button id="send-btn" onclick="send()" href="/">发 送</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="SecndBox" style="display: none;">
+            <h1>ChatGPT Demo</h1>
+            <div id="chat-log"></div>
+            <form id="chat-form" method="POST" action="/chatgpt">
+                <input type="text" id="user-input" name="message" />
+                <button type="submit">Send</button>
+        </div>
+
+        <div id="StbleBox" style="display: none;">
+            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:90vw;overflow:hidden;background:transparent;"  src="http://127.0.0.1:7860"></iframe>
+        </div>
+
+        <div id="WidgtBox" style="display: none;">
+            <div class="card_container">
+                <a href="#">
+                    <div class="card_contentbox">
+                        <h2>标题</h2>
+                        <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                    </div>
+                </a>
+
+                <a href="#">
+                    <div class="card_contentbox">
+                        <h2>标题</h2>
+                        <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                    </div>
+                </a>
+
+                <a href="#">
+                    <div class="card_contentbox">
+                        <h2>标题</h2>
+                        <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                    </div>
+                </a>
+
+                <a href="#">
+                    <div class="card_contentbox">
+                        <h2>标题</h2>
+                        <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                    </div>
+                </a>
+
+                <a href="#">
+                    <div class="card_contentbox">
+                        <h2>标题</h2>
+                     <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                    </div>
+                </a>
+
+                <a href="#">
+                    <div class="card_contentbox">
+                        <h2>标题</h2>
+                        <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+	</div>
+</div>
+
+<div class="account" id="account-box" style="display: none;">
+    <div style="margin-left:20px">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <center>
+                        <h3>模型账号管理</h3>                            
+                        </center>
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>类型</p>
+                    </td>
+                    <td>
+                        <p>备注</p>
+                    </td>
+                    <td>
+                        <p>地址</p>
+                    </td>
+                    <td>
+                        <p>端口</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" name="Type" placeholder="NLP" value="NLP">
+                    </td>
+                    <td>
+                        <input type="text" name="Name" placeholder="ChatGLM" value="ChatGLM">
+                    </td>
+                    <td>
+                        <input type="url" name="URL" placeholder="127.0.0.1" value="127.0.0.1">
+                    </td>
+                    <td>
+                        <input type="text" name="Port" placeholder="1836" value="18356">
+                    </td>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<div class="widgets" id="widgets-box" style="display: none;">
+    <div class="card_container">
+        <a href="#">
+            <div class="card_contentbox">
+                <h2>标题</h2>
+                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+            </div>
+        </a>
+
+        <a href="#">
+            <div class="card_contentbox">
+                <h2>标题</h2>
+                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+            </div>
+        </a>
+
+        <a href="#">
+            <div class="card_contentbox">
+                <h2>标题</h2>
+                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+            </div>
+        </a>
+
+        <a href="#">
+            <div class="card_contentbox">
+                <h2>标题</h2>
+                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+            </div>
+        </a>
+
+        <a href="#">
+            <div class="card_contentbox">
+                <h2>标题</h2>
+             <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+            </div>
+        </a>
+
+        <a href="#">
+            <div class="card_contentbox">
+                <h2>标题</h2>
+                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="models" id="models-box" style="display: none;">
+    <div class="card_container">
+        <a href="https://github.com/THUDM/ChatGLM-6B">
+            <div class="card_contentbox">
+                    <h2>ChatGLM-6B</h2>
+                    <p>ChatGLM-6B 是一个开源的、支持中英双语的对话语言模型。更多信息请点击本链接</p>
+            </div>
+        </a>
+
+        <a href="https://www.openai.com/">
+            <div class="card_contentbox">
+                <h2>ChatGPT</h2>
+                <p>ChatGPT是由OpenAI开发的大型语言模型，用于进行自然语言交互。更多信息请点击本链接</p>
+            </div>
+        </a>
+
+        <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui">
+            <div class="card_contentbox">
+                <h2>StableDiffusion</h2>
+                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+            </div>
+        </a>
+
+
+            <div class="card_contentbox">
+                <h2>标题</h2>
+                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+            </div>
+
+            <div class="card_contentbox">
+                <h2>标题</h2>
+             <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+            </div>
+
+            <div class="card_contentbox">
+                <h2>标题</h2>
+                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+            </div>
+    </div>
+</div>
+
+<div class="settings" id="setting-box" style="display: none;">
+    <div style="margin-left:20px">
+        <hr class="line">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <h3>远程设置 Remote Settings</h3>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>iPv4地址</p>
+                    </td>
+                    <td>
+                        <input type="url" name="iPv4" placeholder="127.0.0.1">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>端口</p>
+                    </td>
+                    <td>
+                        <input type="number" name="Port" placeholder="5000">
+                    </td>
+                </tr>
+            </thead>
+        </table>
+        <hr class="line">
+    </div>
+</div>
+
+<div class="login-container" id="login-box" style="display: none;">
+<div class="login-form-container sign-up-container">
+<form action="/register" method="POST">
+            <h1>注册</h1>           
+            <div class="txtb">
+                <input name="reg_txt" type="reg_text">
+                <span data-placeholder="Useranme" ></span>
+            </div>
+            <div class="txtb">
+                <input name="email" type="reg_email">
+                <span data-placeholder="Email" ></span>
+            </div> 
+            <div class="txtb">
+                <input name="set_password" type="reg_set_password">
+                <span data-placeholder="Password" ></span>
+            </div>
+            <div class="txtb">
+                <input name="check_password" type="reg_check_password">
+                <span data-placeholder="Confirm Password" ></span>
+            </div>            
+            <button herf="/register">注册</button>
+            <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
+</form>
+</div>
+<div class="login-form-container sign-in-container">
+    <form action="/login" method="POST">
+                <h1>登录</h1>
+                <div class="txtb">
+                    <input name="logid" type="log_id">
+                    <span data-placeholder="Username" ></span>
+                </div>
+                <div class="txtb">
+                    <input name="password" type="log_password">
+                    <span data-placeholder="Password"></span>
+                </div>
+                <button onclick="clickme();" class="submit" type="submit" value="Login" herf='/login'>登录</button>
+                <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
+</form>
+</div>
+<div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>已有账号？</h1>
+                <p>请使用您的账号进行登录</p>
+                <button class="ghost" id="signIn" >登录</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>没有账号?</h1>
+                <p>立即注册加入我们</p>
+                <button class="ghost" id="signUp">注册</button>
+            </div>
+        </div>
+</div>
+</div>
+
+<div class="copyright" id="rights-box" style="display: none;">
+    <p></p>
+</div>
+
+</body>
+<script>
+//打字机(常驻)
+var text = document.getElementById('text').getAttribute("data-text");//获取要输出的文字
+var index = 0;
+var element = document.getElementById('text');//获取元素
+function myprint() {
+    if (index < text.length) {
+        element.innerText = element.innerText + text.charAt(index);
+        index++;
+    } else {
+        clearInterval(c);//输出完后关闭定时器
+    }
+}
+var c = setInterval(myprint, 10);//定时器
+
+let height = document.querySelector('.content').scrollHeight;
+document.querySelector(".content").scrollTop = height;
+
+$("#signUp").click(function(){
+    $("#login-box").addClass('right-panel-active')
+})
+
+$("#signIn").click(function(){
+    $("#login-box").removeClass('right-panel-active')
+})
+
+$(".txtb input").on("focus",function(){
+    $(this).addClass("focus")
+})
+
+$(".txtb input").on("blur",function(){
+    if($(this).val() == '')
+    $(this).removeClass("focus")
+})
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+const transcriptElement = document.getElementById('transcript');
+
+function startSpeechRecognition() {
+  recognition.start();
+}
+
+recognition.onresult = function(event) {
+  const transcript = event.results[0][0].transcript;
+  transcriptElement.textContent = transcript;
+}
+
+
+const chatForm = document.getElementById('chat-form');
+const chatLog = document.getElementById('chat-log');
+
+chatForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const userInput = document.getElementById('user-input').value;
+    appendMessage('You', userInput);
+    sendMessage(userInput);
+    document.getElementById('user-input').value = '';
+});
+
+function appendMessage(role, content) {
+    const messageElement = document.createElement('p');
+    messageElement.innerText = `${role}: ${content}`;
+    chatLog.appendChild(messageElement);
+}
+
+function sendMessage(message) {
+    fetch('/chat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `message=${encodeURIComponent(message)}`
+    })
+    .then(response => response.text())
+    .then(reply => {
+        appendMessage('AI', reply);
+    });
+}
+</script>
+{% endblock %}
+{% block footer %}
+{% endblock %}
+</html>

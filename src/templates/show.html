@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+<title>Realizer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="keywords" content="realizer">
+<meta name="Description" content="Argon Studio|github.com/hcl595/">
+<link rel="shortcut icon" href="static/res/test.ico">
+<link rel="stylesheet" href="static/css/show.css">
+<link rel="stylesheet" href="static/css/boxicons.css">
+<link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" >
+<script src="static/js/show_hm.js"></script>
+<script id="allow-copy_scripts">
+  (function agent() {
+    let unlock = false
+    document.addEventListener('allow_copy', (event) => {
+      unlock = event.detail.unlock
+    })
+
+    const copyEvents = [
+      'copy',
+      'cut',
+      'contextmenu',
+      'selectstart',
+      'mousedown',
+      'mouseup',
+      'mousemove',
+      'keydown',
+      'keypress',
+      'keyup',
+    ]
+    const rejectOtherHandlers = (e) => {
+      if (unlock) {
+        e.stopPropagation()
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation()
+      }
+    }
+    copyEvents.forEach((evt) => {
+      document.documentElement.addEventListener(evt, rejectOtherHandlers, {
+        capture: true,
+      })
+    })
+  })()
+</script>
+</head>
+<body>
+    <header class="header">
+      <a href="https://github.com/hcl595/Realizer" class="logo">Realizer Project</a>
+      <nav class="navbar">
+        <a href="https://github.com/Call-me-phoenix/css-effect-collectionn" class="item" style="--i: 3">CSS Effect Designer</a>
+        <a href="https://github.com/hcl595/Realizer" class="item" style="--i: 3">主页</a>
+      </nav>
+    </header>
+
+    <section class="home">
+      <div class="home-content">
+        <h3>PRINT("Hello,World!") _</h3>
+        <h1>Welcome To Argon Studio</h1>
+        <h3><span class=" type_text"></span>
+        </h3>
+        <div class="social-media">
+          <a href="https://github.com/hcl595" style="--i: 8"><i class="bx bxl-github"></i></a>
+        </div>
+        <a href="https://github.com/hcl595/Realizer" class="btn">Our Project</a>
+      <div class="home-img">
+        <img src=".\static\res\server.ico" style="height: 160px;width: 160px;" alt="">
+      </div>
+      <nav class="navbar">
+        <a href="https://icp.gov.moe/?keyword=20231207" target="_blank">萌ICP备20231207号</a>
+    </section>
+    <script src="static\js\show_scripts.js"></script>
+    <script src="static\js\typed.umd.js"></script>
+    <style type="text/css" data-typed-js-css="true">
+                .typed-cursor{
+                  opacity: 1;
+                }
+                .typed-cursor.typed-cursor--blink{
+                  animation: typedjsBlink 0.7s infinite;
+                  -webkit-animation: typedjsBlink 0.7s infinite;
+                          animation: typedjsBlink 0.7s infinite;
+                }
+                @keyframes typedjsBlink{
+                  50% { opacity: 0.0; }
+                }
+                @-webkit-keyframes typedjsBlink{
+                  0% { opacity: 1; }
+                  50% { opacity: 0.0; }
+                  100% { opacity: 1; }
+                }
+              </style>
+</body>
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+</html>

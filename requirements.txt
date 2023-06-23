@@ -1,0 +1,7 @@
+flask
+flaskwebgui
+requests
+
+# dev
+black
+auto-py-to-exe
