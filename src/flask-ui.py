@@ -23,6 +23,7 @@ historysA = []
 dev_mode = 'True'
 port = "8000"
 host = "127.0.0.1"
+api_key = "None"
 
 @app.route('/show')
 def show():
@@ -72,7 +73,7 @@ def gpt_response():
 
 #functions
 def send_message(message):
-    api_key = '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'  # 将YOUR_API_KEY替换为你的OpenAI API密钥
+    api_key = api_key  # 将YOUR_API_KEY替换为你的OpenAI API密钥
 
     headers = {
         'Content-Type': 'application/json',
