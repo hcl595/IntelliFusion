@@ -48,7 +48,7 @@ def root():
 def upload():
     global result,historys,historysO
     input = request.form.get('inputInfo')
-    response = requests.post('http://127.0.0.1:18365/',data=json.dumps({"prompt": input,"history": []}),headers={'Content-Type': 'application/json'})
+    response = requests.post('http://127.0.0.1:1365/',data=json.dumps({"prompt": input,"history": []}),headers={'Content-Type': 'application/json'})
     SrResponse = response.json()
     historys = SrResponse['history']
     for i in range(len(historys)):
