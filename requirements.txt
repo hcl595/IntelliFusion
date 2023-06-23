@@ -1,6 +1,7 @@
 flask
 flaskwebgui
 requests
+configparaser
 
 # dev
 black
