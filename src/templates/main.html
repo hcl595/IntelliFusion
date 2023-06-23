@@ -2,12 +2,12 @@
 <head>
 {% block include %}
 {{ super() }}
-<title>HOME 首页</title>
+<title>Realizer</title>
 {% endblock %}
 
 </head>
 {% block body %}
-<body onload="ChangeToMain()">
+<body>
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
@@ -271,8 +271,9 @@
 </div>
 
 <div class="login-container" id="login-box" style="display: none;">
-<div class="login-form-container sign-up-container">
-<form action="/register" method="POST">
+<div class="login-form-container sign-up-container" id="SignUp">
+    <div  action="/login" method="POST" id="SignUpDiv">
+        <form>
             <h1>注册</h1>           
             <div class="txtb">
                 <input name="reg_txt" type="reg_text">
@@ -292,10 +293,13 @@
             </div>            
             <button herf="/register">注册</button>
             <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
-</form>
+        </div>
+        </form>
+
 </div>
-<div class="login-form-container sign-in-container">
-    <form action="/login" method="POST">
+
+<div class="login-form-container sign-in-container" id="SignIn">
+    <form action="/login" method="POST" id="login">
                 <h1>登录</h1>
                 <div class="txtb">
                     <input name="logid" type="log_id">
@@ -307,19 +311,20 @@
                 </div>
                 <button onclick="clickme();" class="submit" type="submit" value="Login" herf='/login'>登录</button>
                 <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
-</form>
+            </form>
 </div>
+
 <div class="overlay-container">
         <div class="overlay">
             <div class="overlay-panel overlay-left">
                 <h1>已有账号？</h1>
                 <p>请使用您的账号进行登录</p>
-                <button class="ghost" id="signIn" >登录</button>
+                <button class="ghost" id="signIn" onclick="SignIn()">登录</button>
             </div>
             <div class="overlay-panel overlay-right">
                 <h1>没有账号?</h1>
                 <p>立即注册加入我们</p>
-                <button class="ghost" id="signUp">注册</button>
+                <button class="ghost" id="signUp" onclick="SignUp()">注册</button>
             </div>
         </div>
 </div>
@@ -348,13 +353,13 @@ var c = setInterval(myprint, 10);//定时器
 let height = document.querySelector('.content').scrollHeight;
 document.querySelector(".content").scrollTop = height;
 
-$("#signUp").click(function(){
+function SignUp(){
     $("#login-box").addClass('right-panel-active')
-})
+}
 
-$("#signIn").click(function(){
+function SignIn(){
     $("#login-box").removeClass('right-panel-active')
-})
+}
 
 $(".txtb input").on("focus",function(){
     $(this).addClass("focus")
@@ -364,50 +369,7 @@ $(".txtb input").on("blur",function(){
     if($(this).val() == '')
     $(this).removeClass("focus")
 })
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
-const transcriptElement = document.getElementById('transcript');
 
-function startSpeechRecognition() {
-  recognition.start();
-}
-
-recognition.onresult = function(event) {
-  const transcript = event.results[0][0].transcript;
-  transcriptElement.textContent = transcript;
-}
-
-
-const chatForm = document.getElementById('chat-form');
-const chatLog = document.getElementById('chat-log');
-
-chatForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const userInput = document.getElementById('user-input').value;
-    appendMessage('You', userInput);
-    sendMessage(userInput);
-    document.getElementById('user-input').value = '';
-});
-
-function appendMessage(role, content) {
-    const messageElement = document.createElement('p');
-    messageElement.innerText = `${role}: ${content}`;
-    chatLog.appendChild(messageElement);
-}
-
-function sendMessage(message) {
-    fetch('/chat', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `message=${encodeURIComponent(message)}`
-    })
-    .then(response => response.text())
-    .then(reply => {
-        appendMessage('AI', reply);
-    });
-}
 </script>
 {% endblock %}
 {% block footer %}
