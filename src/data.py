@@ -35,6 +35,7 @@ class models(Base):
     comment = Column(String(32), nullable=False, comment="备注")
     url = Column(String(32), nullable=False, comment="地址")
     port = Column(Integer, nullable=False, comment="端口")
+    LaunchUrl = Column(String(32), nullable=False, comment="启动地址")
     __table__args__ = (
         UniqueConstraint("id", "url"),  # 联合唯一约束
         Index("url", unique=True),       # 联合唯一索引
@@ -56,6 +57,7 @@ def setup():
     comment = "ChatGLM",
     url = "127.0.0.1",
     port = "18356",
+    LaunchUrl = ".\\ChatGLM\\api.py"
     )
     session.add(BasisModel)
     session.commit()

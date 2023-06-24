@@ -28,17 +28,16 @@ historysO = []
 historysA = []
 dev_mode = cfg.read("BaseConfig","DevMode")
 KeepLogin = cfg.read("BaseConfig","KeepLogin")
-host = cfg.read("RemoteConfig","host")
-port = cfg.read("RemoteConfig","port")
-api_key = cfg.read("ModelConfig","APIKEY")
 
 
 
 @app.route('/')
 def root():
+    ModelList = db.session.query(models.id,models.type,models.comment,models.url,models.port,models.LaunchUrl,).all()
     return render_template('main.html',
                            result = result,
                            NeedLogin = NeedLogin,
+                           ModelList = ModelList,
                            historys = historysA,
                            username = session.get('username'),)
 
@@ -46,7 +45,7 @@ def root():
 def upload():
     global result,historys,historysO
     input = request.form.get('inputInfo')
-    response = requests.post('http://127.0.0.1:1365/',data=json.dumps({"prompt": input,"history": []}),headers={'Content-Type': 'application/json'})
+    response = requests.post('http://127.0.0.1:18365/',data=json.dumps({"prompt": input,"history": []}),headers={'Content-Type': 'application/json'})
     SrResponse = response.json()
     historys = SrResponse['history']
     for i in range(len(historys)):
@@ -166,7 +165,7 @@ def error404(error):
 
 #functions
 def send_message(message):
-    api_key = api_key  # 将YOUR_API_KEY替换为你的OpenAI API密钥
+    api_key = cfg.read("ModelConfig","APIKEY")  # 将YOUR_API_KEY替换为你的OpenAI API密钥
 
     headers = {
         'Content-Type': 'application/json',
@@ -184,8 +183,8 @@ def send_message(message):
 if __name__ == '__main__':
     if dev_mode == "True":
     #WEB MODE
-        app.run(debug=True,port=port,host=host)
+        app.run(debug=True,port=cfg.read("RemoteConfig","port"),host=cfg.read("RemoteConfig","host"))
     #GUI MODE
     else:
         ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
-        FlaskUI(app=app,server='flask',port=port,width=1000,height=800).run()
+        FlaskUI(app=app,server='flask',port=cfg.read("RemoteConfig","port"),width=1000,height=800).run()

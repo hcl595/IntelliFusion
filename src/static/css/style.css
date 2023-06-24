@@ -492,6 +492,7 @@ ul.tab li.li:last-child{border-right: 1px solid #C5D0DC;}
 }
 .content{
   max-width: calc(100% - 40px);
+  max-height: 80vh;
   overflow-y: scroll;
   flex: 1;
 }

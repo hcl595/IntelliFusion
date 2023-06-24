@@ -35,7 +35,7 @@
                     <button onclick="startSpeechRecognition()">开始语音识别</button>
                     <p id="transcript"></p >
                     <div class="button-area">
-                        <button id="send-btn" onclick="send()" href="/">发 送</button>
+                        <button id="send-btn" onclick="send()">发 送</button>
                     </div>
                 </form>
             </div>
@@ -131,20 +131,25 @@
                         <p>端口</p>
                     </td>
                 </tr>
+                {% for Model in ModelList %}
                 <tr>
                     <td>
-                        <input type="text" name="Type" placeholder="NLP" value="NLP">
+                        <input type="text" name="Type" placeholder="NLP" value={{ Model[1] }}>
+                    </td>
+                    <td> 
+                        <input type="text" name="Name" placeholder="ChatGLM" value={{ Model[2] }}>
                     </td>
                     <td>
-                        <input type="text" name="Name" placeholder="ChatGLM" value="ChatGLM">
+                        <input type="url" name="URL" placeholder="127.0.0.1" value={{ Model[3] }}>
                     </td>
                     <td>
-                        <input type="url" name="URL" placeholder="127.0.0.1" value="127.0.0.1">
+                        <input type="number" name="Port" placeholder="1836" value={{ Model[4] }}>
                     </td>
                     <td>
-                        <input type="text" name="Port" placeholder="1836" value="18356">
+                        <input type="url" name="Launch" placeholder=".\ChatGLM\launch.py" value={{ Model[5] }}>
                     </td>
                 </tr>
+                {% endfor %}
             </thead>
         </table>
     </div>
@@ -208,32 +213,16 @@
         <a href="https://www.openai.com/">
             <div class="card_contentbox">
                 <h2>ChatGPT</h2>
-                <p>ChatGPT是由OpenAI开发的大型语言模型，用于进行自然语言交互。更多信息请点击本链接</p>
+                <p>ChatGPT是由OpenAI开发的大型语言模型,用于进行自然语言交互。更多信息请点击本链接</p>
             </div>
         </a>
 
         <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui">
             <div class="card_contentbox">
                 <h2>StableDiffusion</h2>
-                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                <p>Stable Diffusion是一种潜在扩散模型,能够从文本描述中生成详细的图像。更多信息请点击本链接</p>
             </div>
         </a>
-
-
-            <div class="card_contentbox">
-                <h2>标题</h2>
-                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
-            </div>
-
-            <div class="card_contentbox">
-                <h2>标题</h2>
-             <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
-            </div>
-
-            <div class="card_contentbox">
-                <h2>标题</h2>
-                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
-            </div>
     </div>
 </div>
 
@@ -272,61 +261,61 @@
 </div>
 
 <div class="login-container" id="login-box" style="display: none;">
-<div class="login-form-container sign-up-container" id="SignUp">
-    <form action="/login" method="POST" id="SignUpDiv">
-            <h1>注册</h1>           
+    <div class="login-form-container sign-up-container" id="SignUp">
+        <form action="/login" method="POST" id="SignUpDiv">
+                <h1>注册</h1>           
+                <div class="txtb">
+                    <input name="reg_txt" type="reg_text">
+                    <span data-placeholder="Useranme" ></span>
+                </div>
+                <div class="txtb">
+                    <input name="email" type="reg_email">
+                    <span data-placeholder="Email" ></span>
+                </div> 
+                <div class="txtb">
+                    <input name="set_password" type="reg_set_password">
+                    <span data-placeholder="Password" ></span>
+                </div>
+                <div class="txtb">
+                    <input name="check_password" type="reg_check_password">
+                    <span data-placeholder="Confirm Password" ></span>
+                </div>            
+                <button type="button" herf="/register">注册</button>
+                <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
+        </form>
+
+    </div>
+
+    <div class="login-form-container sign-in-container" id="SignIn">
+        <form action="/login" method="POST" id="login">
+            <h1>登录</h1>
             <div class="txtb">
-                <input name="reg_txt" type="reg_text">
-                <span data-placeholder="Useranme" ></span>
+                <input name="logid" type="log_id">
+                <span data-placeholder="Username" ></span>
             </div>
             <div class="txtb">
-                <input name="email" type="reg_email">
-                <span data-placeholder="Email" ></span>
-            </div> 
-            <div class="txtb">
-                <input name="set_password" type="reg_set_password">
-                <span data-placeholder="Password" ></span>
+                <input name="password" type="log_password">
+                <span data-placeholder="Password"></span>
             </div>
-            <div class="txtb">
-                <input name="check_password" type="reg_check_password">
-                <span data-placeholder="Confirm Password" ></span>
-            </div>            
-            <button type="button" herf="/register">注册</button>
+            <button class="submit" type="submit" value="Login" herf='/login'>登录</button>
             <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
-    </form>
+        </form>
+    </div>
 
-</div>
-
-<div class="login-form-container sign-in-container" id="SignIn">
-    <form action="/login" method="POST" id="login">
-        <h1>登录</h1>
-        <div class="txtb">
-            <input name="logid" type="log_id">
-            <span data-placeholder="Username" ></span>
-        </div>
-        <div class="txtb">
-            <input name="password" type="log_password">
-            <span data-placeholder="Password"></span>
-        </div>
-        <button class="submit" type="submit" value="Login" herf='/login'>登录</button>
-        <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
-    </form>
-</div>
-
-<div class="overlay-container">
-        <div class="overlay">
-            <div class="overlay-panel overlay-left">
-                <h1>已有账号？</h1>
-                <p>请使用您的账号进行登录</p>
-                <button class="ghost" id="signIn" onclick="SignIn()">登录</button>
+    <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>已有账号？</h1>
+                    <p>请使用您的账号进行登录</p>
+                    <button class="ghost" id="signIn" onclick="SignIn()">登录</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>没有账号?</h1>
+                    <p>立即注册加入我们</p>
+                    <button class="ghost" id="signUp" onclick="SignUp()">注册</button>
+                </div>
             </div>
-            <div class="overlay-panel overlay-right">
-                <h1>没有账号?</h1>
-                <p>立即注册加入我们</p>
-                <button class="ghost" id="signUp" onclick="SignUp()">注册</button>
-            </div>
-        </div>
-</div>
+    </div>
 </div>
 
 <div class="copyright" id="rights-box" style="display: none;">
