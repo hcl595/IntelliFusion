@@ -51,8 +51,15 @@ def setup():
     password="admin1234",
     )
     session.add(user_instance)
+    BasisModel = models(
+    type = "LLM",
+    comment = "ChatGLM",
+    url = "127.0.0.1",
+    port = "18356",
+    )
+    session.add(BasisModel)
     session.commit()
-    print("database setup completely!")
+    print("database successfully setup!")
 
 if __name__ == "__main__":
     setup()

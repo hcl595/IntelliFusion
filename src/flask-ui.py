@@ -11,7 +11,7 @@ import json
 #configs
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPO'
+app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPONE'
 
 #setup
 cfg = Settings()
@@ -32,9 +32,7 @@ host = cfg.read("RemoteConfig","host")
 port = cfg.read("RemoteConfig","port")
 api_key = cfg.read("ModelConfig","APIKEY")
 
-@app.route('/show')
-def show():
-    return render_template('show.html')
+
 
 @app.route('/')
 def root():
@@ -84,7 +82,7 @@ def UpdateSettings():
 
 
 
-@app.route('/login',methods=['POST'])#登录
+@app.post('/login')#登录
 def login_check():
     global login_error,choose,page
     account = request.form.get("logid")
@@ -103,7 +101,7 @@ def login_check():
                     session.permanent=True
                 login_error = "已登录"
                 choose = 0
-                return redirect('/home')
+                return redirect('/')
             else:
                 page = 'login'
                 login_error = "密码错误"
@@ -118,7 +116,7 @@ def login_check():
         return redirect('/')
 
 
-@app.route('/logout',methods=['POST'])#登出
+@app.get('/logout')#登出
 def logout():
     global login_error
     session.clear()
@@ -126,7 +124,7 @@ def logout():
     return redirect('/')
 
 
-@app.route('/register',methods=['POST'])#注册
+@app.post('/register')#注册
 def register():
     global login_error,page
     account = request.form.get("reg_txt")
@@ -157,14 +155,10 @@ def before_NeedLogin():
     if 'username' in session:
         if request.path == '/':
             NeedLogin = False
-            return redirect('/')
         else:
             pass
     else:
-        if request.path != '/' and request.path != '/ogin' and request.path != '/register' and request.endpoint not in ('static'):
-            NeedLogin = True
-            return redirect('/')
-        pass
+        NeedLogin = True
 
 @app.errorhandler(404)
 def error404(error):

@@ -47,6 +47,7 @@
             <form id="chat-form" method="POST" action="/chatgpt">
                 <input type="text" id="user-input" name="message" />
                 <button type="submit">Send</button>
+            </form>
         </div>
 
         <div id="StbleBox" style="display: none;">
@@ -272,8 +273,7 @@
 
 <div class="login-container" id="login-box" style="display: none;">
 <div class="login-form-container sign-up-container" id="SignUp">
-    <div  action="/login" method="POST" id="SignUpDiv">
-        <form>
+    <form action="/login" method="POST" id="SignUpDiv">
             <h1>注册</h1>           
             <div class="txtb">
                 <input name="reg_txt" type="reg_text">
@@ -293,25 +293,24 @@
             </div>            
             <button type="button" herf="/register">注册</button>
             <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
-        </form>
-    </div>
+    </form>
 
 </div>
 
 <div class="login-form-container sign-in-container" id="SignIn">
     <form action="/login" method="POST" id="login">
-                <h1>登录</h1>
-                <div class="txtb">
-                    <input name="logid" type="log_id">
-                    <span data-placeholder="Username" ></span>
-                </div>
-                <div class="txtb">
-                    <input name="password" type="log_password">
-                    <span data-placeholder="Password"></span>
-                </div>
-                <button  type="button" class="submit" type="submit" value="Login" herf='/login'>登录</button>
-                <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
-            </form>
+        <h1>登录</h1>
+        <div class="txtb">
+            <input name="logid" type="log_id">
+            <span data-placeholder="Username" ></span>
+        </div>
+        <div class="txtb">
+            <input name="password" type="log_password">
+            <span data-placeholder="Password"></span>
+        </div>
+        <button class="submit" type="submit" value="Login" herf='/login'>登录</button>
+        <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
+    </form>
 </div>
 
 <div class="overlay-container">
