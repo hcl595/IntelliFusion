@@ -3,3 +3,4 @@ ChatGLM
 stable-diffusion-webui
 stable-diffusion-webui/*
 tmp
+./src/config.cfg

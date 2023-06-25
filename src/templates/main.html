@@ -4,7 +4,26 @@
 {{ super() }}
 <title>Realizer</title>
 {% endblock %}
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('form').on('submit', function(event) {
+            event.preventDefault();
+            var userInput = $('#user-input').val();
+            $.ajax({
+                url: '/get_response',
+                type: 'POST',
+                data: { user_input: userInput },
+                success: function(response) {
+                    var chatGptResponse = response.response;
+                    $('#chat-output').append('<p><strong>You:</strong> ' + userInput + '</p>');
+                    $('#chat-output').append('<p><strong>ChatGPT:</strong> ' + chatGptResponse + '</p>');
+                    $('#user-input').val('');
+                }
+            });
+        });
+    });
+</script>
 </head>
 {% block body %}
 <body>
@@ -43,9 +62,9 @@
 
         <div id="SecndBox" style="display: none;">
             <h1>ChatGPT Demo</h1>
-            <div id="chat-log"></div>
+            <div id="chat-log">{{ GPT_response }}</div>
             <form id="chat-form" method="POST" action="/chatgpt">
-                <input type="text" id="user-input" name="message" />
+                <input type="text" id="user-input" name="user-input" />
                 <button type="submit">Send</button>
             </form>
         </div>

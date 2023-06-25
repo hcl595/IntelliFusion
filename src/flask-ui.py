@@ -1,5 +1,6 @@
 #headers
-from flask import Flask, render_template, redirect, request, session
+from flask import Flask, render_template, redirect, request, session, json
+import openai
 from flaskwebgui import FlaskUI
 from config import Settings
 import data as db
@@ -15,8 +16,13 @@ app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPONE'
 
 #setup
 cfg = Settings()
-global historys,NeedLogin,KeepLogin
+global historys,NeedLogin,KeepLogin,GPT_response
 response = {
+        'response': '你好👋！我是人工智能助手 ChatGLM-6B，很高兴见到你，欢迎问我任何问题。',
+        'history': [['你好', '你好👋！我是人工智能助手 ChatGLM-6B，很高兴见到你，欢迎问我任何问题。']],
+        'status': 200,
+        'time': '2023-05-13 18:56:53'}
+GPT_response = {
         'response': '你好👋！我是人工智能助手 ChatGLM-6B，很高兴见到你，欢迎问我任何问题。',
         'history': [['你好', '你好👋！我是人工智能助手 ChatGLM-6B，很高兴见到你，欢迎问我任何问题。']],
         'status': 200,
@@ -35,6 +41,7 @@ KeepLogin = cfg.read("BaseConfig","KeepLogin")
 def root():
     ModelList = db.session.query(models.id,models.type,models.comment,models.url,models.port,models.LaunchUrl,).all()
     return render_template('main.html',
+                           GPT_response = GPT_response,
                            result = result,
                            NeedLogin = NeedLogin,
                            ModelList = ModelList,
@@ -69,10 +76,11 @@ def upload():
 
 @app.post('/chatgpt')
 def gpt_response():
-    message = request.form['message']
-    response = send_message(message)
-    print(response)
-    return response
+    global GPT_response
+    message = request.form['user-input']
+    GPT_response = ai(message)
+    print(GPT_response)
+    return redirect('/')
 
 
 @app.get('/settings')
@@ -164,21 +172,37 @@ def error404(error):
     return render_template('404.html'),404
 
 #functions
-def send_message(message):
-    api_key = cfg.read("ModelConfig","APIKEY")  # 将YOUR_API_KEY替换为你的OpenAI API密钥
+def ai(question:str):
+    openai.api_base = "https://ai.fakeopen.com/v1/"
+    openai.api_key = cfg.read("ModelConfig","APIKEY")
+    model = "gpt-3.5-turbo"
+    response = openai.ChatCompletion.create(
+    model = model,
+    messages = [
+        {'role': 'system', 'content': "你是一名开发者"}, # 给gpt定义一个角色，也可以不写
+        {'role': 'user', 'content': question} # 问题
+    ],
+    temperature = 0,
+    stream = True
+    )
 
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {api_key}'
-    }
+    collected_chunks = []
+    collected_messages = []
+    messages = []
 
-    data = {
-        'messages': [{'role': 'system', 'content': 'You are a user'}, {'role': 'user', 'content': message}]
-    }
 
-    response = requests.post('https://chatgpt-api.shn.hk/v1/', headers=headers, json=data)
-    reply = response.json()['choices'][0]['message']['content']
-    return reply
+    print(f"OpenAI({model}) :  ",end="")
+    for chunk in response:
+        message = chunk["choices"][0]["delta"].get("content","")
+        print(message,end="")
+
+        messages.append(message,end="")
+
+        collected_chunks.append(chunk)
+
+        chunk_message = chunk["choices"][0]["delta"]
+        collected_messages.append(chunk_message)
+    return messages
 
 if __name__ == '__main__':
     if dev_mode == "True":
