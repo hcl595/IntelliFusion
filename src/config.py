@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 
-config_file = Path(__file__).parent / "data\config.cfg"
+config_file = Path(__file__).parent / "data" / "config.cfg"
 
 class Settings(object):
     def __init__(self):

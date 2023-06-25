@@ -7,7 +7,7 @@ import os
 
 # 基础类
 basedir= os.path.abspath(os.path.dirname(__file__)) + "\\data"
-file_path = Path(__file__).parent / "data\models.sqlite"
+file_path = Path(__file__).parent / "data" / "models.sqlite"
 Base = declarative_base()
 engine = create_engine('sqlite:///'+os.path.join(basedir,'models.sqlite'), echo=True)
 Session = sessionmaker(bind=engine)
