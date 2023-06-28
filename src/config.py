@@ -3,12 +3,12 @@ from pathlib import Path
 
 
 
-config_file = Path(__file__).parent / "data\config.cfg"
+config_file = Path(__file__).parent / "data" / "config.cfg"
 
 class Settings(object):
     def __init__(self):
         if not config_file.exists():
-            print("on config_file,creating config_file...")
+            print("config file doesn't exist,creating config file...")
             f = open(config_file,'w')
             f.write('[BaseConfig]\n')
             f.write('devmode = True\n')
@@ -22,7 +22,7 @@ class Settings(object):
             f.write('APIKEY = None\n')
             f.write('\n')
             f.close()
-            print("config file create successfully!")
+            print("config file successfully create!")
         self.cfg = configparser.ConfigParser()
         self.cfg.read(config_file)
 
