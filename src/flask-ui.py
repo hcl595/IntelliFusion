@@ -12,45 +12,48 @@ import json
 #configs
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPONE'
+app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPTWO'
 
 #setup
 cfg = Settings()
-global historys,NeedLogin,KeepLogin,GPT_response
+global historys,NeedLogin,GPT_response
 response = {
-        'response': '你好👋！我是人工智能助手 ChatGLM-6B，很高兴见到你，欢迎问我任何问题。',
-        'history': [['你好', '你好👋！我是人工智能助手 ChatGLM-6B，很高兴见到你，欢迎问我任何问题。']],
+        'response': '',
+        'history': [['', '']],
         'status': 200,
-        'time': '2023-05-13 18:56:53'}
+        'time': '1234-05-06 07:08:09'}
 GPT_response = {
-        'response': '你好👋！我是人工智能助手 ChatGLM-6B，很高兴见到你，欢迎问我任何问题。',
-        'history': [['你好', '你好👋！我是人工智能助手 ChatGLM-6B，很高兴见到你，欢迎问我任何问题。']],
+        'response': '',
+        'history': [['', '']],
         'status': 200,
-        'time': '2023-05-13 18:56:53'}
+        'time': '1234-05-06 07:08:09'}
 result = None
 NeedLogin = True
 historys = response['history']
-historysO = []
-historysA = []
-dev_mode = cfg.read("BaseConfig","DevMode")
-KeepLogin = cfg.read("BaseConfig","KeepLogin")
+OldHistorys = []
+AllHistorys = []
 
-
-
-@app.route('/')
+#main
+@app.route('/')#根目录
 def root():
-    ModelList = db.session.query(models.id,models.type,models.comment,models.url,models.port,models.LaunchUrl,).all()
+    ModelList = db.session.query(
+                models.id,
+                models.type,
+                models.comment,
+                models.url,
+                models.port,
+                models.LaunchUrl,).all()
     return render_template('main.html',
                            GPT_response = GPT_response,
                            result = result,
                            NeedLogin = NeedLogin,
                            ModelList = ModelList,
-                           historys = historysA,
+                           historys = AllHistorys,
                            username = session.get('username'),)
 
-@app.post('/')
+@app.post('/')#GLM请求与回复
 def upload():
-    global result,historys,historysO
+    global result,AllHistorys,OldHistorys
     input = request.form.get('inputInfo')
     response = requests.post('http://127.0.0.1:18365/',data=json.dumps({"prompt": input,"history": []}),headers={'Content-Type': 'application/json'})
     SrResponse = response.json()
@@ -70,11 +73,11 @@ def upload():
                 last_code_block_index=-1
                 is_code_block_start=not is_code_block_start
             history[i] = tmp
-    historysA.append(historys[0])
-    print(historysA)
+    AllHistorys.append(historys[0])
+    print(AllHistorys)
     return redirect('/')
 
-@app.post('/chatgpt')
+@app.post('/chatgpt')#GPT请求与回复
 def gpt_response():
     global GPT_response
     message = request.form['user-input']
@@ -83,10 +86,22 @@ def gpt_response():
     return redirect('/')
 
 
-@app.get('/settings')
-def UpdateSettings():
+@app.post('/add')#添加模型
+def AddModel():
+    InputType = request.form.get("type")
+    InputComment = request.form.get("comment")
+    InputUrl = request.form.get("url")
+    InputPort = request.form.get("Port")
+    LaunchUrl = request.form.get("LCurl")
+    info = db.models(
+                type = InputType,
+                comment = InputComment,
+                url = InputUrl,
+                port = InputPort,
+                LaunchUrl = LaunchUrl,)
+    db.session.add(info)
+    db.session.commit()
     return redirect('/')
-
 
 
 @app.post('/login')#登录
@@ -104,7 +119,7 @@ def login_check():
                 uid =db.session.query(userInfo.id).filter(userInfo.account==account,userInfo.password==password).first()
                 uid = uid[0]
                 session['uid']= uid
-                if KeepLogin == 'True':
+                if cfg.read("BaseConfig","KeepLogin") == 'True':
                     session.permanent=True
                 login_error = "已登录"
                 choose = 0
@@ -156,6 +171,27 @@ def register():
         login_error = '完整填写信息'
     return redirect('/')
 
+
+@app.get('/ModelList')
+def GetModelList():
+    ModelList = db.session.query(
+            models.id,
+            models.type,
+            models.comment,
+            models.url,
+            models.port,
+            models.LaunchUrl,).all()
+    return ModelList
+
+
+@app.get("/SettingData")
+def GetSettingData():
+    iPv4 = cfg.read("RemoteSetting","host")
+    port = cfg.read("RemoteSetting","port")
+    return iPv4,port
+
+
+
 @app.before_request
 def before_NeedLogin():
     global NeedLogin
@@ -204,8 +240,10 @@ def ai(question:str):
         collected_messages.append(chunk_message)
     return messages
 
+
+#launch
 if __name__ == '__main__':
-    if dev_mode == "True":
+    if cfg.read("BaseConfig","DevMode") == "True":
     #WEB MODE
         app.run(debug=True,port=cfg.read("RemoteConfig","port"),host=cfg.read("RemoteConfig","host"))
     #GUI MODE
