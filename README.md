@@ -4,6 +4,8 @@ A project that allows you to start and manage models such as LLM model and GPT m
 # Version 0.1.2 Dev
 1. Add config.py to manage user configs
 2. Add data.py to manage models configs
+3. Add Setup.bat to clone project
+4. Add Update.bat to update local project
 
 # New Features
 Now you can manage and add your models on 'Accounts' page
