@@ -49,7 +49,7 @@
                 {% endfor %}
             </div>
             <div class="input-area">
-                <form href="/" method="POST">
+                <form href="/" method="POST" target="GLM">
                     <input name="inputInfo">
                     <button onclick="startSpeechRecognition()">开始语音识别</button>
                     <p id="transcript"></p >
@@ -57,16 +57,18 @@
                         <button id="send-btn" onclick="send()">发 送</button>
                     </div>
                 </form>
+                <iframe src="/" style="display: none;" name="GLM"></iframe>
             </div>
         </div>
 
         <div id="SecndBox" style="display: none;">
             <h1>ChatGPT Demo</h1>
             <div id="chat-log">{{ GPT_response }}</div>
-            <form id="chat-form" method="POST" action="/chatgpt">
+            <form id="chat-form" method="POST" action="/chatgpt" target="GPT">
                 <input type="text" id="user-input" name="user-input" />
                 <button type="submit">Send</button>
             </form>
+            <iframe style="display: none;" src="/" name="GPT"></iframe>
         </div>
 
         <div id="StbleBox" style="display: none;">
@@ -161,9 +163,18 @@
                     <td>
                         <p>一键启动</p>
                     </td>
+                    <td>
+                        <p>本地启动地址</p>
+                    </td>
+                    <td>
+                        <p>修改</p>
+                    </td>
+                    <td>
+                        <p>删除</p>
+                    </td>
                 </tr>
                 {% for Model in ModelList %}
-                <form action="/edit&del" target="edit&del">
+                <form action="/edit" method="post" target="edit&del">
                 <tr>
                     <td>
                         <input type="text" name="Type" placeholder="NLP" value={{ Model[1] }}>
@@ -175,7 +186,7 @@
                         <input type="text" name="URL" placeholder="127.0.0.1" value={{ Model[3] }}>
                     </td>
                     <td>
-                        <input type="number" name="Port" placeholder="1836" value={{ Model[4] }}>
+                        <input type="number" namsse="Port" placeholder="1836" value={{ Model[4] }}>
                     </td>
                     <td>
                         <input type="text" name="LaunchUrl" placeholder=".\ChatGLM\launch.py" value={{ Model[5] }}>
@@ -191,7 +202,7 @@
                     </td>
                 </tr>
                 </form>
-                <iframe style="display: none;" src="/" name="edit&del"></iframe>
+                <iframe style="display: none;" src="/edit&del" name="edit&del"></iframe>
                 {% endfor %}
                 <form action="/add" target="add" method="post">
                     <tr>

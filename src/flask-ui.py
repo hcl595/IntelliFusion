@@ -4,7 +4,7 @@ import openai
 from flaskwebgui import FlaskUI
 from config import Settings
 import data as db
-from data import userInfo,models
+from data import userInfo,models,setup
 import ctypes
 import requests
 import json
@@ -15,6 +15,7 @@ app.config.from_object(__name__)
 app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPTWO'
 
 #setup
+setup()
 cfg = Settings()
 global historys,NeedLogin,GPT_response
 response = {
