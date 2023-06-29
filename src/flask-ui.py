@@ -12,7 +12,7 @@ import json
 #configs
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPTWO'
+app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPTRE'
 
 #setup
 setup()
@@ -87,22 +87,49 @@ def gpt_response():
     return redirect('/')
 
 
-@app.post('/add')#添加模型
+@app.post('/exchange')#添加模型
 def AddModel():
-    InputType = request.form.get("type")
-    InputComment = request.form.get("comment")
-    InputUrl = request.form.get("url")
-    InputPort = request.form.get("Port")
-    LaunchUrl = request.form.get("LCurl")
-    info = db.models(
-                type = InputType,
-                comment = InputComment,
-                url = InputUrl,
-                port = InputPort,
-                LaunchUrl = LaunchUrl,)
-    db.session.add(info)
-    db.session.commit()
+    Number = request.form.get("id")
+    if Number == "-1":
+        InputType = request.form.get("type")
+        InputComment = request.form.get("comment")
+        InputUrl = request.form.get("url")
+        InputPort = request.form.get("Port")
+        LaunchUrl = request.form.get("LCurl")
+        info = db.models(
+                    type = InputType,
+                    comment = InputComment,
+                    url = InputUrl,
+                    port = InputPort,
+                    LaunchUrl = LaunchUrl,)
+        db.session.add(info)
+        db.session.commit()
+    else:
+        InputState = request.form.get(Number + "state")
+        if InputState == "edit":
+            InputID = request.form.get("id")
+            InputType = request.form.get("type")
+            InputComment = request.form.get("comment")
+            InputUrl = request.form.get("url")
+            InputPort = request.form.get("port")
+            LaunchUrl = request.form.get("LCurl")
+            db.session.query(db.models).filter(models.id == InputID).update({
+                    db.models.type: InputType,
+                    db.models.comment: InputComment,
+                    db.models.url: InputUrl,
+                    db.models.port: InputPort,
+                    db.models.LaunchUrl: LaunchUrl,
+                    })
+        elif InputState == "del":
+            InputID = request.form.get("id")
+            db.session.query(models).filter(models.id == InputID).delete()
+    print(InputID)
     return redirect('/')
+
+
+@app.route("/exchange")
+def LoadExchange():
+    return redirect("/")
 
 
 @app.post('/login')#登录
