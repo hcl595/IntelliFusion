@@ -697,6 +697,7 @@ textarea{
 }
 .account table{
   margin: 20px;
+  overflow: scroll;
 }
 .account table input{
   border-radius: 20px;
@@ -735,11 +736,16 @@ textarea{
   background: #87a3af;
 }
 .settings input{
+  min-width: auto;
+  max-width: 80vw;
   border-radius: 20px;
   background-color: rgba(0, 0, 0, .05);
   border-color: rgba(0, 0, 0, .05);
 }
-
+.settings table thead tr th h3,.settings table td p{
+  margin-left: 10px;
+  margin-right: 10px;
+}
 
 /* Windows */
 .copyright {

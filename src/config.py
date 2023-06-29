@@ -12,6 +12,7 @@ class Settings(object):
             f = open(config_file,'w')
             f.write('[BaseConfig]\n')
             f.write('devmode = True\n')
+            f.write('debug = True\n')
             f.write('keeplogin = True\n')
             f.write('\n')
             f.write('[RemoteConfig]\n')

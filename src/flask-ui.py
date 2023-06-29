@@ -37,6 +37,7 @@ AllHistorys = []
 #main
 @app.route('/')#根目录
 def root():
+
     ModelList = db.session.query(
                 models.id,
                 models.type,
@@ -44,13 +45,27 @@ def root():
                 models.url,
                 models.port,
                 models.LaunchUrl,).all()
+    
+    #Settings
+
     return render_template('main.html',
-                           GPT_response = GPT_response,
-                           result = result,
-                           NeedLogin = NeedLogin,
-                           ModelList = ModelList,
-                           historys = AllHistorys,
-                           username = session.get('username'),)
+                            GPT_response = GPT_response,
+                            result = result,
+                            NeedLogin = NeedLogin,
+                            ModelList = ModelList,
+                            historys = AllHistorys,
+                            host = cfg.read("RemoteConfig","host"),
+                            port = cfg.read("RemoteConfig","port"),
+                            Mode = cfg.read("BaseConfig","devmode"),
+                            BugM = cfg.read("BaseConfig","debug"),
+                            Key = cfg.read("ModelConfig","APIKEY"),
+                            username = session.get('username'),)
+
+
+@app.route("/exchange")
+def LoadExchange():
+    return redirect("/")
+
 
 @app.post('/')#GLM请求与回复
 def upload():
@@ -78,6 +93,7 @@ def upload():
     print(AllHistorys)
     return redirect('/')
 
+
 @app.post('/chatgpt')#GPT请求与回复
 def gpt_response():
     global GPT_response
@@ -103,7 +119,6 @@ def AddModel():
                     port = InputPort,
                     LaunchUrl = LaunchUrl,)
         db.session.add(info)
-        db.session.commit()
     else:
         InputState = request.form.get(Number + "state")
         if InputState == "edit":
@@ -123,12 +138,17 @@ def AddModel():
         elif InputState == "del":
             InputID = request.form.get("id")
             db.session.query(models).filter(models.id == InputID).delete()
-    print(InputID)
+    db.session.commit()
     return redirect('/')
 
 
-@app.route("/exchange")
-def LoadExchange():
+@app.post("/UpdateSettings")
+def UpdateSettings():
+    UpdateHost = request.form.get("host")
+    UpdatePort = request.form.get("port")
+    UpdateMode = request.form.get("mode")
+    UpdateKey = request.form.get("key")
+
     return redirect("/")
 
 
@@ -166,14 +186,6 @@ def login_check():
         return redirect('/')
 
 
-@app.get('/logout')#登出
-def logout():
-    global login_error
-    session.clear()
-    login_error = '登出成功'
-    return redirect('/')
-
-
 @app.post('/register')#注册
 def register():
     global login_error,page
@@ -200,6 +212,14 @@ def register():
     return redirect('/')
 
 
+@app.get('/logout')#登出
+def logout():
+    global login_error
+    session.clear()
+    login_error = '登出成功'
+    return redirect('/')
+
+
 @app.get('/ModelList')
 def GetModelList():
     ModelList = db.session.query(
@@ -217,7 +237,6 @@ def GetSettingData():
     iPv4 = cfg.read("RemoteSetting","host")
     port = cfg.read("RemoteSetting","port")
     return iPv4,port
-
 
 
 @app.before_request
@@ -273,7 +292,7 @@ def ai(question:str):
 if __name__ == '__main__':
     if cfg.read("BaseConfig","DevMode") == "True":
     #WEB MODE
-        app.run(debug=True,port=cfg.read("RemoteConfig","port"),host=cfg.read("RemoteConfig","host"))
+        app.run(debug=cfg.read("BaseConfig","debug"),port=cfg.read("RemoteConfig","port"),host=cfg.read("RemoteConfig","host"))
     #GUI MODE
     else:
         ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
