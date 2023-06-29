@@ -2,12 +2,31 @@
 <head>
 {% block include %}
 {{ super() }}
-<title>HOME 首页</title>
+<title>Realizer</title>
 {% endblock %}
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('form').on('submit', function(event) {
+            event.preventDefault();
+            var userInput = $('#user-input').val();
+            $.ajax({
+                url: '/get_response',
+                type: 'POST',
+                data: { user_input: userInput },
+                success: function(response) {
+                    var chatGptResponse = response.response;
+                    $('#chat-output').append('<p><strong>You:</strong> ' + userInput + '</p>');
+                    $('#chat-output').append('<p><strong>ChatGPT:</strong> ' + chatGptResponse + '</p>');
+                    $('#user-input').val('');
+                }
+            });
+        });
+    });
+</script>
 </head>
 {% block body %}
-<body onload="ChangeToMain()">
+<body>
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
@@ -30,23 +49,26 @@
                 {% endfor %}
             </div>
             <div class="input-area">
-                <form href="/" method="POST">
+                <form href="/" method="POST" target="GLM">
                     <input name="inputInfo">
                     <button onclick="startSpeechRecognition()">开始语音识别</button>
                     <p id="transcript"></p >
                     <div class="button-area">
-                        <button id="send-btn" onclick="send()" href="/">发 送</button>
+                        <button id="send-btn" onclick="send()">发 送</button>
                     </div>
                 </form>
+                <iframe src="/" style="display: none;" name="GLM"></iframe>
             </div>
         </div>
 
         <div id="SecndBox" style="display: none;">
             <h1>ChatGPT Demo</h1>
-            <div id="chat-log"></div>
-            <form id="chat-form" method="POST" action="/chatgpt">
-                <input type="text" id="user-input" name="message" />
+            <div id="chat-log">{{ GPT_response }}</div>
+            <form id="chat-form" method="POST" action="/chatgpt" target="GPT">
+                <input type="text" id="user-input" name="user-input" />
                 <button type="submit">Send</button>
+            </form>
+            <iframe style="display: none;" src="/" name="GPT"></iframe>
         </div>
 
         <div id="StbleBox" style="display: none;">
@@ -55,47 +77,14 @@
 
         <div id="WidgtBox" style="display: none;">
             <div class="card_container">
-                <a href="#">
-                    <div class="card_contentbox">
-                        <h2>标题</h2>
-                        <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
-                    </div>
-                </a>
 
                 <a href="#">
                     <div class="card_contentbox">
-                        <h2>标题</h2>
-                        <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                        <h2>小组件</h2>
+                        <p>敬请期待</p>
                     </div>
                 </a>
-
-                <a href="#">
-                    <div class="card_contentbox">
-                        <h2>标题</h2>
-                        <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
-                    </div>
-                </a>
-
-                <a href="#">
-                    <div class="card_contentbox">
-                        <h2>标题</h2>
-                        <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
-                    </div>
-                </a>
-
-                <a href="#">
-                    <div class="card_contentbox">
-                        <h2>标题</h2>
-                     <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
-                    </div>
-                </a>
-
-                <a href="#">
-                    <div class="card_contentbox">
-                        <h2>标题</h2>
-                        <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
-                    </div>
-                </a>
+                
             </div>
         </div>
 
@@ -103,6 +92,7 @@
 </div>
 
 <div class="account" id="account-box" style="display: none;">
+    <iframe style="display: none;" src="/exchange" name="exchange"></iframe>
     <div style="margin-left:20px">
         <table>
             <thead>
@@ -124,26 +114,86 @@
                         <p>备注</p>
                     </td>
                     <td>
-                        <p>地址</p>
+                        <p>API地址</p>
                     </td>
                     <td>
-                        <p>端口</p>
+                        <p>API端口</p>
+                    </td>
+                    <td>
+                        <p>启动地址</p>
+                    </td>
+                    <td>
+                        <p>编辑</p>
+                    </td>
+                    <td>
+                        <p>删除</p>
+                    </td>
+                    <td>
+                        <p>一键启动</p>
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        <input type="text" name="Type" placeholder="NLP" value="NLP">
-                    </td>
-                    <td>
-                        <input type="text" name="Name" placeholder="ChatGLM" value="ChatGLM">
-                    </td>
-                    <td>
-                        <input type="url" name="URL" placeholder="127.0.0.1" value="127.0.0.1">
-                    </td>
-                    <td>
-                        <input type="text" name="Port" placeholder="1836" value="18356">
-                    </td>
-                </tr>
+                {% for Model in ModelList %}
+                <form action="/exchange" method="post" target="exchange">
+                    <input type="hidden" name="{{ Model[0] }}state" id="{{ Model[0] }}state">
+                    <input type="hidden" name="id" id="number" value={{ Model[0] }}>
+                    <tr>
+                        <td>
+                            <input type="text" name="type" placeholder="NLP" value={{ Model[1] }}>
+                        </td>
+                        <td> 
+                            <input type="text" name="comment" placeholder="ChatGLM" value={{ Model[2] }}>
+                        </td>
+                        <td>
+                            <input type="text" name="url" placeholder="127.0.0.1" value={{ Model[3] }}>
+                        </td>
+                        <td>
+                            <input type="number" name="port" placeholder="1836" value={{ Model[4] }}>
+                        </td>
+                        <td>
+                            <input type="text" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[5] }}>
+                        </td>
+                        <td>
+                            <button type="submit" style="background-color: rgba(89, 147, 255, 0.671);border-radius:20px;" type="launch" name="edit" id="edit" onclick="$('#{{ Model[0] }}state').val('edit')">编辑</button>
+                        </td>
+                        <td>
+                            <button type="submit" style="background-color: rgba(255, 89, 89, 0.671);border-radius:20px;" type="launch" name="del" id="del" onclick="$('#{{ Model[0] }}state').val('del')">删除</button>
+                        </td>
+                        <td>
+                            <button type="submit" style="background-color: rgba(117, 255, 89, 0.671);border-radius:20px;" type="launch" name="run" id="run" onclick="$('#{{ Model[0] }}state').val('run')">启动</button>
+                        </td>
+                    </tr>
+                </form>
+                {% endfor %}
+                <form action="/exchange" target="exchange" method="post">
+                    <input type="hidden" name="state" id="state">
+                    <input type="hidden" name="id" id="number" value="-1">
+                    <tr>
+                        <td>
+                            <input type="text" name="type" placeholder="LLM">
+                        </td>
+                        <td> 
+                            <input type="text" name="comment" placeholder="ChatGLM">
+                        </td>
+                        <td>
+                            <input type="text" name="url" placeholder="127.0.0.1">
+                        </td>
+                        <td>
+                            <input type="number" name="Port" placeholder="12345">
+                        </td>
+                        <td>
+                            <input type="text" name="LCurl" placeholder=".\Models\launch.py">
+                        </td>
+                        <td>
+                            <button disabled type="submit" style="background-color: rgba(89, 147, 255, 0.671);border-radius:20px;" name="edit" id="edit">编辑</button>
+                        </td>
+                        <td>
+                            <button disabled type="submit" style="background-color: rgba(255, 89, 89, 0.671);border-radius:20px;" name="del" id="del">删除</button>
+                        </td>
+                        <td>
+                            <button type="submit" style="background-color: rgba(117, 255, 89, 0.671);border-radius:20px;" name="launch" id="launch">添加</button>
+                        </td>
+                    </tr>
+                    </form>
             </thead>
         </table>
     </div>
@@ -153,43 +203,36 @@
     <div class="card_container">
         <a href="#">
             <div class="card_contentbox">
-                <h2>标题</h2>
-                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                <h2>小组件</h2>
+                <p>Coming Soon!</p>
             </div>
         </a>
 
         <a href="#">
             <div class="card_contentbox">
-                <h2>标题</h2>
-                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                <h2>小组件</h2>
+                <p>Coming Soon!</p>
             </div>
         </a>
 
         <a href="#">
             <div class="card_contentbox">
-                <h2>标题</h2>
-                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                <h2>小组件</h2>
+                <p>Coming Soon!</p>
             </div>
         </a>
 
         <a href="#">
             <div class="card_contentbox">
-                <h2>标题</h2>
-                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                <h2>小组件</h2>
+                <p>Coming Soon!</p>
             </div>
         </a>
 
         <a href="#">
             <div class="card_contentbox">
-                <h2>标题</h2>
-             <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
-            </div>
-        </a>
-
-        <a href="#">
-            <div class="card_contentbox">
-                <h2>标题</h2>
-                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                <h2>小组件</h2>
+                <p>Coming Soon!</p>
             </div>
         </a>
     </div>
@@ -207,32 +250,16 @@
         <a href="https://www.openai.com/">
             <div class="card_contentbox">
                 <h2>ChatGPT</h2>
-                <p>ChatGPT是由OpenAI开发的大型语言模型，用于进行自然语言交互。更多信息请点击本链接</p>
+                <p>ChatGPT是由OpenAI开发的大型语言模型,用于进行自然语言交互。更多信息请点击本链接</p>
             </div>
         </a>
 
         <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui">
             <div class="card_contentbox">
                 <h2>StableDiffusion</h2>
-                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
+                <p>Stable Diffusion是一种潜在扩散模型,能够从文本描述中生成详细的图像。更多信息请点击本链接</p>
             </div>
         </a>
-
-
-            <div class="card_contentbox">
-                <h2>标题</h2>
-                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
-            </div>
-
-            <div class="card_contentbox">
-                <h2>标题</h2>
-             <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
-            </div>
-
-            <div class="card_contentbox">
-                <h2>标题</h2>
-                <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
-            </div>
     </div>
 </div>
 
@@ -243,7 +270,10 @@
             <thead>
                 <tr>
                     <th>
-                        <h3>远程设置 Remote Settings</h3>
+                        <h3>远程设置</h3>
+                    </th>
+                    <th>
+                        <h3>Remote Setting</h3>
                     </th>
                 </tr>
             </thead>
@@ -253,7 +283,7 @@
                         <p>iPv4地址</p>
                     </td>
                     <td>
-                        <input type="url" name="iPv4" placeholder="127.0.0.1">
+                        <input type="url" name="iPv4" placeholder="127.0.0.1" value={{ host }}>
                     </td>
                 </tr>
                 <tr>
@@ -261,68 +291,124 @@
                         <p>端口</p>
                     </td>
                     <td>
-                        <input type="number" name="Port" placeholder="5000">
+                        <input type="number" name="Port" placeholder="5000" value={{ port }}>
                     </td>
                 </tr>
             </thead>
         </table>
         <hr class="line">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <h3>开发者设置  </h3>
+                    </th>
+                    <th>
+                        <h3>Developer Settings</h3>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>Web模式</p>
+                    </td>
+                    <td>
+                        <input type="text" name="Mode" placeholder="False" value={{ Mode }}>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>DeBug模式</p>
+                    </td>
+                    <td>
+                        <input type="text" name="BugM" placeholder="False" value={{ BugM }}>
+                    </td>
+                </tr>
+            </thead>
+        </table>
+        <hr class="line">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <h3>API设置</h3>
+                    </th>
+                    <th>
+                        <h3> API Settings </h3>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>OpenAI API Key</p>
+                    </td>
+                    <td>
+                        <input contenteditable="true" type="text" name="key" placeholder="sk-qwertyuiopasdfghjklzxcvbnmqwerty" value={{ Key }}>
+                    </td>
+                </tr>
+            </thead>
+        </table>
     </div>
 </div>
 
 <div class="login-container" id="login-box" style="display: none;">
-<div class="login-form-container sign-up-container">
-<form action="/register" method="POST">
-            <h1>注册</h1>           
-            <div class="txtb">
-                <input name="reg_txt" type="reg_text">
-                <span data-placeholder="Useranme" ></span>
-            </div>
-            <div class="txtb">
-                <input name="email" type="reg_email">
-                <span data-placeholder="Email" ></span>
-            </div> 
-            <div class="txtb">
-                <input name="set_password" type="reg_set_password">
-                <span data-placeholder="Password" ></span>
-            </div>
-            <div class="txtb">
-                <input name="check_password" type="reg_check_password">
-                <span data-placeholder="Confirm Password" ></span>
-            </div>            
-            <button herf="/register">注册</button>
-            <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
-</form>
-</div>
-<div class="login-form-container sign-in-container">
-    <form action="/login" method="POST">
-                <h1>登录</h1>
+    <div class="login-form-container sign-up-container" id="SignUp">
+        <form action="/login" method="POST" id="SignUpDiv">
+                <h1>注册</h1>           
                 <div class="txtb">
-                    <input name="logid" type="log_id">
-                    <span data-placeholder="Username" ></span>
+                    <input name="reg_txt" type="reg_text">
+                    <span data-placeholder="Useranme" ></span>
                 </div>
                 <div class="txtb">
-                    <input name="password" type="log_password">
-                    <span data-placeholder="Password"></span>
+                    <input name="email" type="reg_email">
+                    <span data-placeholder="Email" ></span>
+                </div> 
+                <div class="txtb">
+                    <input name="set_password" type="reg_set_password">
+                    <span data-placeholder="Password" ></span>
                 </div>
-                <button onclick="clickme();" class="submit" type="submit" value="Login" herf='/login'>登录</button>
+                <div class="txtb">
+                    <input name="check_password" type="reg_check_password">
+                    <span data-placeholder="Confirm Password" ></span>
+                </div>            
+                <button type="button" herf="/register">注册</button>
                 <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
-</form>
-</div>
-<div class="overlay-container">
-        <div class="overlay">
-            <div class="overlay-panel overlay-left">
-                <h1>已有账号？</h1>
-                <p>请使用您的账号进行登录</p>
-                <button class="ghost" id="signIn" >登录</button>
+        </form>
+
+    </div>
+
+    <div class="login-form-container sign-in-container" id="SignIn">
+        <form action="/login" method="POST" id="login">
+            <h1>登录</h1>
+            <div class="txtb">
+                <input name="logid" type="log_id">
+                <span data-placeholder="Username" ></span>
             </div>
-            <div class="overlay-panel overlay-right">
-                <h1>没有账号?</h1>
-                <p>立即注册加入我们</p>
-                <button class="ghost" id="signUp">注册</button>
+            <div class="txtb">
+                <input name="password" type="log_password">
+                <span data-placeholder="Password"></span>
             </div>
-        </div>
-</div>
+            <button class="submit" type="submit" value="Login" herf='/login'>登录</button>
+            <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
+        </form>
+    </div>
+
+    <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>已有账号？</h1>
+                    <p>请使用您的账号进行登录</p>
+                    <button class="ghost" id="signIn" onclick="SignIn()">登录</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>没有账号?</h1>
+                    <p>立即注册加入我们</p>
+                    <button class="ghost" id="signUp" onclick="SignUp()">注册</button>
+                </div>
+            </div>
+    </div>
 </div>
 
 <div class="copyright" id="rights-box" style="display: none;">
@@ -348,13 +434,13 @@ var c = setInterval(myprint, 10);//定时器
 let height = document.querySelector('.content').scrollHeight;
 document.querySelector(".content").scrollTop = height;
 
-$("#signUp").click(function(){
+function SignUp(){
     $("#login-box").addClass('right-panel-active')
-})
+}
 
-$("#signIn").click(function(){
+function SignIn(){
     $("#login-box").removeClass('right-panel-active')
-})
+}
 
 $(".txtb input").on("focus",function(){
     $(this).addClass("focus")
@@ -364,50 +450,7 @@ $(".txtb input").on("blur",function(){
     if($(this).val() == '')
     $(this).removeClass("focus")
 })
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
-const transcriptElement = document.getElementById('transcript');
 
-function startSpeechRecognition() {
-  recognition.start();
-}
-
-recognition.onresult = function(event) {
-  const transcript = event.results[0][0].transcript;
-  transcriptElement.textContent = transcript;
-}
-
-
-const chatForm = document.getElementById('chat-form');
-const chatLog = document.getElementById('chat-log');
-
-chatForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const userInput = document.getElementById('user-input').value;
-    appendMessage('You', userInput);
-    sendMessage(userInput);
-    document.getElementById('user-input').value = '';
-});
-
-function appendMessage(role, content) {
-    const messageElement = document.createElement('p');
-    messageElement.innerText = `${role}: ${content}`;
-    chatLog.appendChild(messageElement);
-}
-
-function sendMessage(message) {
-    fetch('/chat', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `message=${encodeURIComponent(message)}`
-    })
-    .then(response => response.text())
-    .then(reply => {
-        appendMessage('AI', reply);
-    });
-}
 </script>
 {% endblock %}
 {% block footer %}

@@ -1,6 +1,10 @@
 #headers
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request, session, json
+import openai
 from flaskwebgui import FlaskUI
+from config import Settings
+import data as db
+from data import userInfo,models,setup
 import ctypes
 import requests
 import json
@@ -8,37 +12,64 @@ import json
 #configs
 app = Flask(__name__)
 app.config.from_object(__name__)
+app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPTRE'
 
 #setup
-global result,historys
+setup()
+cfg = Settings()
+global historys,NeedLogin,GPT_response
 response = {
-        'response': '你好👋！我是人工智能助手 ChatGLM-6B，很高兴见到你，欢迎问我任何问题。',
-        'history': [['你好', '你好👋！我是人工智能助手 ChatGLM-6B，很高兴见到你，欢迎问我任何问题。']],
+        'response': '',
+        'history': [['', '']],
         'status': 200,
-        'time': '2023-05-13 18:56:53'}
+        'time': '1234-05-06 07:08:09'}
+GPT_response = {
+        'response': '',
+        'history': [['', '']],
+        'status': 200,
+        'time': '1234-05-06 07:08:09'}
 result = None
+NeedLogin = True
 historys = response['history']
-historysO = []
-historysA = []
-dev_mode = 'True'
-port = "8000"
-host = "127.0.0.1"
-api_key = "None"
+OldHistorys = []
+AllHistorys = []
 
-@app.route('/show')
-def show():
-    return render_template('show.html')
-
-@app.route('/')
+#main
+@app.route('/')#根目录
 def root():
-    return render_template('main.html',
-                           result = result,
-                           historys = historysA,
-                           username = "Login",)
 
-@app.post('/')
+    ModelList = db.session.query(
+                models.id,
+                models.type,
+                models.comment,
+                models.url,
+                models.port,
+                models.LaunchUrl,).all()
+    
+    #Settings
+
+    return render_template('main.html',
+                            GPT_response = GPT_response,
+                            result = result,
+                            NeedLogin = NeedLogin,
+                            ModelList = ModelList,
+                            historys = AllHistorys,
+                            host = cfg.read("RemoteConfig","host"),
+                            port = cfg.read("RemoteConfig","port"),
+                            Mode = cfg.read("BaseConfig","devmode"),
+                            BugM = cfg.read("BaseConfig","debug"),
+                            Key = cfg.read("ModelConfig","APIKEY"),
+                            username = session.get('username'),)
+
+
+@app.route("/exchange")
+def LoadExchange():
+    return redirect("/")
+
+
+@app.post('/')#GLM请求与回复
 def upload():
-    global result,historys,historysO
+    global result,AllHistorys,OldHistorys
     input = request.form.get('inputInfo')
     response = requests.post('http://127.0.0.1:18365/',data=json.dumps({"prompt": input,"history": []}),headers={'Content-Type': 'application/json'})
     SrResponse = response.json()
@@ -58,45 +89,211 @@ def upload():
                 last_code_block_index=-1
                 is_code_block_start=not is_code_block_start
             history[i] = tmp
-    historysA.append(historys[0])
-    print(historysA)
+    AllHistorys.append(historys[0])
+    print(AllHistorys)
     return redirect('/')
 
-@app.post('/chatgpt')
+
+@app.post('/chatgpt')#GPT请求与回复
 def gpt_response():
-    message = request.form['message']
-    response = send_message(message)
-    print(response)
-    return response
+    global GPT_response
+    message = request.form['user-input']
+    GPT_response = ai(message)
+    print(GPT_response)
+    return redirect('/')
 
 
+@app.post('/exchange')#添加模型
+def AddModel():
+    Number = request.form.get("id")
+    if Number == "-1":
+        InputType = request.form.get("type")
+        InputComment = request.form.get("comment")
+        InputUrl = request.form.get("url")
+        InputPort = request.form.get("Port")
+        LaunchUrl = request.form.get("LCurl")
+        info = db.models(
+                    type = InputType,
+                    comment = InputComment,
+                    url = InputUrl,
+                    port = InputPort,
+                    LaunchUrl = LaunchUrl,)
+        db.session.add(info)
+    else:
+        InputState = request.form.get(Number + "state")
+        if InputState == "edit":
+            InputID = request.form.get("id")
+            InputType = request.form.get("type")
+            InputComment = request.form.get("comment")
+            InputUrl = request.form.get("url")
+            InputPort = request.form.get("port")
+            LaunchUrl = request.form.get("LCurl")
+            db.session.query(db.models).filter(models.id == InputID).update({
+                    db.models.type: InputType,
+                    db.models.comment: InputComment,
+                    db.models.url: InputUrl,
+                    db.models.port: InputPort,
+                    db.models.LaunchUrl: LaunchUrl,
+                    })
+        elif InputState == "del":
+            InputID = request.form.get("id")
+            db.session.query(models).filter(models.id == InputID).delete()
+    db.session.commit()
+    return redirect('/')
 
-#functions
-def send_message(message):
-    api_key = api_key  # 将YOUR_API_KEY替换为你的OpenAI API密钥
 
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {api_key}'
-    }
+@app.post("/UpdateSettings")
+def UpdateSettings():
+    UpdateHost = request.form.get("host")
+    UpdatePort = request.form.get("port")
+    UpdateMode = request.form.get("mode")
+    UpdateKey = request.form.get("key")
 
-    data = {
-        'messages': [{'role': 'system', 'content': 'You are a user'}, {'role': 'user', 'content': message}]
-    }
+    return redirect("/")
 
-    response = requests.post('https://chatgpt-api.shn.hk/v1/', headers=headers, json=data)
-    reply = response.json()['choices'][0]['message']['content']
-    return reply
+
+@app.post('/login')#登录
+def login_check():
+    global login_error,choose,page
+    account = request.form.get("logid")
+    password = request.form.get("password")
+    acc_result = db.session.query(userInfo.account).filter(userInfo.account == account).first()
+    pwd_result = db.session.query(userInfo.password).filter(userInfo.account == account,userInfo.password == password).first()
+    if account and password:
+        if acc_result:
+            if pwd_result:
+                session['username']=account
+                session['password']=password
+                uid =db.session.query(userInfo.id).filter(userInfo.account==account,userInfo.password==password).first()
+                uid = uid[0]
+                session['uid']= uid
+                if cfg.read("BaseConfig","KeepLogin") == 'True':
+                    session.permanent=True
+                login_error = "已登录"
+                choose = 0
+                return redirect('/')
+            else:
+                page = 'login'
+                login_error = "密码错误"
+                return redirect('/')
+        else:
+            page = 'login'
+            login_error = "未知用户名"
+            return redirect('/')
+    else:
+        page = 'login'
+        login_error = "请写入信息"
+        return redirect('/')
+
+
+@app.post('/register')#注册
+def register():
+    global login_error,page
+    account = request.form.get("reg_txt")
+    mail = request.form.get("email")
+    password = request.form.get("set_password")
+    check_password = request.form.get("check_password")
+    if account and password and mail:
+        if password == check_password:
+            info = db.userInfo(
+                            account=account,
+                            password=password,
+                            mail=mail,)
+            db.session.add(info)
+            db.session.commit()
+            db.session.remove()
+            login_error = '注册成功'
+            page = 'login'
+        else:
+            login_error = '两次密码不一'
+    else:
+        page = "register"
+        login_error = '完整填写信息'
+    return redirect('/')
+
+
+@app.get('/logout')#登出
+def logout():
+    global login_error
+    session.clear()
+    login_error = '登出成功'
+    return redirect('/')
+
+
+@app.get('/ModelList')
+def GetModelList():
+    ModelList = db.session.query(
+            models.id,
+            models.type,
+            models.comment,
+            models.url,
+            models.port,
+            models.LaunchUrl,).all()
+    return ModelList
+
+
+@app.get("/SettingData")
+def GetSettingData():
+    iPv4 = cfg.read("RemoteSetting","host")
+    port = cfg.read("RemoteSetting","port")
+    return iPv4,port
+
+
+@app.before_request
+def before_NeedLogin():
+    global NeedLogin
+    if 'username' in session:
+        if request.path == '/':
+            NeedLogin = False
+        else:
+            pass
+    else:
+        NeedLogin = True
 
 @app.errorhandler(404)
 def error404(error):
     return render_template('404.html'),404
 
+#functions
+def ai(question:str):
+    openai.api_base = "https://ai.fakeopen.com/v1/"
+    openai.api_key = cfg.read("ModelConfig","APIKEY")
+    model = "gpt-3.5-turbo"
+    response = openai.ChatCompletion.create(
+    model = model,
+    messages = [
+        {'role': 'system', 'content': "你是一名开发者"}, # 给gpt定义一个角色，也可以不写
+        {'role': 'user', 'content': question} # 问题
+    ],
+    temperature = 0,
+    stream = True
+    )
+
+    collected_chunks = []
+    collected_messages = []
+    messages = []
+
+
+    print(f"OpenAI({model}) :  ",end="")
+    for chunk in response:
+        message = chunk["choices"][0]["delta"].get("content","")
+        print(message,end="")
+
+        messages.append(message,end="")
+
+        collected_chunks.append(chunk)
+
+        chunk_message = chunk["choices"][0]["delta"]
+        collected_messages.append(chunk_message)
+    return messages
+
+
+#launch
 if __name__ == '__main__':
-    if dev_mode == "True":
+    if cfg.read("BaseConfig","DevMode") == "True":
     #WEB MODE
-        app.run(debug=True,port=port,host=host)
+        app.run(debug=cfg.read("BaseConfig","debug"),port=cfg.read("RemoteConfig","port"),host=cfg.read("RemoteConfig","host"))
     #GUI MODE
     else:
         ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
-        FlaskUI(app=app,server='flask',port=port,width=1000,height=800).run()
+        FlaskUI(app=app,server='flask',port=cfg.read("RemoteConfig","port"),width=1000,height=800).run()

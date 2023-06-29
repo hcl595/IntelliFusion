@@ -1,6 +1,10 @@
 flask
 flaskwebgui
 requests
+configparaser
+sqlite3
+sqlalchemy
+openai
 
 # dev
 black
