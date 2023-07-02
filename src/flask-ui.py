@@ -8,6 +8,7 @@ from data import userInfo,models,setup
 import ctypes
 import requests
 import json
+import os
 
 #configs
 app = Flask(__name__)
@@ -23,11 +24,8 @@ response = {
         'history': [['', '']],
         'status': 200,
         'time': '1234-05-06 07:08:09'}
-GPT_response = {
-        'response': '',
-        'history': [['', '']],
-        'status': 200,
-        'time': '1234-05-06 07:08:09'}
+GPT_response = []
+GLM_response = []
 result = None
 NeedLogin = True
 historys = response['history']
@@ -50,6 +48,7 @@ def root():
 
     return render_template('main.html',
                             GPT_response = GPT_response,
+                            GLM_response = GLM_response,
                             result = result,
                             NeedLogin = NeedLogin,
                             ModelList = ModelList,
@@ -67,11 +66,11 @@ def LoadExchange():
     return redirect("/")
 
 
-@app.post('/')#GLM请求与回复
+@app.post('/')#GLM请求与回复1
 def upload():
     global result,AllHistorys,OldHistorys
     input = request.form.get('inputInfo')
-    response = requests.post('http://127.0.0.1:18365/',data=json.dumps({"prompt": input,"history": []}),headers={'Content-Type': 'application/json'})
+    response = requests.post('http://127.0.0.1:8000/',data=json.dumps({"prompt": input,"history": []}),headers={'Content-Type': 'application/json'})
     SrResponse = response.json()
     historys = SrResponse['history']
     for i in range(len(historys)):
@@ -94,10 +93,19 @@ def upload():
     return redirect('/')
 
 
+@app.post('/chatglm')
+def get_glm_response():
+    global GLM_response
+    input = request.form.get("user-input")
+    GLM_response = glm(input)
+    print(GLM_response)
+    return redirect("/")
+
+
 @app.post('/chatgpt')#GPT请求与回复
 def gpt_response():
     global GPT_response
-    message = request.form['user-input']
+    message = request.form.get('user-input')
     GPT_response = ai(message)
     print(GPT_response)
     return redirect('/')
@@ -138,6 +146,11 @@ def AddModel():
         elif InputState == "del":
             InputID = request.form.get("id")
             db.session.query(models).filter(models.id == InputID).delete()
+        elif InputState == "run":
+            InputID = request.form.get("id")
+            launchCMD = "python " + request.form.get("LCurl")
+            os.system(launchCMD)
+            print(launchCMD)
     db.session.commit()
     return redirect('/')
 
@@ -271,7 +284,7 @@ def ai(question:str):
 
     collected_chunks = []
     collected_messages = []
-    messages = []
+    messages = ""
 
 
     print(f"OpenAI({model}) :  ",end="")
@@ -284,8 +297,27 @@ def ai(question:str):
         collected_chunks.append(chunk)
 
         chunk_message = chunk["choices"][0]["delta"]
-        collected_messages.append(chunk_message)
+        messages = messages + chunk["choices"][0]["delta"]
+
     return messages
+
+def glm(input:str):
+    response = ""
+    openai.api_base = "http://127.0.0.1:8000/v1"
+    openai.api_key = "none"
+    for chunk in openai.ChatCompletion.create(
+        model="chatglm2-6b",
+        messages=[
+            {"role": "user", "content": input}
+        ],
+        stream=True,
+        temperature = 0,
+    ):
+        if hasattr(chunk.choices[0].delta, "content"):
+            print(chunk.choices[0].delta.content, end="", flush=True)
+            response = response + chunk.choices[0].delta.content
+    print(response, flush=True)
+    return response
 
 
 #launch

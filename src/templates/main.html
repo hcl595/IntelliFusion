@@ -49,12 +49,12 @@
                 {% endfor %}
             </div>
             <div class="input-area">
-                <form href="/" method="POST" target="GLM">
+                <form href="/" method="POST">
                     <input name="inputInfo">
                     <button onclick="startSpeechRecognition()">开始语音识别</button>
                     <p id="transcript"></p >
                     <div class="button-area">
-                        <button id="send-btn" onclick="send()">发 送</button>
+                        <button type="submit" id="send-btn" onclick="send()">发 送</button>
                     </div>
                 </form>
                 <iframe src="/" style="display: none;" name="GLM"></iframe>
@@ -63,8 +63,8 @@
 
         <div id="SecndBox" style="display: none;">
             <h1>ChatGPT Demo</h1>
-            <div id="chat-log">{{ GPT_response }}</div>
-            <form id="chat-form" method="POST" action="/chatgpt" target="GPT">
+            <div id="chat-log">{{ GLM_response }}</div>
+            <form id="chat-form" method="POST" action="/chatglm" target="GPT">
                 <input type="text" id="user-input" name="user-input" />
                 <button type="submit">Send</button>
             </form>
@@ -150,7 +150,7 @@
                             <input type="number" name="port" placeholder="1836" value={{ Model[4] }}>
                         </td>
                         <td>
-                            <input type="text" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[5] }}>
+                            <input type="TEXT" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[5] }}>
                         </td>
                         <td>
                             <button type="submit" style="background-color: rgba(89, 147, 255, 0.671);border-radius:20px;" type="launch" name="edit" id="edit" onclick="$('#{{ Model[0] }}state').val('edit')">编辑</button>
