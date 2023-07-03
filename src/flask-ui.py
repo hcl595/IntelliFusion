@@ -25,12 +25,12 @@ response = {
         'status': 200,
         'time': '1234-05-06 07:08:09'}
 GPT_response = []
+LLM_response = []
 GLM_response = []
 result = None
 NeedLogin = True
 historys = response['history']
-OldHistorys = []
-AllHistorys = []
+
 
 #main
 @app.route('/')#根目录
@@ -39,20 +39,20 @@ def root():
     ModelList = db.session.query(
                 models.id,
                 models.type,
-                models.comment,
+                models.name,
                 models.url,
-                models.port,
+                models.APIkey,  
+                models.LaunchCompiler,
                 models.LaunchUrl,).all()
     
     #Settings
-
     return render_template('main.html',
                             GPT_response = GPT_response,
                             GLM_response = GLM_response,
                             result = result,
                             NeedLogin = NeedLogin,
                             ModelList = ModelList,
-                            historys = AllHistorys,
+                            historys = LLM_response,
                             host = cfg.read("RemoteConfig","host"),
                             port = cfg.read("RemoteConfig","port"),
                             Mode = cfg.read("BaseConfig","devmode"),
@@ -66,49 +66,22 @@ def LoadExchange():
     return redirect("/")
 
 
-@app.post('/')#GLM请求与回复1
+@app.post('/llm')#GLM请求与回复1
 def upload():
-    global result,AllHistorys,OldHistorys
-    input = request.form.get('inputInfo')
-    response = requests.post('http://127.0.0.1:8000/',data=json.dumps({"prompt": input,"history": []}),headers={'Content-Type': 'application/json'})
-    SrResponse = response.json()
-    historys = SrResponse['history']
-    for i in range(len(historys)):
-        history = historys[i]
-        for i in range(len(history)):
-            tmp = history[i]
-            tmp = str.replace(tmp,"\n","<br/>")
-            last_code_block_index: int = -1
-            is_code_block_start = True
-            while (last_code_block_index := tmp.find("```")) != -1:
-                if is_code_block_start:
-                    tmp=tmp.replace("```", "<pre>", 1)
-                else:
-                    tmp=tmp.replace("```", "</pre>", 1)
-                last_code_block_index=-1
-                is_code_block_start=not is_code_block_start
-            history[i] = tmp
-    AllHistorys.append(historys[0])
-    print(AllHistorys)
+    global result,LLM_response
+    InputInfo = request.form.get('inputInfo')
+    InputModel =request.form.get("InputMoel")
+    LLM_response = llm(InputModel,InputInfo)
     return redirect('/')
 
 
-@app.post('/chatglm')
+@app.post('/openai')
 def get_glm_response():
     global GLM_response
-    input = request.form.get("user-input")
-    GLM_response = glm(input)
-    print(GLM_response)
+    InputInfo = request.form.get("user-input")
+    InputModel =request.form.get("InputMoel")
+    GLM_response = ai(InputModel,InputInfo)
     return redirect("/")
-
-
-@app.post('/chatgpt')#GPT请求与回复
-def gpt_response():
-    global GPT_response
-    message = request.form.get('user-input')
-    GPT_response = ai(message)
-    print(GPT_response)
-    return redirect('/')
 
 
 @app.post('/exchange')#添加模型
@@ -134,13 +107,15 @@ def AddModel():
             InputType = request.form.get("type")
             InputComment = request.form.get("comment")
             InputUrl = request.form.get("url")
-            InputPort = request.form.get("port")
+            InputAPIkey = request.form.get("APIkey")
+            LaunchCompiler = request.form.get("LcCompiler")
             LaunchUrl = request.form.get("LCurl")
             db.session.query(db.models).filter(models.id == InputID).update({
                     db.models.type: InputType,
-                    db.models.comment: InputComment,
+                    db.models.name: InputComment,
                     db.models.url: InputUrl,
-                    db.models.port: InputPort,
+                    db.models.APIkey: InputAPIkey,
+                    db.models.LaunchCompiler: LaunchCompiler,
                     db.models.LaunchUrl: LaunchUrl,
                     })
         elif InputState == "del":
@@ -238,9 +213,10 @@ def GetModelList():
     ModelList = db.session.query(
             models.id,
             models.type,
-            models.comment,
+            models.name,
             models.url,
-            models.port,
+            models.APIkey,
+            models.LaunchCompiler,
             models.LaunchUrl,).all()
     return ModelList
 
@@ -268,47 +244,14 @@ def error404(error):
     return render_template('404.html'),404
 
 #functions
-def ai(question:str):
-    openai.api_base = "https://ai.fakeopen.com/v1/"
-    openai.api_key = cfg.read("ModelConfig","APIKEY")
-    model = "gpt-3.5-turbo"
-    response = openai.ChatCompletion.create(
-    model = model,
-    messages = [
-        {'role': 'system', 'content': "你是一名开发者"}, # 给gpt定义一个角色，也可以不写
-        {'role': 'user', 'content': question} # 问题
-    ],
-    temperature = 0,
-    stream = True
-    )
-
-    collected_chunks = []
-    collected_messages = []
-    messages = ""
-
-
-    print(f"OpenAI({model}) :  ",end="")
-    for chunk in response:
-        message = chunk["choices"][0]["delta"].get("content","")
-        print(message,end="")
-
-        messages.append(message,end="")
-
-        collected_chunks.append(chunk)
-
-        chunk_message = chunk["choices"][0]["delta"]
-        messages = messages + chunk["choices"][0]["delta"]
-
-    return messages
-
-def glm(input:str):
-    response = ""
-    openai.api_base = "http://127.0.0.1:8000/v1"
-    openai.api_key = "none"
+def ai(ModelID:str,question:str):
+    openai.api_base = db.session.query(models.url).filter(models.id == ModelID).one()
+    openai.api_key = db.session.query(models.APIkey).filter(models.id == ModelID).one()
+    model = db.session.query(models.name).filter(models.id == ModelID).one()
     for chunk in openai.ChatCompletion.create(
         model="chatglm2-6b",
         messages=[
-            {"role": "user", "content": input}
+            {"role": "user", "content": question}
         ],
         stream=True,
         temperature = 0,
@@ -318,6 +261,33 @@ def glm(input:str):
             response = response + chunk.choices[0].delta.content
     print(response, flush=True)
     return response
+
+def llm(ModelID:str,question:str):
+    AllHistorys = []
+    response = requests.post(
+        db.session.query(models.url).filter(models.id == ModelID).one(),
+        data=json.dumps({"prompt": question,"history": []}),
+        headers={'Content-Type': 'application/json'})
+    SourceResponse = response.json()
+    historys = SourceResponse['history']
+    for i in range(len(historys)):
+        history = historys[i]
+        for i in range(len(history)):
+            tmp = history[i]
+            tmp = str.replace(tmp,"\n","<br/>")
+            last_code_block_index: int = -1
+            is_code_block_start = True
+            while (last_code_block_index := tmp.find("```")) != -1:
+                if is_code_block_start:
+                    tmp=tmp.replace("```", "<pre>", 1)
+                else:
+                    tmp=tmp.replace("```", "</pre>", 1)
+                last_code_block_index=-1
+                is_code_block_start=not is_code_block_start
+            history[i] = tmp
+    AllHistorys.append(historys[0])
+    return AllHistorys
+
 
 
 #launch

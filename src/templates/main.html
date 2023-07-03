@@ -111,7 +111,7 @@
                         <p>类型</p>
                     </td>
                     <td>
-                        <p>备注</p>
+                        <p>模型</p>
                     </td>
                     <td>
                         <p>API地址</p>
@@ -138,19 +138,27 @@
                     <input type="hidden" name="id" id="number" value={{ Model[0] }}>
                     <tr>
                         <td>
-                            <input type="text" name="type" placeholder="NLP" value={{ Model[1] }}>
+                            <select>
+                                <option>{{ Model[1] }}</option>
+                                <option>OpenAI</option>
+                                <option>WebUI</option>
+                                <option>API</option>
+                            </select>
                         </td>
                         <td> 
                             <input type="text" name="comment" placeholder="ChatGLM" value={{ Model[2] }}>
                         </td>
                         <td>
-                            <input type="text" name="url" placeholder="127.0.0.1" value={{ Model[3] }}>
+                            <input type="text" class="url" name="url" placeholder="127.0.0.1:8000" value={{ Model[3] }}>
                         </td>
                         <td>
-                            <input type="number" name="port" placeholder="1836" value={{ Model[4] }}>
+                            <input type="text" name="port" placeholder="sk-qwdjqfooajkash & none" value={{ Model[5] }}>
                         </td>
                         <td>
-                            <input type="TEXT" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[5] }}>
+                            <input type="TEXT" name="LcCom" placeholder=".\ven\python.exe & OpenAI" value={{ Model[6] }} style="width: 50px;">
+                        </td>
+                        <td>
+                            <input type="TEXT" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[7] }}>
                         </td>
                         <td>
                             <button type="submit" style="background-color: rgba(89, 147, 255, 0.671);border-radius:20px;" type="launch" name="edit" id="edit" onclick="$('#{{ Model[0] }}state').val('edit')">编辑</button>
@@ -169,13 +177,17 @@
                     <input type="hidden" name="id" id="number" value="-1">
                     <tr>
                         <td>
-                            <input type="text" name="type" placeholder="LLM">
+                            <select>
+                                <option>OpenAI</option>
+                                <option>WebUI</option>
+                                <option>API</option>
+                            </select>
                         </td>
                         <td> 
                             <input type="text" name="comment" placeholder="ChatGLM">
                         </td>
                         <td>
-                            <input type="text" name="url" placeholder="127.0.0.1">
+                            <input type="text" class="url" name="url" placeholder="127.0.0.1">
                         </td>
                         <td>
                             <input type="number" name="Port" placeholder="12345">

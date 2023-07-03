@@ -699,10 +699,29 @@ textarea{
   margin: 20px;
   overflow: scroll;
 }
+.account table select{
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, .05);
+  border-color: rgba(0, 0, 0, .05);
+  transition: .6s cubic-bezier(.8, .5, .5, .8);
+}
 .account table input{
   border-radius: 20px;
   background-color: rgba(0, 0, 0, .05);
   border-color: rgba(0, 0, 0, .05);
+  transition: .6s cubic-bezier(.8, .5, .5, .8);
+}
+.account table input:hover{
+  border-radius: 5px;
+  background-color: rgba(170, 255, 136, 0.05);
+  box-shadow: #000;
+  border-color: rgba(0, 0, 0, 0.05);
+}
+.account table .url{
+  width: 100px;
+}
+.account table .url:hover{
+  width: 300px;
 }
 
 .models {

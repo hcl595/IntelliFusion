@@ -36,10 +36,11 @@ class models(Base):
     __tablename__ = "models"
     id = Column(Integer, primary_key=True, autoincrement=True, comment="主键")
     type = Column(String(32), nullable=False, comment="类型")
-    comment = Column(String(32), nullable=False, comment="备注")
+    name = Column(String(32), nullable=False, comment="模型")
     url = Column(String(32), nullable=False, comment="地址")
-    port = Column(Integer, nullable=False, comment="端口")
-    LaunchUrl = Column(String(32), nullable=False, comment="启动地址")
+    APIkey = Column(Integer, nullable=False, comment="密钥")
+    LaunchCompiler = Column(String(32), nullable=True, comment="启动编译器")
+    LaunchUrl = Column(String(32), nullable=True, comment="启动地址")
     __table__args__ = (
         UniqueConstraint("id", "url"),  # 联合唯一约束
         Index("url", unique=True),       # 联合唯一索引
@@ -61,10 +62,11 @@ def setup():
         session.add(user_instance)
         BasisModel = models(
         type = "LLM",
-        comment = "ChatGLM",
+        name = "ChatGLM",
         url = "127.0.0.1",
-        port = "18356",
-        LaunchUrl = ".\\ChatGLM\\api.py"
+        APIkey = None,
+        LaunchCompiler = "python",
+        LaunchUrl = ".\\ChatGLM\\api.py",
         )
         session.add(BasisModel)
         session.commit() 
