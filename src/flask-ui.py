@@ -1,5 +1,5 @@
 #headers
-from flask import Flask, render_template, redirect, request, session, json
+from flask import Flask, render_template, redirect, request, session, json, jsonify
 import openai
 from flaskwebgui import FlaskUI
 from config import Settings
@@ -75,31 +75,34 @@ def upload():
     return redirect('/')
 
 
-@app.post('/openai')
+@app.route('/openai', methods=['POST'])
 def get_glm_response():
     global GLM_response
-    InputInfo = request.form.get("user-input")
-    InputModel =request.form.get("InputMoel")
-    GLM_response = ai(InputModel,InputInfo)
-    return redirect("/")
+    InputInfo = request.form["user-input"]
+    print(InputInfo)
+    InputModel =request.form["model-input"]
+    openai_response = ai(InputModel,InputInfo)
+    return jsonify({'response': openai_response})
 
 
 @app.post('/exchange')#添加模型
 def AddModel():
     Number = request.form.get("id")
     if Number == "-1":
-        InputType = request.form.get("type")
-        InputComment = request.form.get("comment")
-        InputUrl = request.form.get("url")
-        InputPort = request.form.get("Port")
-        LaunchUrl = request.form.get("LCurl")
-        info = db.models(
-                    type = InputType,
-                    comment = InputComment,
-                    url = InputUrl,
-                    port = InputPort,
-                    LaunchUrl = LaunchUrl,)
-        db.session.add(info)
+            InputType = request.form.get("type")
+            InputComment = request.form.get("comment")
+            InputUrl = request.form.get("url")
+            InputAPIkey = request.form.get("APIkey")
+            LaunchCompiler = request.form.get("LcCompiler")
+            LaunchUrl = request.form.get("LCurl")
+            info = db.models(
+                        type = InputType,
+                        name = InputComment,
+                        url = InputUrl,
+                        APIkey = InputAPIkey,
+                        LaunchCompiler = LaunchCompiler,
+                        LaunchUrl = LaunchUrl,)
+            db.session.add(info)
     else:
         InputState = request.form.get(Number + "state")
         if InputState == "edit":
@@ -123,9 +126,8 @@ def AddModel():
             db.session.query(models).filter(models.id == InputID).delete()
         elif InputState == "run":
             InputID = request.form.get("id")
-            launchCMD = "python " + request.form.get("LCurl")
+            launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LCurl")
             os.system(launchCMD)
-            print(launchCMD)
     db.session.commit()
     return redirect('/')
 
@@ -245,11 +247,11 @@ def error404(error):
 
 #functions
 def ai(ModelID:str,question:str):
-    openai.api_base = db.session.query(models.url).filter(models.id == ModelID).one()
-    openai.api_key = db.session.query(models.APIkey).filter(models.id == ModelID).one()
-    model = db.session.query(models.name).filter(models.id == ModelID).one()
+    response = ""
+    openai.api_base = db.session.query(models.url).filter(models.name == ModelID).one()[0]
+    openai.api_key = db.session.query(models.APIkey).filter(models.name == ModelID).one()
     for chunk in openai.ChatCompletion.create(
-        model="chatglm2-6b",
+        model=ModelID,
         messages=[
             {"role": "user", "content": question}
         ],

@@ -7,17 +7,18 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('form').on('submit', function(event) {
+        $('#OpenAI').on('#sendInput', function(event) {
             event.preventDefault();
             var userInput = $('#user-input').val();
+            var modelInput = $('#model-input').val();
             $.ajax({
-                url: '/get_response',
+                url: '/openai',
                 type: 'POST',
                 data: { user_input: userInput },
                 success: function(response) {
                     var chatGptResponse = response.response;
                     $('#chat-output').append('<p><strong>You:</strong> ' + userInput + '</p>');
-                    $('#chat-output').append('<p><strong>ChatGPT:</strong> ' + chatGptResponse + '</p>');
+                    $('#chat-output').append('<p><strong>' + modelInput + '</strong> ' + chatGptResponse + '</p>');
                     $('#user-input').val('');
                 }
             });
@@ -49,7 +50,7 @@
                 {% endfor %}
             </div>
             <div class="input-area">
-                <form href="/" method="POST">
+                <form href="/llm" method="POST">
                     <input name="inputInfo">
                     <button onclick="startSpeechRecognition()">开始语音识别</button>
                     <p id="transcript"></p >
@@ -63,21 +64,20 @@
 
         <div id="SecndBox" style="display: none;">
             <h1>ChatGPT Demo</h1>
-            <div id="chat-log">{{ GLM_response }}</div>
-            <form id="chat-form" method="POST" action="/chatglm" target="GPT">
+            <div id="chat-output"></div>
+            <form id="OpenAI">
                 <input type="text" id="user-input" name="user-input" />
-                <button type="submit">Send</button>
+                <input type="text" id="model-input" name="model-input" value="chatglm2-6b" />
+                <button type="submit" id="sendInput">Send</button>
             </form>
-            <iframe style="display: none;" src="/" name="GPT"></iframe>
         </div>
 
         <div id="StbleBox" style="display: none;">
-            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:90vw;overflow:hidden;background:transparent;"  src="http://127.0.0.1:7860"></iframe>
+            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src="http://127.0.0.1:7860"></iframe>
         </div>
 
-        <div id="WidgtBox" style="display: none;">
-            <div class="card_container">
-
+        <div id="WidgtBox" style="display: none">
+            <div class="card_container" style="height: 100vh -10px;">
                 <a href="#">
                     <div class="card_contentbox">
                         <h2>小组件</h2>
@@ -92,7 +92,6 @@
 </div>
 
 <div class="account" id="account-box" style="display: none;">
-    <iframe style="display: none;" src="/exchange" name="exchange"></iframe>
     <div style="margin-left:20px">
         <table>
             <thead>
@@ -108,16 +107,19 @@
             <tbody>
                 <tr>
                     <td>
-                        <p>类型</p>
+                        <p>模型类型</p>
                     </td>
                     <td>
-                        <p>模型</p>
+                        <p>模型名称</p>
                     </td>
                     <td>
-                        <p>API地址</p>
+                        <p>调用地址</p>
                     </td>
                     <td>
-                        <p>API端口</p>
+                        <p>访问密钥</p>
+                    </td>
+                    <td>
+                        <p>编译地址</p>
                     </td>
                     <td>
                         <p>启动地址</p>
@@ -129,16 +131,16 @@
                         <p>删除</p>
                     </td>
                     <td>
-                        <p>一键启动</p>
+                        <p>启动</p>
                     </td>
                 </tr>
                 {% for Model in ModelList %}
-                <form action="/exchange" method="post" target="exchange">
+                <form action="/exchange" method="post">
                     <input type="hidden" name="{{ Model[0] }}state" id="{{ Model[0] }}state">
                     <input type="hidden" name="id" id="number" value={{ Model[0] }}>
                     <tr>
                         <td>
-                            <select>
+                            <select name="type">
                                 <option>{{ Model[1] }}</option>
                                 <option>OpenAI</option>
                                 <option>WebUI</option>
@@ -152,13 +154,13 @@
                             <input type="text" class="url" name="url" placeholder="127.0.0.1:8000" value={{ Model[3] }}>
                         </td>
                         <td>
-                            <input type="text" name="port" placeholder="sk-qwdjqfooajkash & none" value={{ Model[5] }}>
+                            <input type="text" class="url" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value={{ Model[4] }}>
                         </td>
                         <td>
-                            <input type="TEXT" name="LcCom" placeholder=".\ven\python.exe & OpenAI" value={{ Model[6] }} style="width: 50px;">
+                            <input type="TEXT" class="url" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model[5] }}>
                         </td>
                         <td>
-                            <input type="TEXT" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[7] }}>
+                            <input type="TEXT" class="url" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[6] }}>
                         </td>
                         <td>
                             <button type="submit" style="background-color: rgba(89, 147, 255, 0.671);border-radius:20px;" type="launch" name="edit" id="edit" onclick="$('#{{ Model[0] }}state').val('edit')">编辑</button>
@@ -172,12 +174,12 @@
                     </tr>
                 </form>
                 {% endfor %}
-                <form action="/exchange" target="exchange" method="post">
+                <form action="/exchange" method="post" target="exchange">
                     <input type="hidden" name="state" id="state">
                     <input type="hidden" name="id" id="number" value="-1">
                     <tr>
                         <td>
-                            <select>
+                            <select name="type">
                                 <option>OpenAI</option>
                                 <option>WebUI</option>
                                 <option>API</option>
@@ -187,13 +189,16 @@
                             <input type="text" name="comment" placeholder="ChatGLM">
                         </td>
                         <td>
-                            <input type="text" class="url" name="url" placeholder="127.0.0.1">
+                            <input type="text" class="url" name="url" placeholder="127.0.0.1:8000">
                         </td>
                         <td>
-                            <input type="number" name="Port" placeholder="12345">
+                            <input rtpe="text" class="url" name="APIkey" placeholder="sk-ahsjfidajfuahfhla & none">
                         </td>
                         <td>
-                            <input type="text" name="LCurl" placeholder=".\Models\launch.py">
+                            <input type="TEXT" class="url" name="LcCompiler" placeholder=".\ChatGLM\scripts\python.exe">
+                        </td>
+                        <td>
+                            <input type="TEXT" class="url" name="LCurl" placeholder=".\ChatGLM\launch.py">
                         </td>
                         <td>
                             <button disabled type="submit" style="background-color: rgba(89, 147, 255, 0.671);border-radius:20px;" name="edit" id="edit">编辑</button>
@@ -202,7 +207,7 @@
                             <button disabled type="submit" style="background-color: rgba(255, 89, 89, 0.671);border-radius:20px;" name="del" id="del">删除</button>
                         </td>
                         <td>
-                            <button type="submit" style="background-color: rgba(117, 255, 89, 0.671);border-radius:20px;" name="launch" id="launch">添加</button>
+                            <button action="/exchange" type="submit" style="background-color: rgba(117, 255, 89, 0.671);border-radius:20px;" name="launch" id="launch">添加</button>
                         </td>
                     </tr>
                     </form>
@@ -340,28 +345,6 @@
             </thead>
         </table>
         <hr class="line">
-        <table>
-            <thead>
-                <tr>
-                    <th>
-                        <h3>API设置</h3>
-                    </th>
-                    <th>
-                        <h3> API Settings </h3>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <p>OpenAI API Key</p>
-                    </td>
-                    <td>
-                        <input contenteditable="true" type="text" name="key" placeholder="sk-qwertyuiopasdfghjklzxcvbnmqwerty" value={{ Key }}>
-                    </td>
-                </tr>
-            </thead>
-        </table>
     </div>
 </div>
 
