@@ -3,7 +3,7 @@ flaskwebgui
 requests
 openai
 sqlalchemy
-pysqlite3
+configparser
 
 # dev
 black
