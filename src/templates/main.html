@@ -9,6 +9,7 @@
 
 {% block body %}
 <body>
+<iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
@@ -18,41 +19,34 @@
             <li id="li_WIG" class="li" onclick="toWIG()"><span>Widgets</span></li>
         </ul>
 
-        <div class="dialogbox_container" id="DeaftBox">
-            <div class="content">
-                {% for history in historys %}
-                {% if loop.last  == True %}
-                    <div class="item item-right"><div class="bubble bubble-right">{{history[0]}}</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>
-                    <div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left"><p id="text" data-text="{{history[1] |safe}}"></div></div>
-                {% else %}
-                    <div class="item item-right"><div class="bubble bubble-right">{{history[0]}}</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>
-                    <div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left" >{{ history[1] |safe}}</div></div>
-                {% endif %}
-                {% endfor %}
+        <div class="dialogbox_container" id="DefaultBox">
+            <div class="content" id="api-output">
+
             </div>
             <div class="input-area">
-                <form href="/llm" method="POST">
-                    <input name="inputInfo">
-                    <button onclick="startSpeechRecognition()">开始语音识别</button>
-                    <p id="transcript"></p >
-                    <div class="button-area">
-                        <button type="submit" id="send-btn" onclick="send()">发 送</button>
-                    </div>
-                </form>
+                <input type="text" id="api-user-input" name="api-user-input" />
+                <input id="api-model-input" name="api-model-input" type="hidden" value={{ DefaultModel }} />
+                <div class="button-area">
+                    <button type="submit" id="SendAPIInput">发 送</button>
+                </div>
             </div>
         </div>
 
-        <div id="SecndBox" style="display: none;">
-            <h1>ChatGPT Demo</h1>
-            <div id="chat-output"></div>
+        <div class="dialogbox_container" id="SecondBox" style="display: none;">
+                <div class="content" id="openai-output">
 
-                <input type="text" id="user-input" name="user-input" />
-                <input type="text" id="model-input" name="model-input" value="chatglm2-6b" />
-                <button type="button" id="sendInput">Send</button>
-
+                </div>
+                <div class="input-area">
+                    <form>
+                        <input type="text" name="openai-user-input" id="user-input" />
+                        <input type="hidden" name="openai-model-input" id="model-input" value={{ SecondModel }} />
+                        <button type="button" id="SendOpenaiInput">发 送</button>
+                    </form>
+                </div>
+            </div>
         </div>
 
-        <div id="StbleBox" style="display: none;">
+        <div id="ThridBox" style="display: none;">
             <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src="http://127.0.0.1:7860"></iframe>
         </div>
 
@@ -78,9 +72,8 @@
                 <tr>
                     <th>
                         <center>
-                        <h3>模型账号管理</h3>                            
+                        <h3>模型管理</h3>                            
                         </center>
-
                     </th>
                 </tr>
             </thead>
@@ -115,7 +108,7 @@
                     </td>
                 </tr>
                 {% for Model in ModelList %}
-                <form action="/exchange" method="post">
+                <form action="/exchange" method="post" target="commit">
                     <input type="hidden" name="{{ Model[0] }}state" id="{{ Model[0] }}state">
                     <input type="hidden" name="id" id="number" value={{ Model[0] }}>
                     <tr>
@@ -187,7 +180,7 @@
                             <button disabled type="submit" style="background-color: rgba(255, 89, 89, 0.671);border-radius:20px;" name="del" id="del">删除</button>
                         </td>
                         <td>
-                            <button action="/exchange" type="submit" style="background-color: rgba(117, 255, 89, 0.671);border-radius:20px;" name="launch" id="launch">添加</button>
+                            <button action="/exchange" type="submit" style="background-color: rgba(117, 255, 89, 0.671);border-radius:20px;" name="launch" id="add">添加</button>
                         </td>
                     </tr>
                     </form>
@@ -267,6 +260,41 @@
             <thead>
                 <tr>
                     <th>
+                        <h3>窗口设置  </h3>
+                    </th>
+                    <th>
+                        <h3>Windows Settings</h3>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>默认窗口</p>
+                    </td>
+                    <td>
+                        <p>
+                            <input type="text" name="DefaultModel" placeholder="chatglm2-6b" value={{ DefaultModel }} />
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>第二窗口</p>
+                    </td>
+                    <td>
+                        <p>
+                            <input type="text" name="SecondModel" placeholder="text-davinci-002" value={{ SecondModel }} />
+                        </p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="line">
+        <table>
+            <thead>
+                <tr>
+                    <th>
                         <h3>远程设置</h3>
                     </th>
                     <th>
@@ -280,7 +308,7 @@
                         <p>iPv4地址</p>
                     </td>
                     <td>
-                        <input type="url" name="iPv4" placeholder="127.0.0.1" value={{ host }}>
+                        <input type="url" name="iPv4" placeholder="127.0.0.1" value={{ host }} />
                     </td>
                 </tr>
                 <tr>
@@ -288,7 +316,7 @@
                         <p>端口</p>
                     </td>
                     <td>
-                        <input type="number" name="Port" placeholder="5000" value={{ port }}>
+                        <input type="number" name="Port" placeholder="5000" value={{ port }} />
                     </td>
                 </tr>
             </thead>
@@ -311,7 +339,7 @@
                         <p>Web模式</p>
                     </td>
                     <td>
-                        <input type="text" name="Mode" placeholder="False" value={{ Mode }}>
+                        <input type="text" name="Mode" placeholder="False" value={{ Mode }} />
                     </td>
                 </tr>
                 <tr>
@@ -319,12 +347,13 @@
                         <p>DeBug模式</p>
                     </td>
                     <td>
-                        <input type="text" name="BugM" placeholder="False" value={{ BugM }}>
+                        <input type="text" name="BugM" placeholder="False" value={{ BugM }} />
                     </td>
                 </tr>
             </thead>
         </table>
         <hr class="line">
+
     </div>
 </div>
 
@@ -392,20 +421,6 @@
 
 </body>
 <script type="text/javascript">
-//打字机(常驻)
-var text = document.getElementById('text').getAttribute("data-text");//获取要输出的文字
-var index = 0;
-var element = document.getElementById('text');//获取元素
-function myprint() {
-    if (index < text.length) {
-        element.innerText = element.innerText + text.charAt(index);
-        index++;
-    } else {
-        clearInterval(c);//输出完后关闭定时器
-    }
-}
-var c = setInterval(myprint, 10);//定时器
-
 let height = document.querySelector('.content').scrollHeight;
 document.querySelector(".content").scrollTop = height;
 
@@ -426,45 +441,47 @@ $(".txtb input").on("blur",function(){
     $(this).removeClass("focus")
 })
 
-    $("#sendInput").on('click',
-    alert("on"),
+//ajax交互
+$(document).on('click',"#SendOpenaiInput",
         function() {
-        showLogin()
-        var userInput = $('#user-input').val();
-        var modelInput = $('#model-input').val();
+        var userInput = $('#openai-user-input').val();
+        var modelInput = $('#openai-model-input').val();
+        $('#openai-output').append('<div class="item item-right"><div class="bubble bubble-right">' + userInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
         $.ajax({
             url: '/openai',
             type: 'POST',
-            data: { user_input: userInput ,modelInput: modelInput},
+            data: { userinput: userInput ,modelinput: modelInput},
             success: function(response) {
                 var chatGptResponse = response.response;
-                $('#chat-output').append('<p><strong>You:</strong> ' + userInput + '</p>');
-                $('#chat-output').append('<p><strong>' + modelInput + '</strong> ' + chatGptResponse + '</p>');
-                $('#user-input').val('');
+                $('#openai-output').append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+                $('#openai-user-input').val('');
             }
         });
     });
 
+$(document).on('click',"#SendAPIInput",
+    function() {
+    var userInput = $('#api-user-input').val();
+    var modelInput = $('#api-model-input').val();
+    $('#api-output').append('<div class="item item-right"><div class="bubble bubble-right">' + userInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+    $.ajax({
+        url: '/llm',
+        type: 'POST',
+        data: { userinput: userInput ,modelinput: modelInput},
+        success: function(response) {
+            var chatGptResponse = response.response;
+            $('#api-output').append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+            $('#api-user-input').val('');
+        }
+    });
+});
 
-
-const send = document.getElementById("sendInput");
-const chat_output = document.getElementById("chat-output");
-send.onclick = function(){
-    alert("hello")
-    const xhr = new XMLHttpRequest();
-    xhr.open('post','https://127.0.0.1:800/openai');
-    xhr.send();
-    xhr.onreadystatechange = function(){
-        if(xhr.readyState === 4)
-        if(xhr.status >= 200 && xhr.status <= 300)
-            console.log(xhr.response);
-            chat_output.innerText = xhr.response;
-    }
-}
-
-$("send-btn").on('click',function(){
-    alert("HELLO")
+//launch model
+$(".account .run").on('click',function(){
+    showToast("模型启动中....",1000)
 })
+
+
 
 </script>
 {% endblock %}

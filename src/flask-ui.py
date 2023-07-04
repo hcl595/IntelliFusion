@@ -13,7 +13,7 @@ import os
 #configs
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPTRE'
+app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPFOR'
 
 #setup
 setup()
@@ -47,8 +47,6 @@ def root():
     
     #Settings
     return render_template('main.html',
-                            GPT_response = GPT_response,
-                            GLM_response = GLM_response,
                             result = result,
                             NeedLogin = NeedLogin,
                             ModelList = ModelList,
@@ -57,7 +55,8 @@ def root():
                             port = cfg.read("RemoteConfig","port"),
                             Mode = cfg.read("BaseConfig","devmode"),
                             BugM = cfg.read("BaseConfig","debug"),
-                            Key = cfg.read("ModelConfig","APIKEY"),
+                            DefaultModel = cfg.read("ModelConfig","DefaultModel"),
+                            SecondModel = cfg.read("ModelConfig","SecondModel"),
                             username = session.get('username'),)
 
 
@@ -69,18 +68,17 @@ def LoadExchange():
 @app.post('/llm')#GLM请求与回复1
 def upload():
     global result,LLM_response
-    InputInfo = request.form.get('inputInfo')
-    InputModel =request.form.get("InputMoel")
+    InputInfo = request.form['userinput']
+    InputModel =request.form["modelinput"]
     LLM_response = llm(InputModel,InputInfo)
-    return redirect('/')
+    return jsonify({'response': LLM_response})
 
 
 @app.route('/openai', methods=['POST'])
 def get_glm_response():
     global GLM_response
-    data = json.loads(request.form.get('data'))
-    InputInfo = data['user-input']
-    InputModel = data["model-input"]
+    InputInfo = request.form['userinput']
+    InputModel = request.form["modelinput"]
     openai_response = ai(InputModel,InputInfo)
     return jsonify({'response': openai_response})
 
@@ -223,6 +221,11 @@ def GetModelList():
     return ModelList
 
 
+@app.route("/test")
+def DevTest():
+    return render_template("test.html")
+
+
 @app.get("/SettingData")
 def GetSettingData():
     iPv4 = cfg.read("RemoteSetting","host")
@@ -267,7 +270,7 @@ def ai(ModelID:str,question:str):
 def llm(ModelID:str,question:str):
     AllHistorys = []
     response = requests.post(
-        db.session.query(models.url).filter(models.id == ModelID).one(),
+        url = db.session.query(models.url).filter(models.name == ModelID).one()[0],
         data=json.dumps({"prompt": question,"history": []}),
         headers={'Content-Type': 'application/json'})
     SourceResponse = response.json()
@@ -288,7 +291,7 @@ def llm(ModelID:str,question:str):
                 is_code_block_start=not is_code_block_start
             history[i] = tmp
     AllHistorys.append(historys[0])
-    return AllHistorys
+    return historys[0][1]
 
 
 

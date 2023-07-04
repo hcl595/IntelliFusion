@@ -100,9 +100,9 @@ function toGLM() {
 	document.getElementById("li_GPT").className="li";
 	document.getElementById("li_SD").className="li";
 	document.getElementById("li_WIG").className="li";
-	$("#DeaftBox").fadeIn(100)
-	$("#SecndBox").fadeOut(100)
-	$("#StbleBox").fadeOut(100)
+	$("#DefaultBox").fadeIn(100)
+	$("#SecondBox").fadeOut(100)
+	$("#ThridBox").fadeOut(100)
 	$("#WidgtBox").fadeOut(100)
 }
 function toGPT() {
@@ -110,9 +110,9 @@ function toGPT() {
 	document.getElementById("li_GPT").className="li current";
 	document.getElementById("li_SD").className="li";
 	document.getElementById("li_WIG").className="li";
-	$("#DeaftBox").fadeOut(100)
-	$("#SecndBox").fadeIn(100)
-	$("#StbleBox").fadeOut(100)
+	$("#DefaultBox").fadeOut(100)
+	$("#SecondBox").fadeIn(100)
+	$("#ThridBox").fadeOut(100)
 	$("#WidgtBox").fadeOut(100)
 }
 function toSD() {
@@ -120,9 +120,9 @@ function toSD() {
 	document.getElementById("li_GPT").className="li";
 	document.getElementById("li_SD").className="li current";
 	document.getElementById("li_WIG").className="li";
-	$("#DeaftBox").fadeOut(100)
-	$("#SecndBox").fadeOut(100)
-	$("#StbleBox").fadeIn(100)
+	$("#DefaultBox").fadeOut(100)
+	$("#SecondBox").fadeOut(100)
+	$("#ThridBox").fadeIn(100)
 	$("#WidgtBox").fadeOut(100)
 }
 function toWIG() {
@@ -130,9 +130,9 @@ function toWIG() {
 	document.getElementById("li_GPT").className="li";
 	document.getElementById("li_SD").className="li";
 	document.getElementById("li_WIG").className="li current";
-	$("#DeaftBox").fadeOut(100)
-	$("#SecndBox").fadeOut(100)
-	$("#StbleBox").fadeOut(100)
+	$("#DefaultBox").fadeOut(100)
+	$("#SecondBox").fadeOut(100)
+	$("#ThridBox").fadeOut(100)
 	$("#WidgtBox").fadeIn(100)
 }
 

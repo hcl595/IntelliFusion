@@ -8,7 +8,7 @@ config_file = Path(__file__).parent / "data" / "config.cfg"
 class Settings(object):
     def __init__(self):
         if not config_file.exists():
-            print("config file doesn't exist,creating config file...")
+            print("Config does not exist and is being created automatically...")
             f = open(config_file,'w')
             f.write('[BaseConfig]\n')
             f.write('devmode = True\n')
@@ -20,16 +20,13 @@ class Settings(object):
             f.write('port = 5000\n')
             f.write('\n')
             f.write('[ModelConfig]\n')
-            f.write('APIKEY = None\n')
+            f.write('DefaultModel = NONE\n')
+            f.write('SecondModel = text-davinci-002\n')
             f.write('\n')
             f.close()
-            print("config file successfully create!")
+            print("config is created successfully!")
         self.cfg = configparser.ConfigParser()
         self.cfg.read(config_file)
-
-    def bg_path(self):
-        out = self.cfg.get("config","Background_path")
-        return out
 
     def cfg_in(self, section, option, value):
         value = str(value)

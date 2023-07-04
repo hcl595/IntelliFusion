@@ -52,7 +52,7 @@ class models(Base):
 
 def setup():
     if not file_path.exists():
-        print("database doesn't exist,creating database.")
+        print("Database does not exist and is being created automatically...")
         f = open(file_path,'w')
         Base.metadata.create_all(engine)
         user_instance = userInfo(
@@ -61,16 +61,16 @@ def setup():
         )
         session.add(user_instance)
         BasisModel = models(
-        type = "LLM",
-        name = "ChatGLM",
-        url = "127.0.0.1",
+        type = "openai",
+        name = "text-davinci-002",
+        url = "https:\\ai.fakeopen.com\v1",
         APIkey = None,
-        LaunchCompiler = "python",
-        LaunchUrl = ".\\ChatGLM\\api.py",
+        LaunchCompiler = "NONE",
+        LaunchUrl = "NONE",
         )
         session.add(BasisModel)
         session.commit() 
-        print("database successfully setup!")
+        print("database is created successfully!")
 
 if __name__ == "__main__":
     setup()
