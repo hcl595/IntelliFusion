@@ -4,28 +4,9 @@
 {{ super() }}
 <title>Realizer</title>
 {% endblock %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#OpenAI').on('#sendInput', function(event) {
-            event.preventDefault();
-            var userInput = $('#user-input').val();
-            var modelInput = $('#model-input').val();
-            $.ajax({
-                url: '/openai',
-                type: 'POST',
-                data: { user_input: userInput },
-                success: function(response) {
-                    var chatGptResponse = response.response;
-                    $('#chat-output').append('<p><strong>You:</strong> ' + userInput + '</p>');
-                    $('#chat-output').append('<p><strong>' + modelInput + '</strong> ' + chatGptResponse + '</p>');
-                    $('#user-input').val('');
-                }
-            });
-        });
-    });
-</script>
 </head>
+
+
 {% block body %}
 <body>
 <div class="main" id="main-box">
@@ -58,18 +39,17 @@
                         <button type="submit" id="send-btn" onclick="send()">发 送</button>
                     </div>
                 </form>
-                <iframe src="/" style="display: none;" name="GLM"></iframe>
             </div>
         </div>
 
         <div id="SecndBox" style="display: none;">
             <h1>ChatGPT Demo</h1>
             <div id="chat-output"></div>
-            <form id="OpenAI">
+
                 <input type="text" id="user-input" name="user-input" />
                 <input type="text" id="model-input" name="model-input" value="chatglm2-6b" />
-                <button type="submit" id="sendInput">Send</button>
-            </form>
+                <button type="button" id="sendInput">Send</button>
+
         </div>
 
         <div id="StbleBox" style="display: none;">
@@ -411,7 +391,7 @@
 </div>
 
 </body>
-<script>
+<script type="text/javascript">
 //打字机(常驻)
 var text = document.getElementById('text').getAttribute("data-text");//获取要输出的文字
 var index = 0;
@@ -444,6 +424,46 @@ $(".txtb input").on("focus",function(){
 $(".txtb input").on("blur",function(){
     if($(this).val() == '')
     $(this).removeClass("focus")
+})
+
+    $("#sendInput").on('click',
+    alert("on"),
+        function() {
+        showLogin()
+        var userInput = $('#user-input').val();
+        var modelInput = $('#model-input').val();
+        $.ajax({
+            url: '/openai',
+            type: 'POST',
+            data: { user_input: userInput ,modelInput: modelInput},
+            success: function(response) {
+                var chatGptResponse = response.response;
+                $('#chat-output').append('<p><strong>You:</strong> ' + userInput + '</p>');
+                $('#chat-output').append('<p><strong>' + modelInput + '</strong> ' + chatGptResponse + '</p>');
+                $('#user-input').val('');
+            }
+        });
+    });
+
+
+
+const send = document.getElementById("sendInput");
+const chat_output = document.getElementById("chat-output");
+send.onclick = function(){
+    alert("hello")
+    const xhr = new XMLHttpRequest();
+    xhr.open('post','https://127.0.0.1:800/openai');
+    xhr.send();
+    xhr.onreadystatechange = function(){
+        if(xhr.readyState === 4)
+        if(xhr.status >= 200 && xhr.status <= 300)
+            console.log(xhr.response);
+            chat_output.innerText = xhr.response;
+    }
+}
+
+$("send-btn").on('click',function(){
+    alert("HELLO")
 })
 
 </script>

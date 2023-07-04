@@ -78,9 +78,9 @@ def upload():
 @app.route('/openai', methods=['POST'])
 def get_glm_response():
     global GLM_response
-    InputInfo = request.form["user-input"]
-    print(InputInfo)
-    InputModel =request.form["model-input"]
+    data = json.loads(request.form.get('data'))
+    InputInfo = data['user-input']
+    InputModel = data["model-input"]
     openai_response = ai(InputModel,InputInfo)
     return jsonify({'response': openai_response})
 
