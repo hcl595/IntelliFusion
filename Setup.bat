@@ -1,0 +1,1 @@
+git clone https://gitee.com/argonserver/UniversalModelAssistant.git

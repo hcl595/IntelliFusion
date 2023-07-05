@@ -630,7 +630,80 @@ textarea{
   float: right;
 }
 
+/* Typing */
+.typing {
+  /* 初始宽度为0 */
+  width: 0;
+  height: 30px;
+  border-right: 1px solid darkgray;
+  animation: write 4s steps(14) forwards,
+    blink 0.5s steps(1) infinite;
+    overflow-x: auto;
+}
 
+@keyframes write {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 400px;
+  }
+}
+
+@keyframes blink {
+  50% {
+    /* transparent是全透明黑色(black)的速记法，即一个类似rgba(0,0,0,0)这样的值。 */
+    border-color: transparent; /* #00000000 */
+  }
+}
+
+
+/* Loading */
+
+.loadingOne{
+  z-index: 3;
+  position:fixed;
+  top: 48vh;
+  left: 49vw;
+  width: 80px;
+  height: 20px;
+}
+.loadingOne span{
+  display: inline-block;
+  width: 8px;
+  height: 100%;
+  border-radius: 4px;
+  background: lightgreen;
+  -webkit-animation: load 1s ease infinite;
+  animation: load 1s ease infinite;
+}
+@keyframes load{
+  0%,100%{
+      height: 40px;
+      background: lightgreen;
+  }
+  50%{
+      height: 70px;
+      margin: -15px 0;
+      background: lightblue;
+  }
+}
+.loadingOne span:nth-child(2){
+  -webkit-animation-delay:0.2s;
+  animation-delay:0.2s;
+}
+.loadingOne span:nth-child(3){
+  -webkit-animation-delay:0.4s;
+  animation-delay:0.4s;
+}
+.loadingOne span:nth-child(4){
+  -webkit-animation-delay:0.6s;
+  animation-delay:0.6s;
+}
+.loadingOne span:nth-child(5){
+  -webkit-animation-delay:0.8s;
+  animation-delay:0.8s;
+}
 
 /* Cards */
 
@@ -697,11 +770,31 @@ textarea{
 }
 .account table{
   margin: 20px;
+  overflow: scroll;
+}
+.account table select{
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, .05);
+  border-color: rgba(0, 0, 0, .05);
+  transition: .6s cubic-bezier(.8, .5, .5, .8);
 }
 .account table input{
   border-radius: 20px;
   background-color: rgba(0, 0, 0, .05);
   border-color: rgba(0, 0, 0, .05);
+  transition: .6s cubic-bezier(.8, .5, .5, .8);
+}
+.account table input:hover{
+  border-radius: 5px;
+  background-color: rgba(170, 255, 136, 0.05);
+  box-shadow: #000;
+  border-color: rgba(0, 0, 0, 0.05);
+}
+.account table .url{
+  width: 100px;
+}
+.account table .url:hover{
+  width: 300px;
 }
 
 .models {
@@ -735,11 +828,16 @@ textarea{
   background: #87a3af;
 }
 .settings input{
+  min-width: auto;
+  max-width: 80vw;
   border-radius: 20px;
   background-color: rgba(0, 0, 0, .05);
   border-color: rgba(0, 0, 0, .05);
 }
-
+.settings table thead tr th h3,.settings table td p{
+  margin-left: 10px;
+  margin-right: 10px;
+}
 
 /* Windows */
 .copyright {

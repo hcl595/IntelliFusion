@@ -1,6 +1,12 @@
 UI
 ChatGLM
+Assistant
+.vscode
 stable-diffusion-webui
 stable-diffusion-webui/*
 tmp
 src/data/*
+src/__pycache__
+src/templates/test.html
+release/
+exe.json
