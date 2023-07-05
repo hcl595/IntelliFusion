@@ -157,6 +157,13 @@ def register():
         login_error = '完整填写信息'
     return redirect('/')
 
+@app.route("/add")
+def add_model():
+    db.
+    return redirect("/")
+
+
+
 @app.before_request
 def before_NeedLogin():
     global NeedLogin
