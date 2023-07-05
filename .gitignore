@@ -8,3 +8,5 @@ tmp
 src/data/*
 src/__pycache__
 src/templates/test.html
+release/
+exe.json

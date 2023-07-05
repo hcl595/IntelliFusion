@@ -8,6 +8,7 @@ import os
 # 基础类
 basedir= os.path.abspath(os.path.dirname(__file__)) + "\\data"
 file_path = Path(__file__).parent / "data" / "models.sqlite"
+folder = Path(__file__).parent / "data"
 Base = declarative_base()
 engine = create_engine('sqlite:///'+os.path.join(basedir,'models.sqlite'), echo=True)
 Session = sessionmaker(bind=engine)
@@ -51,6 +52,8 @@ class models(Base):
 
 
 def setup():
+    if not folder.exists():
+        os.makedirs(folder)
     if not file_path.exists():
         print("Database does not exist and is being created automatically...")
         f = open(file_path,'w')
@@ -63,8 +66,8 @@ def setup():
         BasisModel = models(
         type = "openai",
         name = "text-davinci-002",
-        url = "https:\\ai.fakeopen.com\v1",
-        APIkey = None,
+        url = "https:\\\\ai.fakeopen.com\\v1",
+        APIkey = "None",
         LaunchCompiler = "NONE",
         LaunchUrl = "NONE",
         )

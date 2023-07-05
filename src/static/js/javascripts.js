@@ -137,6 +137,13 @@ function toWIG() {
 }
 
 
+function Loading(){
+    $("#loading").fadeIn(100)
+}
+function Load() {
+    $("#loading").fadeOut(100)
+}
+
 function TypeAnime(input){ //打字机动画
     var text = document.getElementById(input).getAttribute("data-text");//获取要输出的文字
     var index = 0;

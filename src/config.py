@@ -1,18 +1,21 @@
 import configparser
 from pathlib import Path
-
+import os
 
 
 config_file = Path(__file__).parent / "data" / "config.cfg"
+folder = Path(__file__).parent / "data"
 
 class Settings(object):
     def __init__(self):
+        if not folder.exists():
+            os.makedirs(folder)
         if not config_file.exists():
             print("Config does not exist and is being created automatically...")
             f = open(config_file,'w')
             f.write('[BaseConfig]\n')
-            f.write('devmode = True\n')
-            f.write('debug = True\n')
+            f.write('devmode = False\n')
+            f.write('debug = False\n')
             f.write('keeplogin = True\n')
             f.write('\n')
             f.write('[RemoteConfig]\n')

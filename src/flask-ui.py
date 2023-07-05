@@ -1,7 +1,7 @@
 #headers
 from flask import Flask, render_template, redirect, request, session, json, jsonify
 import openai
-from flaskwebgui import FlaskUI
+from flaskwebgui import FlaskUI,close_application
 from config import Settings
 import data as db
 from data import userInfo,models,setup
@@ -18,7 +18,8 @@ app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPFOR'
 #setup
 setup()
 cfg = Settings()
-global historys,NeedLogin,GPT_response
+global historys,NeedLogin,GPT_response,login_error
+login_error = ""
 response = {
         'response': '',
         'history': [['', '']],
@@ -35,7 +36,7 @@ historys = response['history']
 #main
 @app.route('/')#根目录
 def root():
-
+    print(login_error)
     ModelList = db.session.query(
                 models.id,
                 models.type,
@@ -85,9 +86,9 @@ def get_glm_response():
 
 @app.post('/exchange')#添加模型
 def AddModel():
-    Number = request.form.get("id")
+    Number = request.form["id"]
     if Number == "-1":
-            InputType = request.form.get("type")
+            InputType = request.form["type"]
             InputComment = request.form.get("comment")
             InputUrl = request.form.get("url")
             InputAPIkey = request.form.get("APIkey")
@@ -189,7 +190,6 @@ def register():
                             mail=mail,)
             db.session.add(info)
             db.session.commit()
-            db.session.remove()
             login_error = '注册成功'
             page = 'login'
         else:
@@ -202,10 +202,7 @@ def register():
 
 @app.get('/logout')#登出
 def logout():
-    global login_error
-    session.clear()
-    login_error = '登出成功'
-    return redirect('/')
+    close_application()
 
 
 @app.get('/ModelList')
@@ -247,6 +244,8 @@ def before_NeedLogin():
 @app.errorhandler(404)
 def error404(error):
     return render_template('404.html'),404
+
+
 
 #functions
 def ai(ModelID:str,question:str):
