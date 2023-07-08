@@ -1,124 +1,125 @@
+#main.py | Realizer Version 0.1.5(202307082000) Developer Alpha
 #headers
-from flask import Flask, render_template, redirect, request, session, json
+from flask import Flask, render_template, redirect, request, session, json, jsonify
 import openai
 from flaskwebgui import FlaskUI
+from flaskwebgui import FlaskUI,close_application
 from config import Settings
 import data as db
 from data import userInfo,models,setup
 import ctypes
 import requests
 import json
+import os
+import psutil
 
 #configs
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPTRE'
+app.config['SECRET_KEY'] = 'UMAVERSIONZPONEPFIV'
 
 #setup
 setup()
 cfg = Settings()
-global historys,NeedLogin,GPT_response
+global historys,NeedLogin,GPT_response,login_error
+login_error = ""
 response = {
         'response': '',
         'history': [['', '']],
         'status': 200,
         'time': '1234-05-06 07:08:09'}
-GPT_response = {
-        'response': '',
-        'history': [['', '']],
-        'status': 200,
-        'time': '1234-05-06 07:08:09'}
+GPT_response = []
+LLM_response = []
+GLM_response = []
 result = None
 NeedLogin = True
 historys = response['history']
-OldHistorys = []
-AllHistorys = []
 
 #main
 @app.route('/')#根目录
 def root():
-
+    print(login_error)
     ModelList = db.session.query(
                 models.id,
                 models.type,
-                models.comment,
+                models.name,
                 models.url,
-                models.port,
+                models.APIkey,  
+                models.LaunchCompiler,
                 models.LaunchUrl,).all()
-    
-    #Settings
-
     return render_template('main.html',
-                            GPT_response = GPT_response,
                             result = result,
                             NeedLogin = NeedLogin,
                             ModelList = ModelList,
-                            historys = AllHistorys,
+                            historys = LLM_response,
+                            ThirdBoxURL = db.session.query(models.url).filter(models.name == cfg.read("ModelConfig","ThirdModel")).one()[0],
                             host = cfg.read("RemoteConfig","host"),
                             port = cfg.read("RemoteConfig","port"),
                             Mode = cfg.read("BaseConfig","devmode"),
                             BugM = cfg.read("BaseConfig","debug"),
-                            Key = cfg.read("ModelConfig","APIKEY"),
+                            DefaultModel = cfg.read("ModelConfig","DefaultModel"),
+                            SecondModel = cfg.read("ModelConfig","SecondModel"),
+                            ThirdModel = cfg.read("ModelConfig","ThirdModel"),
                             username = session.get('username'),)
-
 
 @app.route("/exchange")
 def LoadExchange():
     return redirect("/")
 
-
-@app.post('/')#GLM请求与回复
+@app.post('/llm')#GLM请求与回复1
 def upload():
-    global result,AllHistorys,OldHistorys
-    input = request.form.get('inputInfo')
-    response = requests.post('http://127.0.0.1:18365/',data=json.dumps({"prompt": input,"history": []}),headers={'Content-Type': 'application/json'})
-    SrResponse = response.json()
-    historys = SrResponse['history']
-    for i in range(len(historys)):
-        history = historys[i]
-        for i in range(len(history)):
-            tmp = history[i]
-            tmp = str.replace(tmp,"\n","<br/>")
-            last_code_block_index: int = -1
-            is_code_block_start = True
-            while (last_code_block_index := tmp.find("```")) != -1:
-                if is_code_block_start:
-                    tmp=tmp.replace("```", "<pre>", 1)
-                else:
-                    tmp=tmp.replace("```", "</pre>", 1)
-                last_code_block_index=-1
-                is_code_block_start=not is_code_block_start
-            history[i] = tmp
-    AllHistorys.append(historys[0])
-    print(AllHistorys)
-    return redirect('/')
+    global result,LLM_response
+    InputInfo = request.form['userinput']
+    InputModel =request.form["modelinput"]
+    LLM_response = llm(InputModel,InputInfo)
+    return jsonify({'response': LLM_response})
 
+@app.route('/openai', methods=['POST'])
+def get_glm_response():
+    global GLM_response
+    InputInfo = request.form['userinput']
+    InputModel = request.form["modelinput"]
+    openai_response = ai(InputModel,InputInfo)
+    return jsonify({'response': openai_response})
 
-@app.post('/chatgpt')#GPT请求与回复
-def gpt_response():
-    global GPT_response
-    message = request.form['user-input']
-    GPT_response = ai(message)
-    print(GPT_response)
-    return redirect('/')
-
+@app.post('/EditSetting')
+def EditSetting():
+    InputDefaultModel = request.form.get("DefaultModel")
+    InputSecondModel = request.form.get("SecondModel")
+    InputThirdModel = request.form.get("ThirdModel")
+    InputiPv4 = request.form.get("iPv4")
+    InputPort = request.form.get("Port")
+    InputWebMode = request.form.get("Mode")
+    InputDebugMode = request.form.get("BugM")
+    cfg.write("BaseConfig","devmode",InputWebMode)
+    cfg.write("BaseConfig","debug",InputDebugMode)
+    cfg.write("RemoteConfig","host",InputiPv4)
+    cfg.write("RemoteConfig","port",InputPort)
+    cfg.write("ModelConfig","DefaultModel",InputDefaultModel)
+    cfg.write("ModelConfig","SecondModel",InputSecondModel)
+    cfg.write("ModelConfig","ThirdModel",InputThirdModel)
+    return redirect("/")
 
 @app.post('/exchange')#添加模型
 def AddModel():
     Number = request.form.get("id")
+    Number = request.form["id"]
     if Number == "-1":
-        InputType = request.form.get("type")
-        InputComment = request.form.get("comment")
-        InputUrl = request.form.get("url")
-        InputPort = request.form.get("Port")
-        LaunchUrl = request.form.get("LCurl")
-        info = db.models(
-                    type = InputType,
-                    comment = InputComment,
-                    url = InputUrl,
-                    port = InputPort,
-                    LaunchUrl = LaunchUrl,)
-        db.session.add(info)
+            InputType = request.form.get("type")
+            InputType = request.form["type"]
+            InputComment = request.form.get("comment")
+            InputUrl = request.form.get("url")
+            InputAPIkey = request.form.get("APIkey")
+            LaunchCompiler = request.form.get("LcCompiler")
+            LaunchUrl = request.form.get("LCurl")
+            info = db.models(
+                        type = InputType,
+                        name = InputComment,
+                        url = InputUrl,
+                        APIkey = InputAPIkey,
+                        LaunchCompiler = LaunchCompiler,
+                        LaunchUrl = LaunchUrl,)
+            db.session.add(info)
     else:
         InputState = request.form.get(Number + "state")
         if InputState == "edit":
@@ -126,21 +127,26 @@ def AddModel():
             InputType = request.form.get("type")
             InputComment = request.form.get("comment")
             InputUrl = request.form.get("url")
-            InputPort = request.form.get("port")
+            InputAPIkey = request.form.get("APIkey")
+            LaunchCompiler = request.form.get("LcCompiler")
             LaunchUrl = request.form.get("LCurl")
             db.session.query(db.models).filter(models.id == InputID).update({
                     db.models.type: InputType,
-                    db.models.comment: InputComment,
+                    db.models.name: InputComment,
                     db.models.url: InputUrl,
-                    db.models.port: InputPort,
+                    db.models.APIkey: InputAPIkey,
+                    db.models.LaunchCompiler: LaunchCompiler,
                     db.models.LaunchUrl: LaunchUrl,
                     })
         elif InputState == "del":
             InputID = request.form.get("id")
             db.session.query(models).filter(models.id == InputID).delete()
+        elif InputState == "run":
+            InputID = request.form.get("id")
+            launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LCurl")
+            os.system(launchCMD)
     db.session.commit()
     return redirect('/')
-
 
 @app.post("/UpdateSettings")
 def UpdateSettings():
@@ -148,9 +154,7 @@ def UpdateSettings():
     UpdatePort = request.form.get("port")
     UpdateMode = request.form.get("mode")
     UpdateKey = request.form.get("key")
-
     return redirect("/")
-
 
 @app.post('/login')#登录
 def login_check():
@@ -184,8 +188,6 @@ def login_check():
         page = 'login'
         login_error = "请写入信息"
         return redirect('/')
-
-
 @app.post('/register')#注册
 def register():
     global login_error,page
@@ -211,13 +213,9 @@ def register():
         login_error = '完整填写信息'
     return redirect('/')
 
-
 @app.get('/logout')#登出
 def logout():
-    global login_error
-    session.clear()
-    login_error = '登出成功'
-    return redirect('/')
+    close_application()
 
 
 @app.get('/ModelList')
@@ -225,19 +223,21 @@ def GetModelList():
     ModelList = db.session.query(
             models.id,
             models.type,
-            models.comment,
+            models.name,
             models.url,
-            models.port,
+            models.APIkey,
+            models.LaunchCompiler,
             models.LaunchUrl,).all()
     return ModelList
-
+@app.route("/test")
+def DevTest():
+    return render_template("test.html")
 
 @app.get("/SettingData")
 def GetSettingData():
     iPv4 = cfg.read("RemoteSetting","host")
     port = cfg.read("RemoteSetting","port")
     return iPv4,port
-
 
 @app.before_request
 def before_NeedLogin():
@@ -254,38 +254,33 @@ def before_NeedLogin():
 def error404(error):
     return render_template('404.html'),404
 
+
+
 #functions
-def ai(question:str):
-    openai.api_base = "https://ai.fakeopen.com/v1/"
-    openai.api_key = cfg.read("ModelConfig","APIKEY")
-    model = "gpt-3.5-turbo"
-    response = openai.ChatCompletion.create(
-    model = model,
-    messages = [
-        {'role': 'system', 'content': "你是一名开发者"}, # 给gpt定义一个角色，也可以不写
-        {'role': 'user', 'content': question} # 问题
-    ],
-    temperature = 0,
-    stream = True
-    )
+def ai(ModelID:str,question:str):
+    response = ""
+    openai.api_base = db.session.query(models.url).filter(models.name == ModelID).one()[0]
+    openai.api_key = db.session.query(models.APIkey).filter(models.name == ModelID).one()
+    for chunk in openai.ChatCompletion.create(
+        model=ModelID,
+        messages=[
+            {"role": "user", "content": question}
+        ],
+        stream=True,
+        temperature = 0,
+    ):
+        if hasattr(chunk.choices[0].delta, "content"):
+            print(chunk.choices[0].delta.content, end="", flush=True)
+            response = response + chunk.choices[0].delta.content
+    print(response, flush=True)
+    return response
 
-    collected_chunks = []
-    collected_messages = []
-    messages = []
-
-
-    print(f"OpenAI({model}) :  ",end="")
-    for chunk in response:
-        message = chunk["choices"][0]["delta"].get("content","")
-        print(message,end="")
-
-        messages.append(message,end="")
-
-        collected_chunks.append(chunk)
-
-        chunk_message = chunk["choices"][0]["delta"]
-        collected_messages.append(chunk_message)
-    return messages
+def llm(ModelID:str,question:str):
+    response = requests.post(
+        url = db.session.query(models.url).filter(models.name == ModelID).one()[0],
+        data=json.dumps({"prompt": question,"history": []}),
+        headers={'Content-Type': 'application/json'})
+    return response.json()['history'][0][1]
 
 
 #launch

@@ -393,31 +393,31 @@ nav:hover .list span {
 }
 
 nav:hover .list li:nth-child(1) span {
-    animation-delay: .5s;
+    animation-delay: .3s;
 }
 
 nav:hover .list li:nth-child(2) span {
-    animation-delay: .6s;
+    animation-delay: .35s;
 }
 
 nav:hover .list li:nth-child(3) span {
-    animation-delay: .7s;
+    animation-delay: .4s;
 }
 
 nav:hover .list li:nth-child(4) span {
-    animation-delay: .8s;
+    animation-delay: .45s;
 }
 
 nav:hover .list li:nth-child(5) span {
-    animation-delay: .9s;
+    animation-delay: .5s;
 }
 
 nav:hover .list a li:nth-child(1) span {
-    animation-delay: 1s;
+    animation-delay: 0.5s;
 }
 
 nav:hover .list li:nth-child(8) span {
-    animation-delay: 1.1s;
+    animation-delay: 0.6s;
 }
 
 ::selection {
@@ -630,7 +630,80 @@ textarea{
   float: right;
 }
 
+/* Typing */
+.typing {
+  /* 初始宽度为0 */
+  width: 0;
+  height: 30px;
+  border-right: 1px solid darkgray;
+  animation: write 4s steps(14) forwards,
+    blink 0.5s steps(1) infinite;
+    overflow-x: auto;
+}
 
+@keyframes write {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 400px;
+  }
+}
+
+@keyframes blink {
+  50% {
+    /* transparent是全透明黑色(black)的速记法，即一个类似rgba(0,0,0,0)这样的值。 */
+    border-color: transparent; /* #00000000 */
+  }
+}
+
+
+/* Loading */
+
+.loadingOne{
+  z-index: 3;
+  position:fixed;
+  top: 48vh;
+  left: 49vw;
+  width: 80px;
+  height: 20px;
+}
+.loadingOne span{
+  display: inline-block;
+  width: 8px;
+  height: 100%;
+  border-radius: 4px;
+  background: lightgreen;
+  -webkit-animation: load 1s ease infinite;
+  animation: load 1s ease infinite;
+}
+@keyframes load{
+  0%,100%{
+      height: 40px;
+      background: lightgreen;
+  }
+  50%{
+      height: 70px;
+      margin: -15px 0;
+      background: lightblue;
+  }
+}
+.loadingOne span:nth-child(2){
+  -webkit-animation-delay:0.2s;
+  animation-delay:0.2s;
+}
+.loadingOne span:nth-child(3){
+  -webkit-animation-delay:0.4s;
+  animation-delay:0.4s;
+}
+.loadingOne span:nth-child(4){
+  -webkit-animation-delay:0.6s;
+  animation-delay:0.6s;
+}
+.loadingOne span:nth-child(5){
+  -webkit-animation-delay:0.8s;
+  animation-delay:0.8s;
+}
 
 /* Cards */
 
@@ -699,10 +772,29 @@ textarea{
   margin: 20px;
   overflow: scroll;
 }
+.account table select{
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, .05);
+  border-color: rgba(0, 0, 0, .05);
+  transition: .6s cubic-bezier(.8, .5, .5, .8);
+}
 .account table input{
   border-radius: 20px;
   background-color: rgba(0, 0, 0, .05);
   border-color: rgba(0, 0, 0, .05);
+  transition: .6s cubic-bezier(.8, .5, .5, .8);
+}
+.account table input:hover{
+  border-radius: 5px;
+  background-color: rgba(170, 255, 136, 0.05);
+  box-shadow: #000;
+  border-color: rgba(0, 0, 0, 0.05);
+}
+.account table .url{
+  width: 100px;
+}
+.account table .url:hover{
+  width: 300px;
 }
 
 .models {
@@ -725,27 +817,28 @@ textarea{
   box-shadow: 0 0 30px rgba(0, 0, 0, .05);
   overflow: scroll;
 }
-.settings .table{
+.settings .content .table{
   margin: 20px;
 }
-.settings .line {
+.settings .content .line {
   width: 100%;
   height: 2px;
   margin: 32px 0;
   border-radius: 30%;
   background: #87a3af;
 }
-.settings input{
+.settings .content input{
   min-width: auto;
   max-width: 80vw;
   border-radius: 20px;
   background-color: rgba(0, 0, 0, .05);
   border-color: rgba(0, 0, 0, .05);
 }
-.settings table thead tr th h3,.settings table td p{
+.settings .content table thead tr th h3,.settings table td p{
   margin-left: 10px;
   margin-right: 10px;
 }
+
 
 /* Windows */
 .copyright {
@@ -769,7 +862,18 @@ textarea{
 
 
 /* Others */
-
+.allow {
+  background-color: rgba(117, 255, 89, 0.671);
+  border-radius:20px;
+}
+.deny {
+  background-color: rgba(255, 89, 89, 0.671);
+  border-radius:20px;
+}
+.edit {
+  background-color: rgba(89, 147, 255, 0.671);
+  border-radius:20px;
+}
 a {
   TEXT-DECORATION:none;
 }

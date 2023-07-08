@@ -2,82 +2,57 @@
 <head>
 {% block include %}
 {{ super() }}
-<title>Realizer</title>
+<title>Realizer v0.1.5 TEST</title>
 {% endblock %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('form').on('submit', function(event) {
-            event.preventDefault();
-            var userInput = $('#user-input').val();
-            $.ajax({
-                url: '/get_response',
-                type: 'POST',
-                data: { user_input: userInput },
-                success: function(response) {
-                    var chatGptResponse = response.response;
-                    $('#chat-output').append('<p><strong>You:</strong> ' + userInput + '</p>');
-                    $('#chat-output').append('<p><strong>ChatGPT:</strong> ' + chatGptResponse + '</p>');
-                    $('#user-input').val('');
-                }
-            });
-        });
-    });
-</script>
 </head>
+
+
 {% block body %}
 <body>
+
+<iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
-            <li id="li_GLM" class="li current" onclick="toGLM()"><span>GLM</span></li>
-            <li id="li_GPT" class="li" onclick="toGPT()"><span>GPT</span></li>
-            <li id="li_SD" class="li" onclick="toSD()"><span>StableDiffusion</span></li>
+            <li id="li_GLM" class="li current" onclick="toGLM()"><span>{{ DefaultModel }}</span></li>
+            <li id="li_GPT" class="li" onclick="toGPT()"><span>{{ SecondModel }}</span></li>
+            <li id="li_SD" class="li" onclick="toSD()"><span>{{ ThirdModel }}</span></li>
             <li id="li_WIG" class="li" onclick="toWIG()"><span>Widgets</span></li>
         </ul>
 
-        <div class="dialogbox_container" id="DeaftBox">
-            <div class="content">
-                {% for history in historys %}
-                {% if loop.last  == True %}
-                    <div class="item item-right"><div class="bubble bubble-right">{{history[0]}}</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>
-                    <div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left"><p id="text" data-text="{{history[1] |safe}}"></div></div>
-                {% else %}
-                    <div class="item item-right"><div class="bubble bubble-right">{{history[0]}}</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>
-                    <div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left" >{{ history[1] |safe}}</div></div>
-                {% endif %}
-                {% endfor %}
+        <div class="dialogbox_container" id="DefaultBox">
+            <div class="content" id="api-output">
+
             </div>
             <div class="input-area">
-                <form href="/" method="POST" target="GLM">
-                    <input name="inputInfo">
-                    <button onclick="startSpeechRecognition()">开始语音识别</button>
-                    <p id="transcript"></p >
-                    <div class="button-area">
-                        <button id="send-btn" onclick="send()">发 送</button>
-                    </div>
-                </form>
-                <iframe src="/" style="display: none;" name="GLM"></iframe>
+                <input type="text" id="api-user-input" name="api-user-input" />
+                <input id="api-model-input" name="api-model-input" type="hidden" value={{ DefaultModel }} />
+                <div class="button-area">
+                    <button type="submit" id="SendAPIInput">发 送</button>
+                </div>
             </div>
         </div>
 
-        <div id="SecndBox" style="display: none;">
-            <h1>ChatGPT Demo</h1>
-            <div id="chat-log">{{ GPT_response }}</div>
-            <form id="chat-form" method="POST" action="/chatgpt" target="GPT">
-                <input type="text" id="user-input" name="user-input" />
-                <button type="submit">Send</button>
-            </form>
-            <iframe style="display: none;" src="/" name="GPT"></iframe>
+        <div class="dialogbox_container" id="SecondBox" style="display: none;">
+                <div class="content" id="openai-output">
+
+                </div>
+                <div class="input-area">
+                        <input type="text" name="openai-user-input" id="openai-user-input" />
+                        <input type="hidden" name="openai-model-input" id="openai-model-input" value={{ SecondModel }} />
+                        <div class="button-area">
+                            <button type="button" id="SendOpenaiInput">发 送</button>
+                        </div>
+                </div>
+            </div>
         </div>
 
-        <div id="StbleBox" style="display: none;">
-            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:90vw;overflow:hidden;background:transparent;"  src="http://127.0.0.1:7860"></iframe>
+        <div id="ThridBox" style="display: none;">
+            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src={{ ThirdBoxURL }}></iframe>
         </div>
 
-        <div id="WidgtBox" style="display: none;">
-            <div class="card_container">
-
+        <div id="WidgtBox" style="display: none">
+            <div class="card_container" style="height: 100vh -10px;">
                 <a href="#">
                     <div class="card_contentbox">
                         <h2>小组件</h2>
@@ -92,32 +67,33 @@
 </div>
 
 <div class="account" id="account-box" style="display: none;">
-    <iframe style="display: none;" src="/exchange" name="exchange"></iframe>
     <div style="margin-left:20px">
-        <table>
+        <table id="ModelTable">
             <thead>
                 <tr>
                     <th>
                         <center>
-                        <h3>模型账号管理</h3>                            
+                        <h3>模型管理</h3>                            
                         </center>
-
                     </th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>
-                        <p>类型</p>
+                        <p>模型类型</p>
                     </td>
                     <td>
-                        <p>备注</p>
+                        <p>模型名称</p>
                     </td>
                     <td>
-                        <p>API地址</p>
+                        <p>调用地址</p>
                     </td>
                     <td>
-                        <p>API端口</p>
+                        <p>访问密钥</p>
+                    </td>
+                    <td>
+                        <p>编译地址</p>
                     </td>
                     <td>
                         <p>启动地址</p>
@@ -129,68 +105,83 @@
                         <p>删除</p>
                     </td>
                     <td>
-                        <p>一键启动</p>
+                        <p>启动</p>
                     </td>
                 </tr>
                 {% for Model in ModelList %}
-                <form action="/exchange" method="post" target="exchange">
+                <form target="commit" action="/exchange" method="post">
                     <input type="hidden" name="{{ Model[0] }}state" id="{{ Model[0] }}state">
                     <input type="hidden" name="id" id="number" value={{ Model[0] }}>
                     <tr>
                         <td>
-                            <input type="text" name="type" placeholder="NLP" value={{ Model[1] }}>
+                            <select name="type" id="{{ Model[0] }}Type">
+                                <option>{{ Model[1] }}</option>
+                                <option>OpenAI</option>
+                                <option>WebUI</option>
+                                <option>API</option>
+                            </select>
                         </td>
                         <td> 
-                            <input type="text" name="comment" placeholder="ChatGLM" value={{ Model[2] }}>
+                            <input type="text" name="comment" id="{{ Model[0] }}Comment" placeholder="ChatGLM" value={{ Model[2] }}>
                         </td>
                         <td>
-                            <input type="text" name="url" placeholder="127.0.0.1" value={{ Model[3] }}>
+                            <input type="text" class="url" id="{{ Model[0] }}Url" name="url" placeholder="127.0.0.1:8000" value={{ Model[3] }}>
                         </td>
                         <td>
-                            <input type="number" name="port" placeholder="1836" value={{ Model[4] }}>
+                            <input type="text" class="url" id="{{ Model[0] }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value={{ Model[4] }}>
                         </td>
                         <td>
-                            <input type="text" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[5] }}>
+                            <input type="TEXT" class="url" id="{{ Model[0] }}LcCompiler" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model[5] }}>
                         </td>
                         <td>
-                            <button type="submit" style="background-color: rgba(89, 147, 255, 0.671);border-radius:20px;" type="launch" name="edit" id="edit" onclick="$('#{{ Model[0] }}state').val('edit')">编辑</button>
+                            <input type="TEXT" class="url" id="{{ Model[0] }}LcUrl" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[6] }}>
                         </td>
                         <td>
-                            <button type="submit" style="background-color: rgba(255, 89, 89, 0.671);border-radius:20px;" type="launch" name="del" id="del" onclick="$('#{{ Model[0] }}state').val('del')">删除</button>
+                            <button type="submit" class="edit" type="launch" name="edit" id="edit" onclick="$('#{{ Model[0] }}state').val('edit');CommitModel('{{ Model[0] }}')">编辑</button>
                         </td>
                         <td>
-                            <button type="submit" style="background-color: rgba(117, 255, 89, 0.671);border-radius:20px;" type="launch" name="run" id="run" onclick="$('#{{ Model[0] }}state').val('run')">启动</button>
+                            <button type="submit" class="deny" type="launch" name="del" id="del" onclick="$('#{{ Model[0] }}state').val('del');CommitModel('{{ Model[0] }}')">删除</button>
+                        </td>
+                        <td>
+                            <button type="submit" class="allow" type="launch" name="run" id="run" onclick="$('#{{ Model[0] }}state').val('run');CommitModel('{{ Model[0] }}')">启动</button>
                         </td>
                     </tr>
                 </form>
                 {% endfor %}
-                <form action="/exchange" target="exchange" method="post">
+                <form action="/exchange" method="post" target="exchange">
                     <input type="hidden" name="state" id="state">
                     <input type="hidden" name="id" id="number" value="-1">
                     <tr>
                         <td>
-                            <input type="text" name="type" placeholder="LLM">
+                            <select name="type">
+                                <option>OpenAI</option>
+                                <option>WebUI</option>
+                                <option>API</option>
+                            </select>
                         </td>
                         <td> 
                             <input type="text" name="comment" placeholder="ChatGLM">
                         </td>
                         <td>
-                            <input type="text" name="url" placeholder="127.0.0.1">
+                            <input type="text" class="url" name="url" placeholder="127.0.0.1:8000">
                         </td>
                         <td>
-                            <input type="number" name="Port" placeholder="12345">
+                            <input rtpe="text" class="url" name="APIkey" placeholder="sk-ahsjfidajfuahfhla & none">
                         </td>
                         <td>
-                            <input type="text" name="LCurl" placeholder=".\Models\launch.py">
+                            <input type="TEXT" class="url" name="LcCompiler" placeholder=".\venv\scripts\python.exe">
                         </td>
                         <td>
-                            <button disabled type="submit" style="background-color: rgba(89, 147, 255, 0.671);border-radius:20px;" name="edit" id="edit">编辑</button>
+                            <input type="TEXT" class="url" name="LCurl" placeholder=".\venv\launch.py">
                         </td>
                         <td>
-                            <button disabled type="submit" style="background-color: rgba(255, 89, 89, 0.671);border-radius:20px;" name="del" id="del">删除</button>
+                            <button disabled type="submit" class="edit" name="edit" id="edit">编辑</button>
                         </td>
                         <td>
-                            <button type="submit" style="background-color: rgba(117, 255, 89, 0.671);border-radius:20px;" name="launch" id="launch">添加</button>
+                            <button disabled type="submit" class="deny" name="del" id="del">删除</button>
+                        </td>
+                        <td>
+                            <button action="/exchange" type="submit" class="allow" name="launch" id="add">添加</button>
                         </td>
                     </tr>
                     </form>
@@ -264,98 +255,127 @@
 </div>
 
 <div class="settings" id="setting-box" style="display: none;">
-    <div style="margin-left:20px">
-        <hr class="line">
-        <table>
-            <thead>
-                <tr>
-                    <th>
-                        <h3>远程设置</h3>
-                    </th>
-                    <th>
-                        <h3>Remote Setting</h3>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <p>iPv4地址</p>
-                    </td>
-                    <td>
-                        <input type="url" name="iPv4" placeholder="127.0.0.1" value={{ host }}>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>端口</p>
-                    </td>
-                    <td>
-                        <input type="number" name="Port" placeholder="5000" value={{ port }}>
-                    </td>
-                </tr>
-            </thead>
-        </table>
-        <hr class="line">
-        <table>
-            <thead>
-                <tr>
-                    <th>
-                        <h3>开发者设置  </h3>
-                    </th>
-                    <th>
-                        <h3>Developer Settings</h3>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <p>Web模式</p>
-                    </td>
-                    <td>
-                        <input type="text" name="Mode" placeholder="False" value={{ Mode }}>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>DeBug模式</p>
-                    </td>
-                    <td>
-                        <input type="text" name="BugM" placeholder="False" value={{ BugM }}>
-                    </td>
-                </tr>
-            </thead>
-        </table>
-        <hr class="line">
-        <table>
-            <thead>
-                <tr>
-                    <th>
-                        <h3>API设置</h3>
-                    </th>
-                    <th>
-                        <h3> API Settings </h3>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <p>OpenAI API Key</p>
-                    </td>
-                    <td>
-                        <input contenteditable="true" type="text" name="key" placeholder="sk-qwertyuiopasdfghjklzxcvbnmqwerty" value={{ Key }}>
-                    </td>
-                </tr>
-            </thead>
-        </table>
-    </div>
+    <form action="/EditSetting" target="commit" method="post">
+        <div style="margin-left:20px" class="content">
+            <hr class="line">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <h3>窗口设置  </h3>
+                        </th>
+                        <th>
+                            <h3>Windows Settings</h3>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p>默认窗口</p>
+                        </td>
+                        <td>
+                            <p>
+                                <input type="text" name="DefaultModel" placeholder="chatglm2-6b" value={{ DefaultModel }} />
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>第二窗口</p>
+                        </td>
+                        <td>
+                            <p>
+                                <input type="text" name="SecondModel" placeholder="text-davinci-002" value={{ SecondModel }} />
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>第三窗口</p>
+                        </td>
+                        <td>
+                            <p>
+                                <input type="text" name="ThirdModel" placeholder="StableDiffusion" value={{ ThirdModel }} />
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr class="line">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <h3>远程设置</h3>
+                        </th>
+                        <th>
+                            <h3>Remote Setting</h3>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p>iPv4地址</p>
+                        </td>
+                        <td>
+                            <input type="text" name="iPv4" placeholder="127.0.0.1" value={{ host }} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>端口</p>
+                        </td>
+                        <td>
+                            <input type="number" name="Port" placeholder="5000" value={{ port }} />
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+            <hr class="line">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <h3>开发者设置  </h3>
+                        </th>
+                        <th>
+                            <h3>Developer Settings</h3>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p>Web模式</p>
+                        </td>
+                        <td>
+                            <input type="text" name="Mode" placeholder="False" value={{ Mode }} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>DeBug模式</p>
+                        </td>
+                        <td>
+                            <input type="text" name="BugM" placeholder="False" value={{ BugM }} />
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+            <hr class="line">
+        </div>
+        <button type="submit" class="deny" style="float: left;margin-left: 10px;margin-right: 10px;">重置</button>
+        <button type="submit" class="allow" style="float: right;margin-left: 10px;margin-right: 10px;">更改</button>
+    </form>
+
+    
 </div>
 
 <div class="login-container" id="login-box" style="display: none;">
     <div class="login-form-container sign-up-container" id="SignUp">
-        <form action="/login" method="POST" id="SignUpDiv">
+        <form action="/register" method="POST" id="SignUpDiv">
                 <h1>注册</h1>           
                 <div class="txtb">
                     <input name="reg_txt" type="reg_text">
@@ -373,7 +393,7 @@
                     <input name="check_password" type="reg_check_password">
                     <span data-placeholder="Confirm Password" ></span>
                 </div>            
-                <button type="button" herf="/register">注册</button>
+                <button type="submit" herf="/register">注册</button>
                 <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
         </form>
 
@@ -390,7 +410,7 @@
                 <input name="password" type="log_password">
                 <span data-placeholder="Password"></span>
             </div>
-            <button class="submit" type="submit" value="Login" herf='/login'>登录</button>
+            <button class="submit" type="submit" herf='/login'>登录</button>
             <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
         </form>
     </div>
@@ -412,25 +432,21 @@
 </div>
 
 <div class="copyright" id="rights-box" style="display: none;">
-    <p></p>
+    <img style="margin: 50px;width: 100px;height: 100px;" src="/static/res/test.ico" alt="Realizer">
+    <h3 style="margin: 50px;">Realizer Version 0.1.5(202307082000) Developer Alpha</h3>
+    <a href="https://www.github.com/hcl595/universalmodelassistant/">learn more...</a>
+</div>
+
+<div class="loadingOne" id="loading" style="display: none;">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
 </div>
 
 </body>
-<script>
-//打字机(常驻)
-var text = document.getElementById('text').getAttribute("data-text");//获取要输出的文字
-var index = 0;
-var element = document.getElementById('text');//获取元素
-function myprint() {
-    if (index < text.length) {
-        element.innerText = element.innerText + text.charAt(index);
-        index++;
-    } else {
-        clearInterval(c);//输出完后关闭定时器
-    }
-}
-var c = setInterval(myprint, 10);//定时器
-
+<script type="text/javascript">
 let height = document.querySelector('.content').scrollHeight;
 document.querySelector(".content").scrollTop = height;
 
@@ -450,6 +466,57 @@ $(".txtb input").on("blur",function(){
     if($(this).val() == '')
     $(this).removeClass("focus")
 })
+
+//ajax交互
+$(document).on('click',"#SendOpenaiInput",
+        function() {
+        $("#loading").fadeIn(100);
+        var userInput = $('#openai-user-input').val();
+        var modelInput = $('#openai-model-input').val();
+        $('#openai-output').append('<div class="item item-right"><div class="bubble bubble-right">' + userInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+        $.ajax({
+            url: '/openai',
+            type: 'POST',
+            data: { userinput: userInput ,modelinput: modelInput},
+            success: function(response) {
+                var chatGptResponse = response.response;
+                $('#openai-output').append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+                $('#openai-user-input').val('');
+                $("#loading").fadeOut(100)
+            }
+        });
+    });
+
+$(document).on('click',"#SendAPIInput",
+    function() {
+    $("#loading").fadeIn(100)
+    var userInput = $('#api-user-input').val();
+    var modelInput = $('#api-model-input').val();
+    $('#api-output').append('<div class="item item-right"><div class="bubble bubble-right">' + userInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+    $.ajax({
+        url: '/llm',
+        type: 'POST',
+        data: { userinput: userInput ,modelinput: modelInput},
+        success: function(response) {
+            var chatGptResponse = response.response;
+            $('#api-output').append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+            $('#api-user-input').val('');
+            $("#loading").fadeOut(100)
+        }
+    });
+});
+    //CommitModel
+function CommitModel(Input){
+    $("#loading").fadeIn(100)
+    setTimeout(function(){ $("#loading").fadeOut(100) },1000)
+
+}
+
+
+//launch model
+
+
+
 
 </script>
 {% endblock %}

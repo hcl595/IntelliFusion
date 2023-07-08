@@ -1,3 +1,4 @@
+<!--Realizer Version 0.1.5(202307082000) Developer Alpha-->
 <!--头文件-->
 {% block include %}
 <!DOCTYPE html>
@@ -8,8 +9,8 @@
 <link rel="stylesheet" href="static\css\font-awesome.css">
 <link rel="stylesheet" href="static\css\style.css">
 <link rel="shortcut icon" href="static\res\test.ico">
-<script src="static\js\jquery.min.js" charset="utf-8"></script>
-<script src="static\js\javascripts.js" charset="utf-8"></script>
+<script src="..\static\js\jquery.min.js" charset="utf-8"></script>
+<script src="..\static\js\javascripts.js" charset="utf-8"></script>
 {% endblock %}
 
 
@@ -30,36 +31,36 @@
       <ul class="list">
           <li class="active" id="main" onclick="ChangeToMain()">
               <i class="fa fa-home" href="/"></i>
-              <span>Home</span>
+              <span>主页</span>
           </li>
           <li class="" id="acc" onclick="ChangeToAcc()">
               <i class="fa fa-user-circle"></i>
-              <span>Accounts</span>
+              <span>模型管理</span>
           </li>
           <li class="" id="wig" onclick="ChangeToWdg()">
             <i class="fa fa-bars"></i>
-            <span>Widgets</span>
+            <span>插件管理</span>
           </li>
           <li class="" id="mod" onclick="ChangeToMdl()">
               <i class="fa fa-inbox" id="models"></i>
-              <span>Models</span>
+              <span>模型安装</span>
           </li>
           <li class="" id="set" onclick="ChangeToSet()">
               <i class="fa fa-wrench" id="settings"></i>
-              <span>Settings</span>
+              <span>设置</span>
           </li>
           <hr class="line">
           <!-- 分割线 -->
-          <a href="/logout" method="POST">
+          <a href="/logout">
           <li>
               <i class="fa fa-sign-out" id="logout"></i>
-              <span>Logout</span>
+              <span>退出程序</span>
           </li>
           </a>
           <a href="https://www.github.com/hcl595/">
           <li>
               <i class="fa fa-copyright"></i>
-              <span>Model Assistant v0.1.0</span>
+              <span>Model Assistant v1.1.4</span>
           </li>
           </a>
         </ul>
