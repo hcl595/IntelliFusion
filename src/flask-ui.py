@@ -11,10 +11,13 @@ import ctypes
 import requests
 import json
 import os
+import psutil
+
 #configs
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config['SECRET_KEY'] = 'UMAVERSIONZPONEPFIV'
+
 #setup
 setup()
 cfg = Settings()
@@ -31,10 +34,10 @@ GLM_response = []
 result = None
 NeedLogin = True
 historys = response['history']
+
 #main
 @app.route('/')#根目录
 def root():
-
     print(login_error)
     ModelList = db.session.query(
                 models.id,
@@ -44,8 +47,6 @@ def root():
                 models.APIkey,  
                 models.LaunchCompiler,
                 models.LaunchUrl,).all()
-    
-    #Settings
     return render_template('main.html',
                             result = result,
                             NeedLogin = NeedLogin,
@@ -58,9 +59,11 @@ def root():
                             DefaultModel = cfg.read("ModelConfig","DefaultModel"),
                             SecondModel = cfg.read("ModelConfig","SecondModel"),
                             username = session.get('username'),)
+
 @app.route("/exchange")
 def LoadExchange():
     return redirect("/")
+
 @app.post('/llm')#GLM请求与回复1
 def upload():
     global result,LLM_response
@@ -68,6 +71,7 @@ def upload():
     InputModel =request.form["modelinput"]
     LLM_response = llm(InputModel,InputInfo)
     return jsonify({'response': LLM_response})
+
 @app.route('/openai', methods=['POST'])
 def get_glm_response():
     global GLM_response
@@ -191,10 +195,6 @@ def register():
 
 @app.get('/logout')#登出
 def logout():
-    global login_error
-    session.clear()
-    login_error = '登出成功'
-    return redirect('/')
     close_application()
 
 
