@@ -14,9 +14,9 @@
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
-            <li id="li_GLM" class="li current" onclick="toGLM()"><span>GLM</span></li>
-            <li id="li_GPT" class="li" onclick="toGPT()"><span>GPT</span></li>
-            <li id="li_SD" class="li" onclick="toSD()"><span>StableDiffusion</span></li>
+            <li id="li_GLM" class="li current" onclick="toGLM()"><span>{{ DefaultModel }}</span></li>
+            <li id="li_GPT" class="li" onclick="toGPT()"><span>{{ SecondModel }}</span></li>
+            <li id="li_SD" class="li" onclick="toSD()"><span>{{ ThirdModel }}</span></li>
             <li id="li_WIG" class="li" onclick="toWIG()"><span>Widgets</span></li>
         </ul>
 
@@ -48,7 +48,7 @@
         </div>
 
         <div id="ThridBox" style="display: none;">
-            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src="http://127.0.0.1:7860"></iframe>
+            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src={{ ThirdBoxURL }}></iframe>
         </div>
 
         <div id="WidgtBox" style="display: none">
@@ -137,13 +137,13 @@
                             <input type="TEXT" class="url" id="{{ Model[0] }}LcUrl" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[6] }}>
                         </td>
                         <td>
-                            <button type="submit" style="background-color: rgba(89, 147, 255, 0.671);border-radius:20px;" type="launch" name="edit" id="edit" onclick="$('#{{ Model[0] }}state').val('edit');CommitModel('{{ Model[0] }}')">编辑</button>
+                            <button type="submit" class="edit" type="launch" name="edit" id="edit" onclick="$('#{{ Model[0] }}state').val('edit');CommitModel('{{ Model[0] }}')">编辑</button>
                         </td>
                         <td>
-                            <button type="submit" style="background-color: rgba(255, 89, 89, 0.671);border-radius:20px;" type="launch" name="del" id="del" onclick="$('#{{ Model[0] }}state').val('del');CommitModel('{{ Model[0] }}')">删除</button>
+                            <button type="submit" class="deny" type="launch" name="del" id="del" onclick="$('#{{ Model[0] }}state').val('del');CommitModel('{{ Model[0] }}')">删除</button>
                         </td>
                         <td>
-                            <button type="submit" style="background-color: rgba(117, 255, 89, 0.671);border-radius:20px;" type="launch" name="run" id="run" onclick="$('#{{ Model[0] }}state').val('run');CommitModel('{{ Model[0] }}')">启动</button>
+                            <button type="submit" class="allow" type="launch" name="run" id="run" onclick="$('#{{ Model[0] }}state').val('run');CommitModel('{{ Model[0] }}')">启动</button>
                         </td>
                     </tr>
                 </form>
@@ -175,13 +175,13 @@
                             <input type="TEXT" class="url" name="LCurl" placeholder=".\venv\launch.py">
                         </td>
                         <td>
-                            <button disabled type="submit" style="background-color: rgba(89, 147, 255, 0.671);border-radius:20px;" name="edit" id="edit">编辑</button>
+                            <button disabled type="submit" class="edit" name="edit" id="edit">编辑</button>
                         </td>
                         <td>
-                            <button disabled type="submit" style="background-color: rgba(255, 89, 89, 0.671);border-radius:20px;" name="del" id="del">删除</button>
+                            <button disabled type="submit" class="deny" name="del" id="del">删除</button>
                         </td>
                         <td>
-                            <button action="/exchange" type="submit" style="background-color: rgba(117, 255, 89, 0.671);border-radius:20px;" name="launch" id="add">添加</button>
+                            <button action="/exchange" type="submit" class="allow" name="launch" id="add">添加</button>
                         </td>
                     </tr>
                     </form>
@@ -255,107 +255,122 @@
 </div>
 
 <div class="settings" id="setting-box" style="display: none;">
-    <div style="margin-left:20px">
-        <hr class="line">
-        <table>
-            <thead>
-                <tr>
-                    <th>
-                        <h3>窗口设置  </h3>
-                    </th>
-                    <th>
-                        <h3>Windows Settings</h3>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <p>默认窗口</p>
-                    </td>
-                    <td>
-                        <p>
-                            <input type="text" name="DefaultModel" placeholder="chatglm2-6b" value={{ DefaultModel }} />
-                        </p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>第二窗口</p>
-                    </td>
-                    <td>
-                        <p>
-                            <input type="text" name="SecondModel" placeholder="text-davinci-002" value={{ SecondModel }} />
-                        </p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <hr class="line">
-        <table>
-            <thead>
-                <tr>
-                    <th>
-                        <h3>远程设置</h3>
-                    </th>
-                    <th>
-                        <h3>Remote Setting</h3>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <p>iPv4地址</p>
-                    </td>
-                    <td>
-                        <input type="url" name="iPv4" placeholder="127.0.0.1" value={{ host }} />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>端口</p>
-                    </td>
-                    <td>
-                        <input type="number" name="Port" placeholder="5000" value={{ port }} />
-                    </td>
-                </tr>
-            </thead>
-        </table>
-        <hr class="line">
-        <table>
-            <thead>
-                <tr>
-                    <th>
-                        <h3>开发者设置  </h3>
-                    </th>
-                    <th>
-                        <h3>Developer Settings</h3>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <p>Web模式</p>
-                    </td>
-                    <td>
-                        <input type="text" name="Mode" placeholder="False" value={{ Mode }} />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>DeBug模式</p>
-                    </td>
-                    <td>
-                        <input type="text" name="BugM" placeholder="False" value={{ BugM }} />
-                    </td>
-                </tr>
-            </thead>
-        </table>
-        <hr class="line">
+    <form action="/EditSetting" target="commit" method="post">
+        <div style="margin-left:20px" class="content">
+            <hr class="line">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <h3>窗口设置  </h3>
+                        </th>
+                        <th>
+                            <h3>Windows Settings</h3>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p>默认窗口</p>
+                        </td>
+                        <td>
+                            <p>
+                                <input type="text" name="DefaultModel" placeholder="chatglm2-6b" value={{ DefaultModel }} />
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>第二窗口</p>
+                        </td>
+                        <td>
+                            <p>
+                                <input type="text" name="SecondModel" placeholder="text-davinci-002" value={{ SecondModel }} />
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>第三窗口</p>
+                        </td>
+                        <td>
+                            <p>
+                                <input type="text" name="ThirdModel" placeholder="StableDiffusion" value={{ ThirdModel }} />
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr class="line">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <h3>远程设置</h3>
+                        </th>
+                        <th>
+                            <h3>Remote Setting</h3>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p>iPv4地址</p>
+                        </td>
+                        <td>
+                            <input type="text" name="iPv4" placeholder="127.0.0.1" value={{ host }} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>端口</p>
+                        </td>
+                        <td>
+                            <input type="number" name="Port" placeholder="5000" value={{ port }} />
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+            <hr class="line">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <h3>开发者设置  </h3>
+                        </th>
+                        <th>
+                            <h3>Developer Settings</h3>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p>Web模式</p>
+                        </td>
+                        <td>
+                            <input type="text" name="Mode" placeholder="False" value={{ Mode }} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>DeBug模式</p>
+                        </td>
+                        <td>
+                            <input type="text" name="BugM" placeholder="False" value={{ BugM }} />
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+            <hr class="line">
+        </div>
+        <button type="submit" class="deny" style="float: left;margin-left: 10px;margin-right: 10px;">重置</button>
+        <button type="submit" class="allow" style="float: right;margin-left: 10px;margin-right: 10px;">更改</button>
+    </form>
 
-    </div>
+    
 </div>
 
 <div class="login-container" id="login-box" style="display: none;">

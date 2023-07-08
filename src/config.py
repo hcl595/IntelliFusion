@@ -32,7 +32,7 @@ class Settings(object):
         self.cfg = configparser.ConfigParser()
         self.cfg.read(config_file)
 
-    def cfg_in(self, section, option, value):
+    def write(self, section, option, value):
         value = str(value)
         self.cfg.set(section,option,value)
         self.cfg.write(open(config_file, "w"))

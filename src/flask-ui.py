@@ -52,12 +52,14 @@ def root():
                             NeedLogin = NeedLogin,
                             ModelList = ModelList,
                             historys = LLM_response,
+                            ThirdBoxURL = db.session.query(models.url).filter(models.name == cfg.read("ModelConfig","ThirdModel")).one()[0],
                             host = cfg.read("RemoteConfig","host"),
                             port = cfg.read("RemoteConfig","port"),
                             Mode = cfg.read("BaseConfig","devmode"),
                             BugM = cfg.read("BaseConfig","debug"),
                             DefaultModel = cfg.read("ModelConfig","DefaultModel"),
                             SecondModel = cfg.read("ModelConfig","SecondModel"),
+                            ThirdModel = cfg.read("ModelConfig","ThirdModel"),
                             username = session.get('username'),)
 
 @app.route("/exchange")
@@ -79,6 +81,24 @@ def get_glm_response():
     InputModel = request.form["modelinput"]
     openai_response = ai(InputModel,InputInfo)
     return jsonify({'response': openai_response})
+
+@app.post('/EditSetting')
+def EditSetting():
+    InputDefaultModel = request.form.get("DefaultModel")
+    InputSecondModel = request.form.get("SecondModel")
+    InputThirdModel = request.form.get("ThirdModel")
+    InputiPv4 = request.form.get("iPv4")
+    InputPort = request.form.get("Port")
+    InputWebMode = request.form.get("Mode")
+    InputDebugMode = request.form.get("BugM")
+    cfg.write("BaseConfig","devmode",InputWebMode)
+    cfg.write("BaseConfig","debug",InputDebugMode)
+    cfg.write("RemoteConfig","host",InputiPv4)
+    cfg.write("RemoteConfig","port",InputPort)
+    cfg.write("ModelConfig","DefaultModel",InputDefaultModel)
+    cfg.write("ModelConfig","SecondModel",InputSecondModel)
+    cfg.write("ModelConfig","ThirdModel",InputThirdModel)
+    return redirect("/")
 
 @app.post('/exchange')#添加模型
 def AddModel():
@@ -256,12 +276,10 @@ def ai(ModelID:str,question:str):
     return response
 
 def llm(ModelID:str,question:str):
-    AllHistorys = []
     response = requests.post(
         url = db.session.query(models.url).filter(models.name == ModelID).one()[0],
         data=json.dumps({"prompt": question,"history": []}),
         headers={'Content-Type': 'application/json'})
-    SourceResponse = response.json()
     return response.json()['history'][0][1]
 
 
