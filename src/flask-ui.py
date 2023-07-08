@@ -14,7 +14,7 @@ import os
 #configs
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SECRET_KEY'] = 'UMAVERSIONOPONEPFOR'
+app.config['SECRET_KEY'] = 'UMAVERSIONZPONEPFIV'
 #setup
 setup()
 cfg = Settings()
