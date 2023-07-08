@@ -1,7 +1,9 @@
 ChatGLM
+ChatGLM.zip
 Assistant
 .vscode
 stable-diffusion-webui
+stable-diffusion-webui.zip
 stable-diffusion-webui/*
 tmp
 src/data/*

@@ -2,13 +2,14 @@
 <head>
 {% block include %}
 {{ super() }}
-<title>Realizer</title>
+<title>Realizer v0.1.5 TEST</title>
 {% endblock %}
 </head>
 
 
 {% block body %}
 <body>
+
 <iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
@@ -37,11 +38,11 @@
 
                 </div>
                 <div class="input-area">
-                    <form>
                         <input type="text" name="openai-user-input" id="openai-user-input" />
                         <input type="hidden" name="openai-model-input" id="openai-model-input" value={{ SecondModel }} />
-                        <button type="button" id="SendOpenaiInput">发 送</button>
-                    </form>
+                        <div class="button-area">
+                            <button type="button" id="SendOpenaiInput">发 送</button>
+                        </div>
                 </div>
             </div>
         </div>
@@ -416,7 +417,9 @@
 </div>
 
 <div class="copyright" id="rights-box" style="display: none;">
-    <p></p>
+    <img style="margin: 50px;width: 100px;height: 100px;" src="/static/res/test.ico" alt="Realizer">
+    <h3 style="margin: 50px;">Realizer Version 0.1.5(202307082000) Developer Alpha</h3>
+    <a href="https://www.github.com/hcl595/universalmodelassistant/">learn more...</a>
 </div>
 
 <div class="loadingOne" id="loading" style="display: none;">
@@ -464,7 +467,7 @@ $(document).on('click',"#SendOpenaiInput",
                 var chatGptResponse = response.response;
                 $('#openai-output').append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
                 $('#openai-user-input').val('');
-                $("##loading").fadeOut(100)
+                $("#loading").fadeOut(100)
             }
         });
     });
