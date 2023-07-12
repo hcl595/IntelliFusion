@@ -26,7 +26,6 @@ class Settings(object):
             f.write('[ModelConfig]\n')
             f.write('DefaultModel = NONE\n')
             f.write('SecondModel = text-davinci-002\n')
-            f.write('ThirdModel = NONE\n')
             f.write('\n')
             f.close()
             print("config is created successfully!")

@@ -47,16 +47,12 @@ def root():
                 models.APIkey,  
                 models.LaunchCompiler,
                 models.LaunchUrl,).all()
-    try:
-        ThirdBoxURL = db.session.query(models.url).filter(models.name == cfg.read("ModelConfig","ThirdModel")).one()[0]
-    except:
-        ThirdBoxURL = None
     return render_template('main.html',
                             result = result,
                             NeedLogin = NeedLogin,
                             ModelList = ModelList,
                             historys = LLM_response,
-                            ThirdBoxURL = ThirdBoxURL,
+                            ThirdBoxURL = db.session.query(models.url).filter(models.name == cfg.read("ModelConfig","ThirdModel")).one()[0],
                             host = cfg.read("RemoteConfig","host"),
                             port = cfg.read("RemoteConfig","port"),
                             Mode = cfg.read("BaseConfig","devmode"),
@@ -233,8 +229,6 @@ def GetModelList():
             models.LaunchCompiler,
             models.LaunchUrl,).all()
     return ModelList
-
-
 @app.route("/test")
 def DevTest():
     return render_template("test.html")

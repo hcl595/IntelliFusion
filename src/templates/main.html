@@ -137,13 +137,13 @@
                             <input type="TEXT" class="url" id="{{ Model[0] }}LcUrl" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[6] }}>
                         </td>
                         <td>
-                            <button type="submit" class="edit" type="launch" name="edit" id="edit" onclick="$('#{{ Model[0] }}state').val('edit');loading()">编辑</button>
+                            <button type="submit" class="edit" type="launch" name="edit" id="edit" onclick="$('#{{ Model[0] }}state').val('edit');CommitModel('{{ Model[0] }}')">编辑</button>
                         </td>
                         <td>
-                            <button type="submit" class="deny" type="launch" name="del" id="del" onclick="$('#{{ Model[0] }}state').val('del');loading()">删除</button>
+                            <button type="submit" class="deny" type="launch" name="del" id="del" onclick="$('#{{ Model[0] }}state').val('del');CommitModel('{{ Model[0] }}')">删除</button>
                         </td>
                         <td>
-                            <button type="submit" class="allow" type="launch" name="run" id="run" onclick="$('#{{ Model[0] }}state').val('run');loading()">启动</button>
+                            <button type="submit" class="allow" type="launch" name="run" id="run" onclick="$('#{{ Model[0] }}state').val('run');CommitModel('{{ Model[0] }}')">启动</button>
                         </td>
                     </tr>
                 </form>
@@ -366,8 +366,8 @@
             </table>
             <hr class="line">
         </div>
-        <button type="submit" class="deny" style="float: left;margin-left: 10px;margin-right: 10px;" onclick="loading()">重置</button>
-        <button type="submit" class="allow" style="float: right;margin-left: 10px;margin-right: 10px;" onclick="loading()">更改</button>
+        <button type="submit" class="deny" style="float: left;margin-left: 10px;margin-right: 10px;">重置</button>
+        <button type="submit" class="allow" style="float: right;margin-left: 10px;margin-right: 10px;">更改</button>
     </form>
 
     
@@ -506,9 +506,10 @@ $(document).on('click',"#SendAPIInput",
     });
 });
     //CommitModel
-function loading(){
+function CommitModel(Input){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
+
 }
 
 
