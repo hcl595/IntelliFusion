@@ -11,6 +11,7 @@ import ctypes
 import requests
 import json
 import os
+from urllib.parse import urlparse
 import psutil
 
 #configs
@@ -75,16 +76,16 @@ def upload():
     LLM_response = llm(InputModel,InputInfo)
     return jsonify({'response': LLM_response})
 
-@app.route('/openai', methods=['POST'])
+@app.route('/openai', methods=['POST'])#openAI请求端口
 def get_glm_response():
     global GLM_response
     InputInfo = request.form['userinput']
     InputModel = request.form["modelinput"]
-    print(InputInfo,InputModel)
+    print("model:",InputInfo,InputModel)
     openai_response = ai(InputModel,InputInfo)
-    return jsonify({'response': openai_response})
+    return jsonify({'response': openai_response})#ajax返回
 
-@app.post('/EditSetting')
+@app.post('/EditSetting')#编辑设置
 def EditSetting():
     InputDefaultModel = request.form.get("DefaultModel")
     InputSecondModel = request.form.get("SecondModel")
@@ -93,6 +94,7 @@ def EditSetting():
     InputPort = request.form.get("Port")
     InputWebMode = request.form.get("Mode")
     InputDebugMode = request.form.get("BugM")
+    print(InputDefaultModel,InputSecondModel,)
     cfg.write("BaseConfig","devmode",InputWebMode)
     cfg.write("BaseConfig","debug",InputDebugMode)
     cfg.write("RemoteConfig","host",InputiPv4)
@@ -102,12 +104,10 @@ def EditSetting():
     cfg.write("ModelConfig","ThirdModel",InputThirdModel)
     return redirect("/")
 
-@app.post('/exchange')#添加模型
+@app.post('/exchange') #TODO: 适配前端ajax
 def AddModel():
-    Number = request.form.get("id")
-    Number = request.form["id"]
+    Number = request.form["number"]
     if Number == "-1":
-            InputType = request.form.get("type")
             InputType = request.form["type"]
             InputComment = request.form.get("comment")
             InputUrl = request.form.get("url")
@@ -124,15 +124,15 @@ def AddModel():
             db.session.add(info)
     else:
         InputState = request.form.get(Number + "state")
+        print(InputState)
         if InputState == "edit":
-            InputID = request.form.get("id")
             InputType = request.form.get("type")
             InputComment = request.form.get("comment")
             InputUrl = request.form.get("url")
             InputAPIkey = request.form.get("APIkey")
             LaunchCompiler = request.form.get("LcCompiler")
-            LaunchUrl = request.form.get("LCurl")
-            db.session.query(db.models).filter(models.id == InputID).update({
+            LaunchUrl = request.form.get("LcUrl")
+            db.session.query(db.models).filter(models.id == Number).update({
                     db.models.type: InputType,
                     db.models.name: InputComment,
                     db.models.url: InputUrl,
@@ -141,21 +141,21 @@ def AddModel():
                     db.models.LaunchUrl: LaunchUrl,
                     })
         elif InputState == "del":
-            InputID = request.form.get("id")
-            db.session.query(models).filter(models.id == InputID).delete()
+            db.session.query(models).filter(models.id == Number).delete()
         elif InputState == "run":
-            InputID = request.form.get("id")
             launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LCurl")
             os.system(launchCMD)
-    db.session.commit()
-    return redirect('/')
-
-@app.post("/UpdateSettings")
-def UpdateSettings():
-    UpdateHost = request.form.get("host")
-    UpdatePort = request.form.get("port")
-    UpdateMode = request.form.get("mode")
-    UpdateKey = request.form.get("key")
+        elif InputState == "stop":
+            InputUrl = request.form.get("url")
+            print(InputUrl)
+            port = int(urlparse(InputUrl).port)
+            for conn in psutil.net_connections():
+                if conn.laddr.port == port:
+                    pid = conn.pid
+                    p = psutil.Process(pid)
+                    p.kill()
+                    break
+            return jsonify({'response': "YES"})
     return redirect("/")
 
 @app.post('/login')#登录
@@ -190,6 +190,7 @@ def login_check():
         page = 'login'
         login_error = "请写入信息"
         return redirect('/')
+    
 @app.post('/register')#注册
 def register():
     global login_error,page
@@ -219,29 +220,9 @@ def register():
 def logout():
     close_application()
 
-
-@app.get('/ModelList')
-def GetModelList():
-    ModelList = db.session.query(
-            models.id,
-            models.type,
-            models.name,
-            models.url,
-            models.APIkey,
-            models.LaunchCompiler,
-            models.LaunchUrl,).all()
-    return ModelList
-
-
 @app.route("/test")
 def DevTest():
     return render_template("test.html")
-
-@app.get("/SettingData")
-def GetSettingData():
-    iPv4 = cfg.read("RemoteSetting","host")
-    port = cfg.read("RemoteSetting","port")
-    return iPv4,port
 
 @app.before_request
 def before_NeedLogin():
@@ -257,7 +238,6 @@ def before_NeedLogin():
 @app.errorhandler(404)
 def error404(error):
     return render_template('404.html'),404
-
 
 
 #functions

@@ -9,12 +9,12 @@
 
 {% block body %}
 <body>
-
+ 
 <iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
-            {% if SecondModel != 'None' %}
+            {% if DefaultModel != 'None' %}
             <li id="li_GLM" class="li current" onclick="toGLM()"><span>{{ DefaultModel }}</span></li>
             {% else %}
             <li id="li_GLM" class="li current" onclick="toGLM()" style="display: none;"><span>{{ DefaultModel }}</span></li>
@@ -65,7 +65,7 @@
                     <input name="openai-model-input" id="openai-model-input" type="hidden" value={{ SecondModel }} />
                     <div class="button-area">
                         <button type="button" id="Start"><i class="fa fa-microphone"></i></button>
-                        <button type="submit" id="SendAPIInput">发 送</button>
+                        <button type="submit" id="SendOpenaiInput">发 送</button>
                     </div>
                 </div>
             </div>
@@ -86,7 +86,6 @@
             </div>
         </div>
     </div>
-	</div>
 </div>
 
 <div class="account" id="account-box" style="display: none;">
@@ -122,7 +121,7 @@
                         <p>启动地址</p>
                     </td>
                     <td>
-                        <p>编辑</p>
+                        <p>运行</p>
                     </td>
                     <td>
                         <p>删除</p>
@@ -132,44 +131,44 @@
                     </td>
                 </tr>
                 {% for Model in ModelList %}
-                <form target="commit" action="/exchange" method="post">
-                    <input type="hidden" name="{{ Model[0] }}state" id="{{ Model[0] }}state">
-                    <input type="hidden" name="id" id="number" value={{ Model[0] }}>
-                    <tr>
-                        <td>
-                            <select name="type" id="{{ Model[0] }}Type">
-                                <option>{{ Model[1] }}</option>
-                                <option>OpenAI</option>
-                                <option>WebUI</option>
-                                <option>API</option>
-                            </select>
-                        </td>
-                        <td> 
-                            <input type="text" name="comment" id="{{ Model[0] }}Comment" placeholder="ChatGLM" value={{ Model[2] }}>
-                        </td>
-                        <td>
-                            <input type="text" class="url" id="{{ Model[0] }}Url" name="url" placeholder="127.0.0.1:8000" value={{ Model[3] }}>
-                        </td>
-                        <td>
-                            <input type="text" class="url" id="{{ Model[0] }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value={{ Model[4] }}>
-                        </td>
-                        <td>
-                            <input type="TEXT" class="url" id="{{ Model[0] }}LcCompiler" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model[5] }}>
-                        </td>
-                        <td>
-                            <input type="TEXT" class="url" id="{{ Model[0] }}LcUrl" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[6] }}>
-                        </td>
-                        <td>
-                            <button type="submit" class="edit" type="launch" name="edit" id="edit" onclick="$('#{{ Model[0] }}state').val('edit');loading()">编辑</button>
-                        </td>
-                        <td>
-                            <button type="submit" class="deny" type="launch" name="del" id="del" onclick="$('#{{ Model[0] }}state').val('del');loading()">删除</button>
-                        </td>
-                        <td>
-                            <button type="submit" class="allow" type="launch" name="run" id="run" onclick="$('#{{ Model[0] }}state').val('run');loading()">启动</button>
-                        </td>
-                    </tr>
-                </form>
+                <input type="hidden" name="{{ Model[0] }}id" id="{{ Model[0] }}id" value={{ Model[0] }}>
+                <tr>
+                    <td>
+                        <select name="type" id="{{ Model[0] }}Type">
+                            <option>{{ Model[1] }}</option>
+                            <option>OpenAI</option>
+                            <option>WebUI</option>
+                            <option>API</option>
+                        </select>
+                    </td>
+                    <td> 
+                        <input type="text" name="comment" id="{{ Model[0] }}Comment" placeholder="ChatGLM" value={{ Model[2] }}>
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="{{ Model[0] }}Url" name="url" placeholder="127.0.0.1:8000" value={{ Model[3] }}>
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="{{ Model[0] }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value={{ Model[4] }}>
+                    </td>
+                    <td>
+                        <input type="TEXT" class="url" id="{{ Model[0] }}LcCompiler" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model[5] }}>
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="{{ Model[0] }}LcUrl" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[6] }}>
+                    </td>
+                    <td>
+                        <button type="submit" class="allow" id="{{ Model[0] }}run"><i class="fa fa-play"></i></button>
+                    </td>
+                    <td>
+                        <button type="submit" class="deny" id="{{ Model[0] }}stop"><i class="fa fa-stop"></i></button>
+                    </td>
+                    <td>
+                        <button type="submit" class="edit" id="{{ Model[0] }}edit"><i class="fa fa-edit"></i></button>
+                    </td>
+                    <td>
+                        <button type="submit" class="deny" id="{{ Model[0] }}del"><i class="fa fa-trash"></i></button>
+                    </td>
+                </tr>
                 {% endfor %}
                 <form action="/exchange" method="post" target="exchange">
                     <input type="hidden" name="state" id="state">
@@ -207,7 +206,7 @@
                             <button action="/exchange" type="submit" class="allow" name="launch" id="add">添加</button>
                         </td>
                     </tr>
-                    </form>
+                </form>
             </thead>
         </table>
     </div>
@@ -298,12 +297,12 @@
                             <p>默认窗口</p>
                         </td>
                         <td>
-                            <select>
-                                <option name="DefaultModel">{{ DefaultModel }}</option>
+                            <select name="DefaultModel">
+                                <option>{{ DefaultModel }}</option>
                                 {% for Model in ModelList %}
-                                <option name="DefaultModel"  value={{ Model[2] }}>{{ Model[2] }}</option>
+                                <option value={{ Model[2] }}>{{ Model[2] }}</option>
                                 {% endfor %}
-                                <option name="DefaultModel" value="None">关闭</option>
+                                <option value="None">关闭</option>
                             </select>
                         </td>
                     </tr>
@@ -312,12 +311,12 @@
                             <p>第二窗口</p>
                         </td>
                         <td>
-                            <select>
-                                <option name="SecondModel">{{ SecondModel }}</option>
+                            <select name="SecondModel">
+                                <option>{{ SecondModel }}</option>
                                 {% for Model in ModelList %}
-                                <option name="SecondModel"  value={{ Model[2] }}>{{ Model[2] }}</option>
+                                <option value={{ Model[2] }}>{{ Model[2] }}</option>
                                 {% endfor %}
-                                <option name="SecondModel" value="None">关闭</option>
+                                <option value="None">关闭</option>
                             </select>
                         </td>
                     </tr>
@@ -326,12 +325,12 @@
                             <p>第三窗口</p>
                         </td>
                         <td>
-                            <select >
-                                <option name="SecondModel">{{ ThirdModel }}</option>
+                            <select name="ThirdModel">
+                                <option>{{ ThirdModel }}</option>
                                 {% for Model in ModelList %}
-                                <option name="SecondModel" value={{ Model[2] }}>{{ Model[2] }}</option>
+                                <option value={{ Model[2] }}>{{ Model[2] }}</option>
                                 {% endfor %}
-                                <option name="SecondModel" value="None">关闭</option>
+                                <option value="None">关闭</option>
                             </select>
                         </td>
                     </tr>
@@ -507,7 +506,6 @@ $(document).on('click',"#SendOpenaiInput",
         function() {
         $("#loading").fadeIn(100);
         var userInput = $('#openai-user-input').val();
-        var modelInput = $('#openai-model-input').val();
         $('#openai-output').append('<div class="item item-right"><div class="bubble bubble-right">' + userInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
         $.ajax({
             url: '/openai',
@@ -529,12 +527,14 @@ $(document).on('click',"#SendAPIInput",
     function() {
     $("#loading").fadeIn(100)
     var userInput = $('#api-user-input').val();
-    var modelInput = $('#api-model-input').val();
     $('#api-output').append('<div class="item item-right"><div class="bubble bubble-right">' + userInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
     $.ajax({
         url: '/llm',
         type: 'POST',
-        data: { userinput: userInput ,modelinput: modelInput},
+        data: {
+            userinput: $('#api-user-input').val() ,
+            modelinput: $('#api-model-input').val()
+            },
         success: function(response) {
             var chatGptResponse = response.response;
             $('#api-output').append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
@@ -543,11 +543,109 @@ $(document).on('click',"#SendAPIInput",
         }
     });
 });
+
+{% for Model in ModelList %}
+$(document).on('click',"#{{ Model[0] }}run",
+    function() {
+    $("#loading").fadeIn(100)
+    $('#{{ Model[0] }}run').attr("disabled",true) //TODO: 修复该行未执行
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: 'run' ,
+            number: $('#{{ Model[0] }}id').val() ,
+            comment: $('#{{ Model[0] }}Comment').val() ,
+            url: $('#{{ Model[0] }}url').val() ,
+            APIkey: $('#{{ Model[0] }}APIkey').val() ,
+            LcCompiler: $('#{{ Model[0] }}LcCompiler').val() ,
+            LcUrl: $('#{{ Model[0] }}LcUrl').val() ,
+        },
+        success: function(response) {
+            var chatGptResponse = response.response;
+            $("#loading").fadeOut(100)
+            $('#{{ Model[0] }}run').removeAttr("disabled")
+        }
+    });
+});
+$(document).on('click',"#{{ Model[0] }}stop",
+    function() {
+    $("#loading").fadeIn(100)
+    $('#{{ Model[0] }}stop').attr("disabled",true)
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: 'stop' ,
+            number: $('#{{ Model[0] }}id').val() ,
+            comment: $('#{{ Model[0] }}Comment').val() ,
+            url: $('#{{ Model[0] }}url').val() ,
+            APIkey: $('#{{ Model[0] }}APIkey').val() ,
+            LcCompiler: $('#{{ Model[0] }}LcCompiler').val() ,
+            LcUrl: $('#{{ Model[0] }}LcUrl').val() ,
+        },
+        success: function(response) {
+            var chatGptResponse = response.response;
+            $("#loading").fadeOut(100)
+            $('#{{ Model[0] }}stop').removeAttr("disabled")
+        }
+    });
+});
+$(document).on('click',"#{{ Model[0] }}edit",
+    function() {
+    $("#loading").fadeIn(100)
+    $('#{{ Model[0] }}edit').attr("disabled",true)
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: 'edit' ,
+            number: $('#{{ Model[0] }}id').val() ,
+            comment: $('#{{ Model[0] }}Comment').val() ,
+            url: $('#{{ Model[0] }}url').val() ,
+            APIkey: $('#{{ Model[0] }}APIkey').val() ,
+            LcCompiler: $('#{{ Model[0] }}LcCompiler').val() ,
+            LcUrl: $('#{{ Model[0] }}LcUrl').val() ,
+        },
+        success: function(response) {
+            var chatGptResponse = response.response;
+            $("#loading").fadeOut(100)
+            $('#{{ Model[0] }}edit').removeAttr("disabled")
+        }
+    });
+});
+$(document).on('click',"#{{ Model[0] }}del",
+    function() {
+    $("#loading").fadeIn(100)
+    $('#{{ Model[0] }}del').attr("disabled",true)
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: 'del' ,
+            number: $('#{{ Model[0] }}id').val() ,
+            comment: $('#{{ Model[0] }}Comment').val() ,
+            url: $('#{{ Model[0] }}url').val() ,
+            APIkey: $('#{{ Model[0] }}APIkey').val() ,
+            LcCompiler: $('#{{ Model[0] }}LcCompiler').val() ,
+            LcUrl: $('#{{ Model[0] }}LcUrl').val() ,
+        },
+        success: function(response) {
+            var chatGptResponse = response.response;
+            $("#loading").fadeOut(100)
+            $('#{{ Model[0] }}del').removeAttr("disabled")
+        }
+    });
+});
+{% endfor %}
+
+
     //CommitModel
 function loading(){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
 }
+
 
 
 //launch model

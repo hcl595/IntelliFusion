@@ -1,13 +1,12 @@
 #config.py | Realizer Version 0.1.6(202307152000) Developer Alpha
 import configparser
 from pathlib import Path
-import os
 
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
 CONFIG_FILE = DATA_DIR / "config.cfg"
 
-class Settings(object):
+class Settings():
     def __init__(self):
         if not DATA_DIR.exists():
             DATA_DIR.mkdir()
