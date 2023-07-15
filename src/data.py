@@ -1,16 +1,17 @@
-# data.py | Realizer Version 0.1.5(202307082000) Developer Alpha
-from sqlalchemy import create_engine,Column,Integer,String,UniqueConstraint,Index
-from sqlalchemy.orm import sessionmaker,scoped_session
-from sqlalchemy.ext.declarative import declarative_base
+# data.py | Realizer Version 0.1.6(202307152000) Developer Alpha
 from pathlib import Path
-import os
+
+from sqlalchemy import Column, Index, Integer, String, UniqueConstraint, create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 # 基础类
-basedir= os.path.abspath(os.path.dirname(__file__)) + "\\data"
-file_path = Path(__file__).parent / "data" / "models.sqlite"
-folder = Path(__file__).parent / "data"
+APP_DIR = Path(__file__).parent
+DATA_DIR = APP_DIR / "data"
+DATABASE_FILE = DATA_DIR / "models.sqlite"
+
 Base = declarative_base()
-engine = create_engine('sqlite:///'+os.path.join(basedir,'models.sqlite'), echo=True)
+engine = create_engine(f"sqlite:///{DATABASE_FILE}", echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -52,28 +53,28 @@ class models(Base):
 
 
 def setup():
-    if not folder.exists():
-        os.makedirs(folder)
-    if not file_path.exists():
+    if not DATA_DIR.exists():
+        DATA_DIR.mkdir()
+    if not DATABASE_FILE.exists():
         print("Database does not exist and is being created automatically...")
-        f = open(file_path,'w')
         Base.metadata.create_all(engine)
         user_instance = userInfo(
-        account="admin",
-        password="admin1234",
+            account="admin",
+            password="admin1234",
         )
         session.add(user_instance)
         BasisModel = models(
-        type = "openai",
-        name = "text-davinci-002",
-        url = "https:\\\\ai.fakeopen.com\\v1",
-        APIkey = "None",
-        LaunchCompiler = "NONE",
-        LaunchUrl = "NONE",
+            type="openai",
+            name="text-davinci-002",
+            url="https:\\\\ai.fakeopen.com\\v1",
+            APIkey="None",
+            LaunchCompiler="NONE",
+            LaunchUrl="NONE",
         )
         session.add(BasisModel)
-        session.commit() 
+        session.commit()
         print("database is created successfully!")
+
 
 if __name__ == "__main__":
     setup()

@@ -1,4 +1,4 @@
-#main.py | Realizer Version 0.1.5(202307082000) Developer Alpha
+#main.py | Realizer Version 0.1.6(202307152000) Developer Alpha
 #headers
 from flask import Flask, render_template, redirect, request, session, json, jsonify
 import openai
@@ -16,7 +16,7 @@ import psutil
 #configs
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SECRET_KEY'] = 'UMAVERSIONZPONEPFIV'
+app.config['SECRET_KEY'] = 'UMAVERSIONZPONEPSIX'
 
 #setup
 setup()
@@ -47,12 +47,16 @@ def root():
                 models.APIkey,  
                 models.LaunchCompiler,
                 models.LaunchUrl,).all()
+    try:
+        ThirdBoxURL = db.session.query(models.url).filter(models.name == cfg.read("ModelConfig","ThirdModel")).one()[0]
+    except:
+        ThirdBoxURL = None
     return render_template('main.html',
                             result = result,
                             NeedLogin = NeedLogin,
                             ModelList = ModelList,
                             historys = LLM_response,
-                            ThirdBoxURL = db.session.query(models.url).filter(models.name == cfg.read("ModelConfig","ThirdModel")).one()[0],
+                            ThirdBoxURL = ThirdBoxURL,
                             host = cfg.read("RemoteConfig","host"),
                             port = cfg.read("RemoteConfig","port"),
                             Mode = cfg.read("BaseConfig","devmode"),
@@ -62,15 +66,12 @@ def root():
                             ThirdModel = cfg.read("ModelConfig","ThirdModel"),
                             username = session.get('username'),)
 
-@app.route("/exchange")
-def LoadExchange():
-    return redirect("/")
-
 @app.post('/llm')#GLM请求与回复1
 def upload():
     global result,LLM_response
     InputInfo = request.form['userinput']
     InputModel =request.form["modelinput"]
+    print(InputInfo,InputModel)
     LLM_response = llm(InputModel,InputInfo)
     return jsonify({'response': LLM_response})
 
@@ -79,6 +80,7 @@ def get_glm_response():
     global GLM_response
     InputInfo = request.form['userinput']
     InputModel = request.form["modelinput"]
+    print(InputInfo,InputModel)
     openai_response = ai(InputModel,InputInfo)
     return jsonify({'response': openai_response})
 
@@ -229,6 +231,8 @@ def GetModelList():
             models.LaunchCompiler,
             models.LaunchUrl,).all()
     return ModelList
+
+
 @app.route("/test")
 def DevTest():
     return render_template("test.html")
@@ -290,5 +294,8 @@ if __name__ == '__main__':
         app.run(debug=cfg.read("BaseConfig","debug"),port=cfg.read("RemoteConfig","port"),host=cfg.read("RemoteConfig","host"))
     #GUI MODE
     else:
-        ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
+        try:
+            ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
+        except:
+            pass
         FlaskUI(app=app,server='flask',port=cfg.read("RemoteConfig","port"),width=1000,height=800).run()

@@ -127,6 +127,7 @@ body {
 
 .focus + span::before {
   top: -5px;
+  font-size: smaller;
 }
 
 .focus + span::after {
@@ -492,7 +493,7 @@ ul.tab li.li:last-child{border-right: 1px solid #C5D0DC;}
 }
 .content{
   max-width: calc(100% - 40px);
-  max-height: 80vh;
+  max-height: 90vh;
   overflow-y: scroll;
   flex: 1;
 }
@@ -572,9 +573,9 @@ ul.tab li.li:last-child{border-right: 1px solid #C5D0DC;}
 }
 .input-area{
   border-top:0.5px solid #e0e0e0;
-  height: 150px;
+  height: 50px;
   display: flex;
-  flex-flow: column;
+  flex-flow:nowrap;
   background-color: #fff;
   border-radius: 1rem;
 }
@@ -599,6 +600,8 @@ textarea{
   justify-content: flex-end;
 }
 .button-area button{
+  margin-left: 5px;
+  margin-right: 5px;
   width: 80px;
   border: none;
   outline: none;
@@ -833,6 +836,12 @@ textarea{
   border-radius: 20px;
   background-color: rgba(0, 0, 0, .05);
   border-color: rgba(0, 0, 0, .05);
+}
+.settings select{
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, .05);
+  border-color: rgba(0, 0, 0, .05);
+  transition: .6s cubic-bezier(.8, .5, .5, .8);
 }
 .settings .content table thead tr th h3,.settings table td p{
   margin-left: 10px;

@@ -1,19 +1,19 @@
-#config.py | Realizer Version 0.1.5(202307082000) Developer Alpha
+#config.py | Realizer Version 0.1.6(202307152000) Developer Alpha
 import configparser
 from pathlib import Path
 import os
 
-
-config_file = Path(__file__).parent / "data" / "config.cfg"
-folder = Path(__file__).parent / "data"
+APP_DIR = Path(__file__).parent
+DATA_DIR = APP_DIR / "data"
+CONFIG_FILE = DATA_DIR / "config.cfg"
 
 class Settings(object):
     def __init__(self):
-        if not folder.exists():
-            os.makedirs(folder)
-        if not config_file.exists():
+        if not DATA_DIR.exists():
+            DATA_DIR.mkdir()
+        if not CONFIG_FILE.exists():
             print("Config does not exist and is being created automatically...")
-            f = open(config_file,'w')
+            f = open(CONFIG_FILE,'w')
             f.write('[BaseConfig]\n')
             f.write('devmode = False\n')
             f.write('debug = False\n')
@@ -24,18 +24,19 @@ class Settings(object):
             f.write('port = 5000\n')
             f.write('\n')
             f.write('[ModelConfig]\n')
-            f.write('DefaultModel = NONE\n')
-            f.write('SecondModel = text-davinci-002\n')
+            f.write('DefaultModel = text-davinci-002\n')
+            f.write('SecondModel = None\n')
+            f.write('ThirdModel = None\n')
             f.write('\n')
             f.close()
             print("config is created successfully!")
         self.cfg = configparser.ConfigParser()
-        self.cfg.read(config_file)
+        self.cfg.read(CONFIG_FILE)
 
     def write(self, section, option, value):
         value = str(value)
         self.cfg.set(section,option,value)
-        self.cfg.write(open(config_file, "w"))
+        self.cfg.write(open(CONFIG_FILE, "w"))
 
     def read(self, section, option):
         out = self.cfg.get(section,option)

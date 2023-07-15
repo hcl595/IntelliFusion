@@ -14,9 +14,21 @@
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
+            {% if SecondModel != 'None' %}
             <li id="li_GLM" class="li current" onclick="toGLM()"><span>{{ DefaultModel }}</span></li>
+            {% else %}
+            <li id="li_GLM" class="li current" onclick="toGLM()" style="display: none;"><span>{{ DefaultModel }}</span></li>
+            {% endif %}
+            {% if SecondModel != 'None' %}
             <li id="li_GPT" class="li" onclick="toGPT()"><span>{{ SecondModel }}</span></li>
+            {% else %}
+            <li id="li_GPT" class="li" onclick="toGPT()" style="display: none;"><span>{{ SecondModel }}</span></li>
+            {% endif %}
+            {% if ThirdModel != 'None' %}
             <li id="li_SD" class="li" onclick="toSD()"><span>{{ ThirdModel }}</span></li>
+            {% else %}
+            <li id="li_SD" class="li" onclick="toSD()" style="display: none;"><span>{{ ThirdModel }}</span></li>
+            {% endif %}
             <li id="li_WIG" class="li" onclick="toWIG()"><span>Widgets</span></li>
         </ul>
 
@@ -25,9 +37,15 @@
 
             </div>
             <div class="input-area">
-                <input type="text" id="api-user-input" name="api-user-input" />
+                <div class="txtb">
+                    <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
+                        <input name="check_password" type="reg_check_password" name="api-user-input" id="api-user-input" />
+                        <span data-placeholder="输入内容" ></span>
+                    </div>
+                </div>
                 <input id="api-model-input" name="api-model-input" type="hidden" value={{ DefaultModel }} />
                 <div class="button-area">
+                    <button type="button" id="Start"><i class="fa fa-microphone"></i></button>
                     <button type="submit" id="SendAPIInput">发 送</button>
                 </div>
             </div>
@@ -38,14 +56,19 @@
 
                 </div>
                 <div class="input-area">
-                        <input type="text" name="openai-user-input" id="openai-user-input" />
-                        <input type="hidden" name="openai-model-input" id="openai-model-input" value={{ SecondModel }} />
-                        <div class="button-area">
-                            <button type="button" id="SendOpenaiInput">发 送</button>
+                    <div class="txtb">
+                        <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
+                            <input name="check_password" type="reg_check_password" name="openai-user-input" id="openai-user-input" />
+                            <span data-placeholder="输入内容" ></span>
                         </div>
+                    </div>
+                    <input name="openai-model-input" id="openai-model-input" type="hidden" value={{ SecondModel }} />
+                    <div class="button-area">
+                        <button type="button" id="Start"><i class="fa fa-microphone"></i></button>
+                        <button type="submit" id="SendAPIInput">发 送</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
         <div id="ThridBox" style="display: none;">
             <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src={{ ThirdBoxURL }}></iframe>
@@ -62,7 +85,7 @@
                 
             </div>
         </div>
-
+    </div>
 	</div>
 </div>
 
@@ -137,13 +160,13 @@
                             <input type="TEXT" class="url" id="{{ Model[0] }}LcUrl" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[6] }}>
                         </td>
                         <td>
-                            <button type="submit" class="edit" type="launch" name="edit" id="edit" onclick="$('#{{ Model[0] }}state').val('edit');CommitModel('{{ Model[0] }}')">编辑</button>
+                            <button type="submit" class="edit" type="launch" name="edit" id="edit" onclick="$('#{{ Model[0] }}state').val('edit');loading()">编辑</button>
                         </td>
                         <td>
-                            <button type="submit" class="deny" type="launch" name="del" id="del" onclick="$('#{{ Model[0] }}state').val('del');CommitModel('{{ Model[0] }}')">删除</button>
+                            <button type="submit" class="deny" type="launch" name="del" id="del" onclick="$('#{{ Model[0] }}state').val('del');loading()">删除</button>
                         </td>
                         <td>
-                            <button type="submit" class="allow" type="launch" name="run" id="run" onclick="$('#{{ Model[0] }}state').val('run');CommitModel('{{ Model[0] }}')">启动</button>
+                            <button type="submit" class="allow" type="launch" name="run" id="run" onclick="$('#{{ Model[0] }}state').val('run');loading()">启动</button>
                         </td>
                     </tr>
                 </form>
@@ -275,9 +298,13 @@
                             <p>默认窗口</p>
                         </td>
                         <td>
-                            <p>
-                                <input type="text" name="DefaultModel" placeholder="chatglm2-6b" value={{ DefaultModel }} />
-                            </p>
+                            <select>
+                                <option name="DefaultModel">{{ DefaultModel }}</option>
+                                {% for Model in ModelList %}
+                                <option name="DefaultModel"  value={{ Model[2] }}>{{ Model[2] }}</option>
+                                {% endfor %}
+                                <option name="DefaultModel" value="None">关闭</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
@@ -285,9 +312,13 @@
                             <p>第二窗口</p>
                         </td>
                         <td>
-                            <p>
-                                <input type="text" name="SecondModel" placeholder="text-davinci-002" value={{ SecondModel }} />
-                            </p>
+                            <select>
+                                <option name="SecondModel">{{ SecondModel }}</option>
+                                {% for Model in ModelList %}
+                                <option name="SecondModel"  value={{ Model[2] }}>{{ Model[2] }}</option>
+                                {% endfor %}
+                                <option name="SecondModel" value="None">关闭</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
@@ -295,9 +326,13 @@
                             <p>第三窗口</p>
                         </td>
                         <td>
-                            <p>
-                                <input type="text" name="ThirdModel" placeholder="StableDiffusion" value={{ ThirdModel }} />
-                            </p>
+                            <select >
+                                <option name="SecondModel">{{ ThirdModel }}</option>
+                                {% for Model in ModelList %}
+                                <option name="SecondModel" value={{ Model[2] }}>{{ Model[2] }}</option>
+                                {% endfor %}
+                                <option name="SecondModel" value="None">关闭</option>
+                            </select>
                         </td>
                     </tr>
                 </tbody>
@@ -366,8 +401,8 @@
             </table>
             <hr class="line">
         </div>
-        <button type="submit" class="deny" style="float: left;margin-left: 10px;margin-right: 10px;">重置</button>
-        <button type="submit" class="allow" style="float: right;margin-left: 10px;margin-right: 10px;">更改</button>
+        <button type="submit" class="deny" style="float: left;margin-left: 10px;margin-right: 10px;" onclick="loading()">重置</button>
+        <button type="submit" class="allow" style="float: right;margin-left: 10px;margin-right: 10px;" onclick="loading()">更改</button>
     </form>
 
     
@@ -477,7 +512,10 @@ $(document).on('click',"#SendOpenaiInput",
         $.ajax({
             url: '/openai',
             type: 'POST',
-            data: { userinput: userInput ,modelinput: modelInput},
+            data: {
+                userinput: userInput,
+                modelinput: modelInput,
+            },
             success: function(response) {
                 var chatGptResponse = response.response;
                 $('#openai-output').append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
@@ -506,10 +544,9 @@ $(document).on('click',"#SendAPIInput",
     });
 });
     //CommitModel
-function CommitModel(Input){
+function loading(){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
-
 }
 
 
