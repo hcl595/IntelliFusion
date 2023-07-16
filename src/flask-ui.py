@@ -1,18 +1,24 @@
 #main.py | Realizer Version 0.1.6(202307152000) Developer Alpha
 #headers
-from flask import Flask, render_template, redirect, request, session, json, jsonify
-import openai
-from flaskwebgui import FlaskUI
-from flaskwebgui import FlaskUI,close_application
-from config import Settings
-import data as db
-from data import userInfo,models,setup
 import ctypes
-import requests
 import json
-import os
+import subprocess
+import time
+from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse
+
+import openai
 import psutil
+import requests
+from flask import (Flask, json, jsonify, redirect, render_template, request,
+                   session)
+from flaskwebgui import FlaskUI, close_application
+
+import data as db
+from config import Settings
+from data import models, setup, userInfo
+
+pool=ThreadPoolExecutor()
 
 #configs
 app = Flask(__name__)
@@ -56,6 +62,7 @@ def root():
                             result = result,
                             NeedLogin = NeedLogin,
                             ModelList = ModelList,
+                            ModelCount = len(ModelList) + 1,
                             historys = LLM_response,
                             ThirdBoxURL = ThirdBoxURL,
                             host = cfg.read("RemoteConfig","host"),
@@ -106,52 +113,64 @@ def EditSetting():
 
 @app.post('/exchange') #TODO: 适配前端ajax
 def AddModel():
-    Number = request.form["number"]
-    InputType = request.form["type"]
+    InputState = request.form.get("state")
+    InputID = request.form.get("number")
+    InputType = request.form.get("type")
     InputComment = request.form.get("comment")
     InputUrl = request.form.get("url")
     InputAPIkey = request.form.get("APIkey")
     LaunchCompiler = request.form.get("LcCompiler")
     LaunchUrl = request.form.get("LcUrl")
-    if Number == "-1":
-            info = db.models(
-                        type = InputType,
-                        name = InputComment,
-                        url = InputUrl,
-                        APIkey = InputAPIkey,
-                        LaunchCompiler = LaunchCompiler,
-                        LaunchUrl = LaunchUrl,)
-            db.session.add(info)
-    else:
-        InputState = request.form["state"]
-        print(InputState)
-        if InputState == "edit":
-            db.session.query(db.models).filter(models.id == Number).update({
-                    db.models.type: InputType,
-                    db.models.name: InputComment,
-                    db.models.url: InputUrl,
-                    db.models.APIkey: InputAPIkey,
-                    db.models.LaunchCompiler: LaunchCompiler,
-                    db.models.LaunchUrl: LaunchUrl,
-                    })
-        elif InputState == "del":
-            db.session.query(models).filter(models.id == Number).delete()
-        elif InputState == "run":
-            launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LcUrl")
-            try:
-                os.system(launchCMD)
-                return jsonify({'response': "complete"})
-            except:
-                jsonify({'response': "error"})
-        elif InputState == "stop":
-            port = int(urlparse(InputUrl).port)
+    try:
+        port = int(urlparse(InputUrl).port)
+    except:
+        port = 80
+    if InputState == "edit":
+        db.session.query(db.models).filter(models.id == InputID).update({
+                                db.models.type: InputType,
+                                db.models.name: InputComment,
+                                db.models.url: InputUrl,
+                                db.models.APIkey: InputAPIkey,
+                                db.models.LaunchCompiler: LaunchCompiler,
+                                db.models.LaunchUrl: LaunchUrl,
+                                })
+        db.session.commit()
+        return jsonify({'response': "complete"})
+    elif InputState == "del":
+        db.session.query(models).filter(models.id == InputID).delete()
+        db.session.commit()
+        return jsonify({'response': "complete"})
+    elif InputState == "run":
+        launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LcUrl")
+        pool.submit(subprocess.run, launchCMD)
+        count = 0
+        while True:
             for conn in psutil.net_connections():
                 if conn.laddr.port == port:
-                    pid = conn.pid
-                    p = psutil.Process(pid)
-                    p.kill()
-                    break
-            return jsonify({'response': "complete"})
+                    return jsonify({'response': "complete"})
+            count += 1
+            time.sleep(1)
+            if count == 60:
+                return jsonify({'response': "TimeOut"})
+    elif InputState == "stop":
+        for conn in psutil.net_connections():
+            if conn.laddr.port == port:
+                pid = conn.pid
+                p = psutil.Process(pid)
+                p.kill()
+                break
+        return jsonify({'response': "complete"})
+    elif InputState == "add":
+        info = db.models(
+                    type = InputType,
+                    name = InputComment,
+                    url = InputUrl,
+                    APIkey = InputAPIkey,
+                    LaunchCompiler = LaunchCompiler,
+                    LaunchUrl = LaunchUrl,)
+        db.session.add(info)
+        db.session.commit()
+        return jsonify({'response': "complete"})
     return redirect("/")
 
 @app.post('/login')#登录

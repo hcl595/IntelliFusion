@@ -32,7 +32,8 @@
             <li id="li_WIG" class="li" onclick="toWIG()"><span>Widgets</span></li>
         </ul>
 
-        <div class="dialogbox_container" id="DefaultBox">
+        <!-- TODO: if判断模型类型切换输入框形式 -->
+        <div class="dialogbox_container" id="DefaultBox"> 
             <div class="content" id="api-output">
 
             </div>
@@ -90,7 +91,7 @@
 
 <div class="account" id="account-box" style="display: none;">
     <div style="margin-left:20px">
-        <table id="ModelTable">
+        <table>
             <thead>
                 <tr>
                     <th>
@@ -100,7 +101,7 @@
                     </th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="ModelTable">
                 <tr>
                     <td>
                         <p>模型类型</p>
@@ -132,7 +133,7 @@
                 </tr>
                 {% for Model in ModelList %}
                 <input type="hidden" name="{{ Model[0] }}id" id="{{ Model[0] }}id" value={{ Model[0] }}>
-                <tr>
+                <tr id="{{Model[0]}}ModelTr">
                     <td>
                         <select name="type" id="{{ Model[0] }}Type">
                             <option>{{ Model[1] }}</option>
@@ -158,9 +159,7 @@
                     </td>
                     <td>
                         <button type="submit" class="allow" id="{{ Model[0] }}run"><i class="fa fa-play"></i></button>
-                    </td>
-                    <td>
-                        <button type="submit" class="deny" id="{{ Model[0] }}stop"><i class="fa fa-stop"></i></button>
+                        <button type="submit" class="deny" id="{{ Model[0] }}stop" style="display: none;"><i class="fa fa-stop"></i></button>
                     </td>
                     <td>
                         <button type="submit" class="edit" id="{{ Model[0] }}edit"><i class="fa fa-edit"></i></button>
@@ -170,44 +169,41 @@
                     </td>
                 </tr>
                 {% endfor %}
-                <form action="/exchange" method="post" target="exchange">
-                    <input type="hidden" name="state" id="state">
-                    <input type="hidden" name="id" id="number" value="-1">
-                    <tr>
-                        <td>
-                            <select name="type">
-                                <option>OpenAI</option>
-                                <option>WebUI</option>
-                                <option>API</option>
-                            </select>
-                        </td>
-                        <td> 
-                            <input type="text" name="comment" placeholder="ChatGLM">
-                        </td>
-                        <td>
-                            <input type="text" class="url" name="url" placeholder="127.0.0.1:8000">
-                        </td>
-                        <td>
-                            <input rtpe="text" class="url" name="APIkey" placeholder="sk-ahsjfidajfuahfhla & none">
-                        </td>
-                        <td>
-                            <input type="TEXT" class="url" name="LcCompiler" placeholder=".\venv\scripts\python.exe">
-                        </td>
-                        <td>
-                            <input type="TEXT" class="url" name="LCurl" placeholder=".\venv\launch.py">
-                        </td>
-                        <td>
-                            <button disabled type="submit" class="edit" name="edit" id="edit">编辑</button>
-                        </td>
-                        <td>
-                            <button disabled type="submit" class="deny" name="del" id="del">删除</button>
-                        </td>
-                        <td>
-                            <button action="/exchange" type="submit" class="allow" name="launch" id="add">添加</button>
-                        </td>
-                    </tr>
-                </form>
-            </thead>
+                <input type="hidden" id="-1id" value="-1">
+                <tr id="AddTr">
+                    <td>
+                        <select id="-1Type" name="type">
+                            <option selected>OpenAI</option>
+                            <option>WebUI</option>
+                            <option>API</option>
+                        </select>
+                    </td>
+                    <td> 
+                        <input type="text" id="-1Comment" placeholder="ChatGLM">
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="-1Url" placeholder="127.0.0.1:8000">
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="-1APIkey" placeholder="sk-ahsjfidajfuahfhla & none">
+                    </td>
+                    <td>
+                        <input type="TEXT" class="url" id="-1LcCompiler" placeholder=".\venv\scripts\python.exe">
+                    </td>
+                    <td>
+                        <input type="TEXT" class="url" id="-1LcUrl" placeholder=".\venv\launch.py">
+                    </td>
+                    <td>
+                        <button type="submit" class="allow" name="launch" id="add"><i class="fa fa-plus"></i></button>
+                    </td>
+                    <td>
+                        <button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button>
+                    </td>
+                    <td>
+                        <button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </div>
 </div>
@@ -548,7 +544,7 @@ $(document).on('click',"#SendAPIInput",
 $(document).on('click',"#{{ Model[0] }}run",
     function() {
     $("#loading").fadeIn(100)
-    $('#{{ Model[0] }}run').attr("disabled",true) //TODO: 修复该行未执行
+    $('#{{ Model[0] }}run').attr("disabled",true)
     $.ajax({
         url: '/exchange',
         type: 'POST',
@@ -639,13 +635,44 @@ $(document).on('click',"#{{ Model[0] }}del",
             LcUrl: $('#{{ Model[0] }}LcUrl').val() ,
         },
         success: function(response) {
-            var chatGptResponse = response.response;
+            $('#{{ Model[0] }}id').remove()
+            $('#{{ Model[0] }}ModelTr').remove()
             $("#loading").fadeOut(100)
             $('#{{ Model[0] }}del').removeAttr("disabled")
         }
     });
 });
 {% endfor %}
+
+$(document).on('click',"#add",
+    function() {
+    $("#loading").fadeIn(100)
+    $('#add').attr("disabled",true)
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: 'add' ,
+            number: $('#-1id').val() ,
+            type: $('#-1Type').val() ,
+            comment: $('#-1Comment').val() ,
+            url: $('#-1Url').val() ,
+            APIkey: $('#-1APIkey').val() ,
+            LcCompiler: $('#-1LcCompiler').val() ,
+            LcUrl: $('#-1LcUrl').val() ,
+        },
+        success: function(response) {
+            $('#ModelTable').append('<input type="hidden" name="{{ ModelCount }}id" id="{{ ModelCount }}id" value={{ ModelCount }}>')
+            $('#ModelTable').append('<tr><td><select name="type" id="{{ ModelCount }}Type">            <option>' + $('#-1Type').val() + '</option>            <option>OpenAI</option>            <option>WebUI</option>            <option>API</option>        </select></td>    <td> <input type="text" name="comment" id="{{ ModelCount }}Comment" placeholder="ChatGLM" value=' + $('#-1Comment').val() + ' ></td>    <td><input type="text" class="url" id="{{ ModelCount }}Url" name="url" placeholder="127.0.0.1:8000" value=' + $('#-1Url').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value=' + $('#-1APIkey').val() + '></td>    <td><input type="TEXT" class="url" id="{{ ModelCount }}LcCompiler" name="LcCompiler" placeholder=".\\venv\\python.exe & OpenAI" value=' + $('#-1LcCompiler').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}LcUrl" name="LCurl" placeholder=".\\ChatGLM\\launch.py" value=' + $('#-1LcUrl').val() + '></td>    <td><button type="submit" class="allow" id="{{ ModelCount }}run"><i class="fa fa-play"></i></button><button type="submit" class="deny" id="{{ ModelCount }}stop" style="display: none;"><i class="fa fa-stop"></i></button></td>    <td><button type="submit" class="edit" id="{{ ModelCount }}edit"><i class="fa fa-edit"></i></button></td>    <td><button type="submit" class="deny" id="{{ ModelCount }}del"><i class="fa fa-trash"></i></button></td></tr>')
+            $("#loading").fadeOut(100)
+            $('#-1id').remove()
+            $('#AddTr').remove()
+            $('#ModelTable').append('<input type="hidden" id="-1id" value="-1">')
+            $('#ModelTable').append('<tr id="AddTr"><td><select id="-1Type" name="type"><option selected>OpenAI</option><option>WebUI</option><option>API</option></select></td><td> <input type="text" id="-1Comment" placeholder="ChatGLM"></td><td><input type="text" class="url" id="-1Url" placeholder="127.0.0.1:8000"></td><td><input type="text" class="url" id="-1APIkey" placeholder="sk-ahsjfidajfuahfhla & none"></td><td><input type="TEXT" class="url" id="-1LcCompiler" placeholder=".\\venv\\scripts\\python.exe"></td><td><input type="TEXT" class="url" id="-1LcUrl" placeholder=".\\venv\\launch.py"></td><td><button type="submit" class="allow" name="launch" id="add"><i class="fa fa-plus"></i></button></td><td><button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button></td><td><button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button></td></tr>')
+            $('#add').removeAttr("disabled")
+        }
+    });
+});
 
 
     //CommitModel
