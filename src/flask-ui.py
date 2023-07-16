@@ -107,13 +107,13 @@ def EditSetting():
 @app.post('/exchange') #TODO: 适配前端ajax
 def AddModel():
     Number = request.form["number"]
+    InputType = request.form["type"]
+    InputComment = request.form.get("comment")
+    InputUrl = request.form.get("url")
+    InputAPIkey = request.form.get("APIkey")
+    LaunchCompiler = request.form.get("LcCompiler")
+    LaunchUrl = request.form.get("LcUrl")
     if Number == "-1":
-            InputType = request.form["type"]
-            InputComment = request.form.get("comment")
-            InputUrl = request.form.get("url")
-            InputAPIkey = request.form.get("APIkey")
-            LaunchCompiler = request.form.get("LcCompiler")
-            LaunchUrl = request.form.get("LCurl")
             info = db.models(
                         type = InputType,
                         name = InputComment,
@@ -123,15 +123,9 @@ def AddModel():
                         LaunchUrl = LaunchUrl,)
             db.session.add(info)
     else:
-        InputState = request.form.get(Number + "state")
+        InputState = request.form["state"]
         print(InputState)
         if InputState == "edit":
-            InputType = request.form.get("type")
-            InputComment = request.form.get("comment")
-            InputUrl = request.form.get("url")
-            InputAPIkey = request.form.get("APIkey")
-            LaunchCompiler = request.form.get("LcCompiler")
-            LaunchUrl = request.form.get("LcUrl")
             db.session.query(db.models).filter(models.id == Number).update({
                     db.models.type: InputType,
                     db.models.name: InputComment,
@@ -143,11 +137,13 @@ def AddModel():
         elif InputState == "del":
             db.session.query(models).filter(models.id == Number).delete()
         elif InputState == "run":
-            launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LCurl")
-            os.system(launchCMD)
+            launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LcUrl")
+            try:
+                os.system(launchCMD)
+                return jsonify({'response': "complete"})
+            except:
+                jsonify({'response': "error"})
         elif InputState == "stop":
-            InputUrl = request.form.get("url")
-            print(InputUrl)
             port = int(urlparse(InputUrl).port)
             for conn in psutil.net_connections():
                 if conn.laddr.port == port:
@@ -155,7 +151,7 @@ def AddModel():
                     p = psutil.Process(pid)
                     p.kill()
                     break
-            return jsonify({'response': "YES"})
+            return jsonify({'response': "complete"})
     return redirect("/")
 
 @app.post('/login')#登录

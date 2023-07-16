@@ -556,7 +556,8 @@ $(document).on('click',"#{{ Model[0] }}run",
             state: 'run' ,
             number: $('#{{ Model[0] }}id').val() ,
             comment: $('#{{ Model[0] }}Comment').val() ,
-            url: $('#{{ Model[0] }}url').val() ,
+            type: $('#{{ Model[0] }}Type').val() ,
+            url: $('#{{ Model[0] }}Url').val() ,
             APIkey: $('#{{ Model[0] }}APIkey').val() ,
             LcCompiler: $('#{{ Model[0] }}LcCompiler').val() ,
             LcUrl: $('#{{ Model[0] }}LcUrl').val() ,
@@ -565,6 +566,8 @@ $(document).on('click',"#{{ Model[0] }}run",
             var chatGptResponse = response.response;
             $("#loading").fadeOut(100)
             $('#{{ Model[0] }}run').removeAttr("disabled")
+            $('#{{ Model[0] }}run').fadeOut(1)
+            $('#{{ Model[0] }}stop').fadeIn(1)
         }
     });
 });
@@ -579,7 +582,8 @@ $(document).on('click',"#{{ Model[0] }}stop",
             state: 'stop' ,
             number: $('#{{ Model[0] }}id').val() ,
             comment: $('#{{ Model[0] }}Comment').val() ,
-            url: $('#{{ Model[0] }}url').val() ,
+            type: $('#{{ Model[0] }}Type').val() ,
+            url: $('#{{ Model[0] }}Url').val() ,
             APIkey: $('#{{ Model[0] }}APIkey').val() ,
             LcCompiler: $('#{{ Model[0] }}LcCompiler').val() ,
             LcUrl: $('#{{ Model[0] }}LcUrl').val() ,
@@ -588,6 +592,8 @@ $(document).on('click',"#{{ Model[0] }}stop",
             var chatGptResponse = response.response;
             $("#loading").fadeOut(100)
             $('#{{ Model[0] }}stop').removeAttr("disabled")
+            $('#{{ Model[0] }}stop').fadeOut(1)
+            $('#{{ Model[0] }}run').fadeIn(1)
         }
     });
 });
@@ -601,8 +607,9 @@ $(document).on('click',"#{{ Model[0] }}edit",
         data: {
             state: 'edit' ,
             number: $('#{{ Model[0] }}id').val() ,
+            type: $('#{{ Model[0] }}Type').val() ,
             comment: $('#{{ Model[0] }}Comment').val() ,
-            url: $('#{{ Model[0] }}url').val() ,
+            url: $('#{{ Model[0] }}Url').val() ,
             APIkey: $('#{{ Model[0] }}APIkey').val() ,
             LcCompiler: $('#{{ Model[0] }}LcCompiler').val() ,
             LcUrl: $('#{{ Model[0] }}LcUrl').val() ,
@@ -624,8 +631,9 @@ $(document).on('click',"#{{ Model[0] }}del",
         data: {
             state: 'del' ,
             number: $('#{{ Model[0] }}id').val() ,
+            type: $('#{{ Model[0] }}Type').val() ,
             comment: $('#{{ Model[0] }}Comment').val() ,
-            url: $('#{{ Model[0] }}url').val() ,
+            url: $('#{{ Model[0] }}Url').val() ,
             APIkey: $('#{{ Model[0] }}APIkey').val() ,
             LcCompiler: $('#{{ Model[0] }}LcCompiler').val() ,
             LcUrl: $('#{{ Model[0] }}LcUrl').val() ,
