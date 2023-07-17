@@ -1,6 +1,6 @@
 # data.py | Realizer Version 0.1.6(202307152000) Developer Alpha
 from pathlib import Path
-
+from loguru import logger
 from sqlalchemy import Column, Index, Integer, String, UniqueConstraint, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -9,6 +9,7 @@ from sqlalchemy.orm import sessionmaker
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
 DATABASE_FILE = DATA_DIR / "models.sqlite"
+LOG_FILE = DATA_DIR / "models.log"
 
 Base = declarative_base()
 engine = create_engine(f"sqlite:///{DATABASE_FILE}", echo=True)
@@ -43,6 +44,7 @@ class models(Base):
     APIkey = Column(Integer, nullable=False, comment="密钥")
     LaunchCompiler = Column(String(32), nullable=True, comment="启动编译器")
     LaunchUrl = Column(String(32), nullable=True, comment="启动地址")
+    Display = Column(String(32), nullable=True, comment="显示")
     __table__args__ = (
         UniqueConstraint("id", "url"),  # 联合唯一约束
         Index("url", unique=True),       # 联合唯一索引
@@ -52,29 +54,23 @@ class models(Base):
         return f"object : <id:{self.id} url:{self.url}>"
 
 
-def setup():
-    if not DATA_DIR.exists():
-        DATA_DIR.mkdir()
-    if not DATABASE_FILE.exists():
-        print("Database does not exist and is being created automatically...")
-        Base.metadata.create_all(engine)
-        user_instance = userInfo(
-            account="admin",
-            password="admin1234",
-        )
-        session.add(user_instance)
-        BasisModel = models(
-            type="openai",
-            name="text-davinci-002",
-            url="https:\\\\ai.fakeopen.com\\v1",
-            APIkey="None",
-            LaunchCompiler="NONE",
-            LaunchUrl="NONE",
-        )
-        session.add(BasisModel)
-        session.commit()
-        print("database is created successfully!")
+def SetupDatabase():
+    logger.info("models.sqlite does not exist and is being created automatically...")
+    Base.metadata.create_all(engine)
+    user_instance = userInfo(
+        account="admin",
+        password="admin1234",
+    )
+    session.add(user_instance)
+    BasisModel = models(
+        type="OpenAI",
+        name="text-davinci-002",
+        url="https:\\\\ai.fakeopen.com\\v1",
+        APIkey="None",
+        LaunchCompiler="NONE",
+        LaunchUrl="NONE",
+    )
+    session.add(BasisModel)
+    session.commit()
+    logger.info("models.sqlite is created successfully!")
 
-
-if __name__ == "__main__":
-    setup()

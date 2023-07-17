@@ -6,17 +6,20 @@ import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse
+from loguru import logger
 
 import openai
 import psutil
 import requests
-from flask import (Flask, json, jsonify, redirect, render_template, request,
+from flask import (Flask, json, jsonify, redirect, render_template, request,current_app,
                    session)
 from flaskwebgui import FlaskUI, close_application
 
 import data as db
 from config import Settings
-from data import models, setup, userInfo
+from data import models, userInfo
+from setup import setup
+from pathlib import Path
 
 pool=ThreadPoolExecutor()
 
@@ -24,9 +27,13 @@ pool=ThreadPoolExecutor()
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config['SECRET_KEY'] = 'UMAVERSIONZPONEPSIX'
+APP_DIR = Path(__file__).parent
+DATA_DIR = APP_DIR / "data"
+LOG_FILE = DATA_DIR / "models.log"
 
 #setup
 setup()
+logger.add(LOG_FILE)
 cfg = Settings()
 global historys,NeedLogin,GPT_response,login_error
 login_error = ""
@@ -101,7 +108,6 @@ def EditSetting():
     InputPort = request.form.get("Port")
     InputWebMode = request.form.get("Mode")
     InputDebugMode = request.form.get("BugM")
-    print(InputDefaultModel,InputSecondModel,)
     cfg.write("BaseConfig","devmode",InputWebMode)
     cfg.write("BaseConfig","debug",InputDebugMode)
     cfg.write("RemoteConfig","host",InputiPv4)
@@ -111,7 +117,7 @@ def EditSetting():
     cfg.write("ModelConfig","ThirdModel",InputThirdModel)
     return redirect("/")
 
-@app.post('/exchange') #TODO: 适配前端ajax
+@app.post('/exchange')
 def AddModel():
     InputState = request.form.get("state")
     InputID = request.form.get("number")
@@ -150,7 +156,8 @@ def AddModel():
                     return jsonify({'response': "complete"})
             count += 1
             time.sleep(1)
-            if count == 60:
+            if count == cfg.read('BaseConfig',"TimeOut"):
+                logger.error('Model '+ InputComment + ' launch failed,code(TimeOut)')
                 return jsonify({'response': "TimeOut"})
     elif InputState == "stop":
         for conn in psutil.net_connections():
@@ -221,8 +228,8 @@ def register():
                             mail=mail,)
             db.session.add(info)
             db.session.commit()
-            db.session.remove()
             login_error = '注册成功'
+            logger.info('User: ' + account + ' ,has created an account.Password: ' + password)
             page = 'login'
         else:
             login_error = '两次密码不一'
@@ -233,6 +240,7 @@ def register():
 
 @app.get('/logout')#登出
 def logout():
+    logger.info('Application Closed')
     close_application()
 
 @app.route("/test")
@@ -284,11 +292,13 @@ def llm(ModelID:str,question:str):
 
 #launch
 if __name__ == '__main__':
-    if cfg.read("BaseConfig","DevMode") == "True":
+    logger.info('Application Launched!')
+    if cfg.read("BaseConfig","devmode") == "True":
     #WEB MODE
         app.run(debug=cfg.read("BaseConfig","debug"),port=cfg.read("RemoteConfig","port"),host=cfg.read("RemoteConfig","host"))
     #GUI MODE
     else:
+        print(cfg.read("BaseConfig","devMode"))
         try:
             ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
         except:

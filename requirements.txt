@@ -4,6 +4,8 @@ flaskwebgui
 requests
 openai
 pyautogui
+loguru
+
 
 # dev
 black

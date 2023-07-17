@@ -14,26 +14,15 @@
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
-            {% if DefaultModel != 'None' %}
-            <li id="li_GLM" class="li current" onclick="toGLM()"><span>{{ DefaultModel }}</span></li>
-            {% else %}
-            <li id="li_GLM" class="li current" onclick="toGLM()" style="display: none;"><span>{{ DefaultModel }}</span></li>
-            {% endif %}
-            {% if SecondModel != 'None' %}
-            <li id="li_GPT" class="li" onclick="toGPT()"><span>{{ SecondModel }}</span></li>
-            {% else %}
-            <li id="li_GPT" class="li" onclick="toGPT()" style="display: none;"><span>{{ SecondModel }}</span></li>
-            {% endif %}
-            {% if ThirdModel != 'None' %}
-            <li id="li_SD" class="li" onclick="toSD()"><span>{{ ThirdModel }}</span></li>
-            {% else %}
-            <li id="li_SD" class="li" onclick="toSD()" style="display: none;"><span>{{ ThirdModel }}</span></li>
-            {% endif %}
-            <li id="li_WIG" class="li" onclick="toWIG()"><span>Widgets</span></li>
+            {% for Model in ModelList %}
+            <li id="li" class="li" value={{ Model[0] }}><span>{{ Model[2] }}</span></li>
+            {% endfor %}
+            <li id="li" class="li current" value="-1"><span>Widgets</span></li>
         </ul>
 
-        <!-- TODO: if判断模型类型切换输入框形式 -->
-        <div class="dialogbox_container" id="DefaultBox"> 
+        {% for Model in ModelList %}
+        {% if Model[1] == 'API' %}
+        <div class="dialogbox_container" id={{ Model[0] }} style="display: none;"> 
             <div class="content" id="api-output">
 
             </div>
@@ -44,15 +33,15 @@
                         <span data-placeholder="输入内容" ></span>
                     </div>
                 </div>
-                <input id="api-model-input" name="api-model-input" type="hidden" value={{ DefaultModel }} />
+                <input id="api-model-input" name="api-model-input" type="hidden" value={{ Model[2] }} />
                 <div class="button-area">
                     <button type="button" id="Start"><i class="fa fa-microphone"></i></button>
                     <button type="submit" id="SendAPIInput">发 送</button>
                 </div>
             </div>
         </div>
-
-        <div class="dialogbox_container" id="SecondBox" style="display: none;">
+        {% elif Model[1] == 'OpenAI' %}
+        <div class="dialogbox_container" id={{ Model[0] }} style="display: none;">
                 <div class="content" id="openai-output">
 
                 </div>
@@ -63,7 +52,7 @@
                             <span data-placeholder="输入内容" ></span>
                         </div>
                     </div>
-                    <input name="openai-model-input" id="openai-model-input" type="hidden" value={{ SecondModel }} />
+                    <input name="openai-model-input" id="openai-model-input" type="hidden" value={{ Model[2] }} />
                     <div class="button-area">
                         <button type="button" id="Start"><i class="fa fa-microphone"></i></button>
                         <button type="submit" id="SendOpenaiInput">发 送</button>
@@ -71,11 +60,15 @@
                 </div>
             </div>
 
-        <div id="ThridBox" style="display: none;">
-            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src={{ ThirdBoxURL }}></iframe>
+        {% elif Model[2] == 'WebUI' %}
+
+        <div id="ThridBox" id={{ Model[0] }} style="display: none;">
+            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src={{ Model[3] }}></iframe>
         </div>
 
-        <div id="WidgtBox" style="display: none">
+        {% endif %}
+        {% endfor %}
+        <div id="-1">
             <div class="card_container" style="height: 100vh -10px;">
                 <a href="#">
                     <div class="card_contentbox">
@@ -122,7 +115,7 @@
                         <p>启动地址</p>
                     </td>
                     <td>
-                        <p>运行</p>
+                        <p>运行/暂停</p>
                     </td>
                     <td>
                         <p>删除</p>
@@ -132,10 +125,10 @@
                     </td>
                 </tr>
                 {% for Model in ModelList %}
-                <input type="hidden" name="{{ Model[0] }}id" id="{{ Model[0] }}id" value={{ Model[0] }}>
-                <tr id="{{Model[0]}}ModelTr">
+                <input type="hidden" id="id{{ Model[0] }}" value={{ Model[0] }}>
+                <tr id="ModelTr{{Model[0]}}">
                     <td>
-                        <select name="type" id="{{ Model[0] }}Type">
+                        <select name="type" id="Type{{ Model[0] }}">
                             <option>{{ Model[1] }}</option>
                             <option>OpenAI</option>
                             <option>WebUI</option>
@@ -143,64 +136,64 @@
                         </select>
                     </td>
                     <td> 
-                        <input type="text" name="comment" id="{{ Model[0] }}Comment" placeholder="ChatGLM" value={{ Model[2] }}>
+                        <input type="text" name="comment" id="Comment{{ Model[0] }}" placeholder="ChatGLM" value={{ Model[2] }}>
                     </td>
                     <td>
-                        <input type="text" class="url" id="{{ Model[0] }}Url" name="url" placeholder="127.0.0.1:8000" value={{ Model[3] }}>
+                        <input type="text" class="url" id="Url{{ Model[0] }}" name="url" placeholder="127.0.0.1:8000" value={{ Model[3] }}>
                     </td>
                     <td>
-                        <input type="text" class="url" id="{{ Model[0] }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value={{ Model[4] }}>
+                        <input type="text" class="url" id="APIkey{{ Model[0] }}" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value={{ Model[4] }}>
                     </td>
                     <td>
-                        <input type="TEXT" class="url" id="{{ Model[0] }}LcCompiler" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model[5] }}>
+                        <input type="TEXT" class="url" id="LcCompiler{{ Model[0] }}" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model[5] }}>
                     </td>
                     <td>
-                        <input type="text" class="url" id="{{ Model[0] }}LcUrl" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[6] }}>
+                        <input type="text" class="url" id="LcUrl{{ Model[0] }}" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[6] }}>
                     </td>
                     <td>
-                        <button type="submit" class="allow" id="{{ Model[0] }}run"><i class="fa fa-play"></i></button>
-                        <button type="submit" class="deny" id="{{ Model[0] }}stop" style="display: none;"><i class="fa fa-stop"></i></button>
+                        <button type="submit" class="run" id="run" value="{{ Model[0] }}"><i class="fa fa-play"></i></button>
+                        <button type="submit" class="stop" id="stop" value="{{ Model[0] }}"><i class="fa fa-stop"></i></button>
                     </td>
                     <td>
-                        <button type="submit" class="edit" id="{{ Model[0] }}edit"><i class="fa fa-edit"></i></button>
+                        <button type="submit" class="edit" id="edit" value="{{ Model[0] }}"><i class="fa fa-edit"></i></button>
                     </td>
                     <td>
-                        <button type="submit" class="deny" id="{{ Model[0] }}del"><i class="fa fa-trash"></i></button>
+                        <button type="submit" class="deny" id="del" value="{{ Model[0] }}"><i class="fa fa-trash"></i></button>
                     </td>
                 </tr>
                 {% endfor %}
-                <input type="hidden" id="-1id" value="-1">
+                <input type="hidden" id="id-1" value="-1">
                 <tr id="AddTr">
                     <td>
-                        <select id="-1Type" name="type">
+                        <select id="Type-1" name="type">
                             <option selected>OpenAI</option>
                             <option>WebUI</option>
                             <option>API</option>
                         </select>
                     </td>
                     <td> 
-                        <input type="text" id="-1Comment" placeholder="ChatGLM">
+                        <input type="text" id="Comment-1" placeholder="ChatGLM">
                     </td>
                     <td>
-                        <input type="text" class="url" id="-1Url" placeholder="127.0.0.1:8000">
+                        <input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000">
                     </td>
                     <td>
-                        <input type="text" class="url" id="-1APIkey" placeholder="sk-ahsjfidajfuahfhla & none">
+                        <input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none">
                     </td>
                     <td>
-                        <input type="TEXT" class="url" id="-1LcCompiler" placeholder=".\venv\scripts\python.exe">
+                        <input type="TEXT" class="url" id="LcCompiler-1" placeholder=".\venv\scripts\python.exe">
                     </td>
                     <td>
-                        <input type="TEXT" class="url" id="-1LcUrl" placeholder=".\venv\launch.py">
+                        <input type="TEXT" class="url" id="LcUrl-1" placeholder=".\venv\launch.py">
                     </td>
                     <td>
-                        <button type="submit" class="allow" name="launch" id="add"><i class="fa fa-plus"></i></button>
+                        <button type="submit" class="allow" id="add" value="-1"><i class="fa fa-plus"></i></button>
                     </td>
                     <td>
-                        <button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button>
+                        <button disabled class="edit"><i class="fa fa-ban"></i></button>
                     </td>
                     <td>
-                        <button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button>
+                        <button disabled class="deny"><i class="fa fa-ban"></i></button>
                     </td>
                 </tr>
             </tbody>
@@ -280,10 +273,10 @@
                 <thead>
                     <tr>
                         <th>
-                            <h3>窗口设置  </h3>
+                            <h3>启动设置  </h3>
                         </th>
                         <th>
-                            <h3>Windows Settings</h3>
+                            <h3>Launch Settings</h3>
                         </th>
                     </tr>
                 </thead>
@@ -328,6 +321,14 @@
                                 {% endfor %}
                                 <option value="None">关闭</option>
                             </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>启动等待时间(秒)</p>
+                        </td>
+                        <td>
+                            <input type="number" name="setTimeout" placeholder="60" value={{ TimeOut }} />
                         </td>
                     </tr>
                 </tbody>
@@ -497,6 +498,16 @@ $(".txtb input").on("blur",function(){
     $(this).removeClass("focus")
 })
 
+$(".li").on("click",function(){
+    var now = $("li.current").val()
+    var target = $(this).val()
+    alert(target)
+    $(".current").removeClass("current")
+    $(this).addClass("current")
+    $('#'+now).fadeOut(1)
+    $('#'+target).fadeIn(10)
+})
+
 //ajax交互
 $(document).on('click',"#SendOpenaiInput",
         function() {
@@ -540,111 +551,110 @@ $(document).on('click',"#SendAPIInput",
     });
 });
 
-{% for Model in ModelList %}
-$(document).on('click',"#{{ Model[0] }}run",
-    function() {
+$(".run").on('click',function() {
     $("#loading").fadeIn(100)
-    $('#{{ Model[0] }}run').attr("disabled",true)
+    $(this).attr("disabled",true)
+    var id = $(this).val()
     $.ajax({
         url: '/exchange',
         type: 'POST',
         data: {
             state: 'run' ,
-            number: $('#{{ Model[0] }}id').val() ,
-            comment: $('#{{ Model[0] }}Comment').val() ,
-            type: $('#{{ Model[0] }}Type').val() ,
-            url: $('#{{ Model[0] }}Url').val() ,
-            APIkey: $('#{{ Model[0] }}APIkey').val() ,
-            LcCompiler: $('#{{ Model[0] }}LcCompiler').val() ,
-            LcUrl: $('#{{ Model[0] }}LcUrl').val() ,
+            number: $('#id'+id).val() ,
+            comment: $('#Comment'+id).val() ,
+            type: $('#Type'+id).val() ,
+            url: $('#Url'+id).val() ,
+            APIkey: $('#APIkey'+id).val() ,
+            LcCompiler: $('#LcCompiler'+id).val() ,
+            LcUrl: $('#LcUrl'+id).val() ,
         },
         success: function(response) {
-            var chatGptResponse = response.response;
+            var response = response.response;
+            if (response == 'TimeOut'){
+                alert('TimeOut')
+                $("#loading").fadeOut(100)
+                $(this).removeAttr("disabled")
+            }
             $("#loading").fadeOut(100)
-            $('#{{ Model[0] }}run').removeAttr("disabled")
-            $('#{{ Model[0] }}run').fadeOut(1)
-            $('#{{ Model[0] }}stop').fadeIn(1)
+            $(this).removeAttr("disabled")
         }
     });
 });
-$(document).on('click',"#{{ Model[0] }}stop",
-    function() {
+$(".stop").on('click',function() {
     $("#loading").fadeIn(100)
-    $('#{{ Model[0] }}stop').attr("disabled",true)
+    $('#stop').attr("disabled",true)
+    var id = $(this).val()
     $.ajax({
         url: '/exchange',
         type: 'POST',
         data: {
             state: 'stop' ,
-            number: $('#{{ Model[0] }}id').val() ,
-            comment: $('#{{ Model[0] }}Comment').val() ,
-            type: $('#{{ Model[0] }}Type').val() ,
-            url: $('#{{ Model[0] }}Url').val() ,
-            APIkey: $('#{{ Model[0] }}APIkey').val() ,
-            LcCompiler: $('#{{ Model[0] }}LcCompiler').val() ,
-            LcUrl: $('#{{ Model[0] }}LcUrl').val() ,
+            number: $('#id'+id).val() ,
+            comment: $('#Comment'+id).val() ,
+            type: $('#Type'+id).val() ,
+            url: $('#Url'+id).val() ,
+            APIkey: $('#APIkey'+id).val() ,
+            LcCompiler: $('#LcCompiler'+id).val() ,
+            LcUrl: $('#LcUrl'+id).val() ,
         },
         success: function(response) {
-            var chatGptResponse = response.response;
+            var Response = response.response;
             $("#loading").fadeOut(100)
-            $('#{{ Model[0] }}stop').removeAttr("disabled")
-            $('#{{ Model[0] }}stop').fadeOut(1)
-            $('#{{ Model[0] }}run').fadeIn(1)
+            $('#stop').removeAttr("disabled")
         }
     });
 });
-$(document).on('click',"#{{ Model[0] }}edit",
-    function() {
+$(".edit").on('click',function() {
     $("#loading").fadeIn(100)
-    $('#{{ Model[0] }}edit').attr("disabled",true)
+    $(this).attr("disabled",true)
+    var id = $(this).val()
     $.ajax({
         url: '/exchange',
         type: 'POST',
         data: {
             state: 'edit' ,
-            number: $('#{{ Model[0] }}id').val() ,
-            type: $('#{{ Model[0] }}Type').val() ,
-            comment: $('#{{ Model[0] }}Comment').val() ,
-            url: $('#{{ Model[0] }}Url').val() ,
-            APIkey: $('#{{ Model[0] }}APIkey').val() ,
-            LcCompiler: $('#{{ Model[0] }}LcCompiler').val() ,
-            LcUrl: $('#{{ Model[0] }}LcUrl').val() ,
+            number: $('#id'+id).val() ,
+            comment: $('#Comment'+id).val() ,
+            type: $('#Type'+id).val() ,
+            url: $('#Url'+id).val() ,
+            APIkey: $('#APIkey'+id).val() ,
+            LcCompiler: $('#LcCompiler'+id).val() ,
+            LcUrl: $('#LcUrl'+id).val() ,
         },
         success: function(response) {
-            var chatGptResponse = response.response;
+            var Response = response.response;
             $("#loading").fadeOut(100)
-            $('#{{ Model[0] }}edit').removeAttr("disabled")
+            $(this).removeAttr("disabled")
         }
     });
 });
-$(document).on('click',"#{{ Model[0] }}del",
-    function() {
+$(".deny").on('click',function() {
     $("#loading").fadeIn(100)
-    $('#{{ Model[0] }}del').attr("disabled",true)
+    $(this).attr("disabled",true)
+    var id = $(this).val()
     $.ajax({
         url: '/exchange',
         type: 'POST',
         data: {
             state: 'del' ,
-            number: $('#{{ Model[0] }}id').val() ,
-            type: $('#{{ Model[0] }}Type').val() ,
-            comment: $('#{{ Model[0] }}Comment').val() ,
-            url: $('#{{ Model[0] }}Url').val() ,
-            APIkey: $('#{{ Model[0] }}APIkey').val() ,
-            LcCompiler: $('#{{ Model[0] }}LcCompiler').val() ,
-            LcUrl: $('#{{ Model[0] }}LcUrl').val() ,
+            number: $('#id'+id).val() ,
+            comment: $('#Comment'+id).val() ,
+            type: $('#Type'+id).val() ,
+            url: $('#Url'+id).val() ,
+            APIkey: $('#APIkey'+id).val() ,
+            LcCompiler: $('#LcCompiler'+id).val() ,
+            LcUrl: $('#LcUrl'+id).val() ,
         },
         success: function(response) {
-            $('#{{ Model[0] }}id').remove()
-            $('#{{ Model[0] }}ModelTr').remove()
+            $('#id'+id).remove()
+            $('#ModelTr'+id).remove()
             $("#loading").fadeOut(100)
-            $('#{{ Model[0] }}del').removeAttr("disabled")
+            $(this).removeAttr("disabled")
         }
     });
 });
-{% endfor %}
 
-$(document).on('click',"#add",
+$("#add").on('click',
     function() {
     $("#loading").fadeIn(100)
     $('#add').attr("disabled",true)
@@ -653,22 +663,22 @@ $(document).on('click',"#add",
         type: 'POST',
         data: {
             state: 'add' ,
-            number: $('#-1id').val() ,
-            type: $('#-1Type').val() ,
-            comment: $('#-1Comment').val() ,
-            url: $('#-1Url').val() ,
-            APIkey: $('#-1APIkey').val() ,
-            LcCompiler: $('#-1LcCompiler').val() ,
-            LcUrl: $('#-1LcUrl').val() ,
+            number: $('#id').val() ,
+            type: $('#Type-1').val() ,
+            comment: $('#Comment-1').val() ,
+            url: $('#Url-1').val() ,
+            APIkey: $('#APIkey-1').val() ,
+            LcCompiler: $('#LcCompiler-1').val() ,
+            LcUrl: $('#LcUrl-1').val() ,
         },
         success: function(response) {
             $('#ModelTable').append('<input type="hidden" name="{{ ModelCount }}id" id="{{ ModelCount }}id" value={{ ModelCount }}>')
-            $('#ModelTable').append('<tr><td><select name="type" id="{{ ModelCount }}Type">            <option>' + $('#-1Type').val() + '</option>            <option>OpenAI</option>            <option>WebUI</option>            <option>API</option>        </select></td>    <td> <input type="text" name="comment" id="{{ ModelCount }}Comment" placeholder="ChatGLM" value=' + $('#-1Comment').val() + ' ></td>    <td><input type="text" class="url" id="{{ ModelCount }}Url" name="url" placeholder="127.0.0.1:8000" value=' + $('#-1Url').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value=' + $('#-1APIkey').val() + '></td>    <td><input type="TEXT" class="url" id="{{ ModelCount }}LcCompiler" name="LcCompiler" placeholder=".\\venv\\python.exe & OpenAI" value=' + $('#-1LcCompiler').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}LcUrl" name="LCurl" placeholder=".\\ChatGLM\\launch.py" value=' + $('#-1LcUrl').val() + '></td>    <td><button type="submit" class="allow" id="{{ ModelCount }}run"><i class="fa fa-play"></i></button><button type="submit" class="deny" id="{{ ModelCount }}stop" style="display: none;"><i class="fa fa-stop"></i></button></td>    <td><button type="submit" class="edit" id="{{ ModelCount }}edit"><i class="fa fa-edit"></i></button></td>    <td><button type="submit" class="deny" id="{{ ModelCount }}del"><i class="fa fa-trash"></i></button></td></tr>')
+            $('#ModelTable').append('<tr><td><select name="type" id="{{ ModelCount }}Type">            <option>' + $('#Type-1').val() + '</option>            <option>OpenAI</option>            <option>WebUI</option>            <option>API</option>        </select></td>    <td> <input type="text" name="comment" id="{{ ModelCount }}Comment" placeholder="ChatGLM" value=' + $('#Comment-1').val() + ' ></td>    <td><input type="text" class="url" id="{{ ModelCount }}Url" name="url" placeholder="127.0.0.1:8000" value=' + $('#Url-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value=' + $('#APIkey-1').val() + '></td>    <td><input type="TEXT" class="url" id="{{ ModelCount }}LcCompiler" name="LcCompiler" placeholder=".\\venv\\python.exe & OpenAI" value=' + $('#LcCompiler-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}LcUrl" name="LCurl" placeholder=".\\ChatGLM\\launch.py" value=' + $('#LcUrl-1').val() + '></td>    <td><button type="submit" class="allow" id="{{ ModelCount }}run"><i class="fa fa-play"></i></button><button type="submit" class="deny" id="{{ ModelCount }}stop" style="display: none;"><i class="fa fa-stop"></i></button></td>    <td><button type="submit" class="edit" id="{{ ModelCount }}edit"><i class="fa fa-edit"></i></button></td>    <td><button type="submit" class="deny" id="{{ ModelCount }}del"><i class="fa fa-trash"></i></button></td></tr>')
             $("#loading").fadeOut(100)
-            $('#-1id').remove()
+            $('#id-1').remove()
             $('#AddTr').remove()
-            $('#ModelTable').append('<input type="hidden" id="-1id" value="-1">')
-            $('#ModelTable').append('<tr id="AddTr"><td><select id="-1Type" name="type"><option selected>OpenAI</option><option>WebUI</option><option>API</option></select></td><td> <input type="text" id="-1Comment" placeholder="ChatGLM"></td><td><input type="text" class="url" id="-1Url" placeholder="127.0.0.1:8000"></td><td><input type="text" class="url" id="-1APIkey" placeholder="sk-ahsjfidajfuahfhla & none"></td><td><input type="TEXT" class="url" id="-1LcCompiler" placeholder=".\\venv\\scripts\\python.exe"></td><td><input type="TEXT" class="url" id="-1LcUrl" placeholder=".\\venv\\launch.py"></td><td><button type="submit" class="allow" name="launch" id="add"><i class="fa fa-plus"></i></button></td><td><button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button></td><td><button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button></td></tr>')
+            $('#ModelTable').append('<input type="hidden" id="id-1" value="-1">')
+            $('#ModelTable').append('<tr id="AddTr"><td><select id="Type-1" name="type"><option selected>OpenAI</option><option>WebUI</option><option>API</option></select></td><td> <input type="text" id="Comment-1" placeholder="ChatGLM"></td><td><input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000"></td><td><input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none"></td><td><input type="TEXT" class="url" id="LcCompiler-1p" placeholder=".\\venv\\scripts\\python.exe"></td><td><input type="TEXT" class="url" id="LcUrl-1" placeholder=".\\venv\\launch.py"></td><td><button type="submit" class="allow" name="launch" id="add"><i class="fa fa-plus"></i></button></td><td><button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button></td><td><button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button></td></tr>')
             $('#add').removeAttr("disabled")
         }
     });

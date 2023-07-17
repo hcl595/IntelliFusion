@@ -871,12 +871,16 @@ textarea{
 
 
 /* Others */
-.allow {
+.run {
   background-color: rgba(117, 255, 89, 0.671);
   border-radius:20px;
 }
-.deny {
+.stop,.deny {
   background-color: rgba(255, 89, 89, 0.671);
+  border-radius:20px;
+}
+.close {
+  background-color: rgba(255, 225, 89, 0.671);
   border-radius:20px;
 }
 .edit {
