@@ -494,7 +494,7 @@ ul.tab li.li:last-child{border-right: 1px solid #C5D0DC;}
 .content{
   max-width: calc(100% - 40px);
   max-height: 90vh;
-  overflow-y: scroll;
+  overflow-y: auto;
   flex: 1;
 }
 .content:hover::-webkit-scrollbar-thumb{
@@ -585,8 +585,7 @@ textarea{
   font-size: 14px;
   border: none;
   cursor: pointer;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: auto;
   outline:none;
   resize:none;
   border-radius: 1rem;
@@ -609,57 +608,13 @@ textarea{
   float: right;
   cursor: pointer;
 }
-/* 设置滚动条的样式 */
-::-webkit-scrollbar {
-  width:10px;
-  border-radius:18px;
-}
-/* 滚动槽 */
-::-webkit-scrollbar-track {
-  -webkit-box-shadow:inset006pxrgba(0,0,0,0.3);
-  border-radius:18px;
-}
-/* 滚动条滑块 */
-::-webkit-scrollbar-thumb {
-  border-radius:10px;
-  background:rgba(0,0,0,0);
-  -webkit-box-shadow:inset006pxrgba(0,0,0,0.5);
-  border-radius:18px;
-}
+
 
 /* Widgets */
 
 .widgets_container {
   float: right;
 }
-
-/* Typing */
-.typing {
-  /* 初始宽度为0 */
-  width: 0;
-  height: 30px;
-  border-right: 1px solid darkgray;
-  animation: write 4s steps(14) forwards,
-    blink 0.5s steps(1) infinite;
-    overflow-x: auto;
-}
-
-@keyframes write {
-  0% {
-    width: 0;
-  }
-  100% {
-    width: 400px;
-  }
-}
-
-@keyframes blink {
-  50% {
-    /* transparent是全透明黑色(black)的速记法，即一个类似rgba(0,0,0,0)这样的值。 */
-    border-color: transparent; /* #00000000 */
-  }
-}
-
 
 /* Loading */
 
@@ -710,17 +665,55 @@ textarea{
 
 /* Cards */
 
+.widgets_container {
+  max-width: 100%;
+  max-height: 100vh;
+  min-height: 95vh;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  overflow: auto;
+  backdrop-filter: blur(20px);
+}
+.widgets_contentbox {
+  width: 320px;
+  height: 320px;
+  margin: 10px;
+  position: relative;
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.486);
+  box-shadow: 5px 5px 10px 0px lightgray;
+  border-radius: 10px;
+  transition: 0.3s;
+  word-break:break-word;
+  white-space: nowrap; 
+  overflow: auto;
+}
+.widgets_contentbox h2 {
+  margin-left: 20px;
+  color: black;
+}
+.widgets_contentbox p {
+  margin-left: 20px;
+  color: black;
+}
+.widgets_contentbox:hover {
+  scale: 0.97;
+  box-shadow: none;
+} 
+
+
 .card_container {
   max-width: 100%;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  overflow: scroll;
+  overflow: auto;
   backdrop-filter: blur(20px);
 }
 .card_contentbox {
-  width: 350px;
-  height: 200px;
+  width: 320px;
+  height: 320px;
   margin: 10px;
   position: relative;
   display: inline-block;
@@ -730,7 +723,7 @@ textarea{
   transition: 0.3s;
   word-break:break-word;
   white-space:pre-line; 
-  overflow: scroll;
+  overflow: auto;
 }
 .card_contentbox h2 {
   margin-left: 20px;
@@ -744,7 +737,6 @@ textarea{
   scale: 0.97;
   box-shadow: none;
 } 
-
 
 /* Pages */
 
@@ -769,11 +761,11 @@ textarea{
   background: rgba(230, 235, 240, .7);
   border: 2px solid rgba(230, 235, 240, .7);
   box-shadow: 0 0 30px rgba(0, 0, 0, .05);
-  overflow: scroll;
+  overflow: auto;
 }
 .account table{
   margin: 20px;
-  overflow: scroll;
+  overflow: auto;
 }
 .account table select{
   border-radius: 20px;
@@ -807,6 +799,15 @@ textarea{
   overflow: hidden;
 }
 
+.widgets {
+  height: 100vh;
+  min-width: 60%;
+  max-width: 100%;
+  display: flex;
+  overflow: hidden;
+  flex-flow: column;
+}
+
 .settings {
   height: 100vh;
   min-width: 40px;
@@ -818,7 +819,7 @@ textarea{
   background: rgba(230, 235, 240, .7);
   border: 2px solid rgba(230, 235, 240, .7);
   box-shadow: 0 0 30px rgba(0, 0, 0, .05);
-  overflow: scroll;
+  overflow: auto;
 }
 .settings .content .table{
   margin: 20px;
@@ -857,6 +858,7 @@ textarea{
   box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
   position: relative;
   overflow: hidden;
+  margin: auto;
   min-width: 768px;
   max-width: 100%;
   min-height: 480px;   
@@ -872,6 +874,11 @@ textarea{
 
 /* Others */
 .run {
+  background-color: rgba(117, 255, 89, 0.671);
+  border-radius:20px;
+}
+.add {
+  width: 70px;
   background-color: rgba(117, 255, 89, 0.671);
   border-radius:20px;
 }

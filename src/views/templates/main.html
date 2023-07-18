@@ -40,7 +40,8 @@
                 </div>
             </div>
         </div>
-        {% elif Model[1] == 'OpenAI' %}
+        {% endif %}
+        {% if Model[1] == 'OpenAI' %}
         <div class="dialogbox_container" id={{ Model[0] }} style="display: none;">
                 <div class="content" id="openai-output">
 
@@ -59,24 +60,31 @@
                     </div>
                 </div>
             </div>
-
-        {% elif Model[2] == 'WebUI' %}
-
-        <div id="ThridBox" id={{ Model[0] }} style="display: none;">
+        {% endif %}
+        {% if Model[1] == 'WebUI' %}
+        <div  id={{ Model[0] }} style="display: none;">
             <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src={{ Model[3] }}></iframe>
         </div>
-
         {% endif %}
         {% endfor %}
         <div id="-1">
-            <div class="card_container" style="height: 100vh -10px;">
-                <a href="#">
-                    <div class="card_contentbox">
-                        <h2>小组件</h2>
-                        <p>敬请期待</p>
-                    </div>
-                </a>
-                
+            <div class="widgets_container">
+                <div class="widgets_contentbox">
+                    <h5 style="margin-left: 30%;">CPU占用率</h5>
+                    <iframe src="/widgets/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                </div>
+                <div class="widgets_contentbox">
+                    <h5 style="margin-left: 30%;">RAM占用率</h5>
+                    <iframe src="/widgets/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                </div>
+                <div class="widgets_contentbox">
+                    <h5 style="margin-left: 30%;">CPU占用率</h5>
+                    <iframe src="/widgets/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                </div>
+                <div class="widgets_contentbox">
+                    <h5 style="margin-left: 30%;">RAM占用率</h5>
+                    <iframe src="/widgets/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                </div>
             </div>
         </div>
     </div>
@@ -145,7 +153,7 @@
                         <input type="text" class="url" id="APIkey{{ Model[0] }}" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value={{ Model[4] }}>
                     </td>
                     <td>
-                        <input type="TEXT" class="url" id="LcCompiler{{ Model[0] }}" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model[5] }}>
+                        <input type="text" class="url" id="LcCompiler{{ Model[0] }}" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model[5] }}>
                     </td>
                     <td>
                         <input type="text" class="url" id="LcUrl{{ Model[0] }}" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[6] }}>
@@ -187,7 +195,7 @@
                         <input type="TEXT" class="url" id="LcUrl-1" placeholder=".\venv\launch.py">
                     </td>
                     <td>
-                        <button type="submit" class="allow" id="add" value="-1"><i class="fa fa-plus"></i></button>
+                        <button type="submit" class="add" id="add" value="-1"><i class="fa fa-plus"></i></button>
                     </td>
                     <td>
                         <button disabled class="edit"><i class="fa fa-ban"></i></button>
@@ -202,41 +210,15 @@
 </div>
 
 <div class="widgets" id="widgets-box" style="display: none;">
-    <div class="card_container">
-        <a href="#">
-            <div class="card_contentbox">
-                <h2>小组件</h2>
-                <p>Coming Soon!</p>
-            </div>
-        </a>
-
-        <a href="#">
-            <div class="card_contentbox">
-                <h2>小组件</h2>
-                <p>Coming Soon!</p>
-            </div>
-        </a>
-
-        <a href="#">
-            <div class="card_contentbox">
-                <h2>小组件</h2>
-                <p>Coming Soon!</p>
-            </div>
-        </a>
-
-        <a href="#">
-            <div class="card_contentbox">
-                <h2>小组件</h2>
-                <p>Coming Soon!</p>
-            </div>
-        </a>
-
-        <a href="#">
-            <div class="card_contentbox">
-                <h2>小组件</h2>
-                <p>Coming Soon!</p>
-            </div>
-        </a>
+    <div class="widgets_container">
+        <div class="widgets_contentbox">
+            <h5 style="margin-left: 30%;">CPU占用率</h5>
+            <iframe src="/widgets/CorePercent" style="width: 300PX; height: 300px; margin-right: auto;" frameborder=0></iframe>
+        </div>
+        <div class="widgets_contentbox">
+            <h5 style="margin-left: 30%;">RAM占用率</h5>
+            <iframe src="/widgets/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+        </div>
     </div>
 </div>
 
@@ -281,48 +263,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            <p>默认窗口</p>
-                        </td>
-                        <td>
-                            <select name="DefaultModel">
-                                <option>{{ DefaultModel }}</option>
-                                {% for Model in ModelList %}
-                                <option value={{ Model[2] }}>{{ Model[2] }}</option>
-                                {% endfor %}
-                                <option value="None">关闭</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>第二窗口</p>
-                        </td>
-                        <td>
-                            <select name="SecondModel">
-                                <option>{{ SecondModel }}</option>
-                                {% for Model in ModelList %}
-                                <option value={{ Model[2] }}>{{ Model[2] }}</option>
-                                {% endfor %}
-                                <option value="None">关闭</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>第三窗口</p>
-                        </td>
-                        <td>
-                            <select name="ThirdModel">
-                                <option>{{ ThirdModel }}</option>
-                                {% for Model in ModelList %}
-                                <option value={{ Model[2] }}>{{ Model[2] }}</option>
-                                {% endfor %}
-                                <option value="None">关闭</option>
-                            </select>
-                        </td>
-                    </tr>
                     <tr>
                         <td>
                             <p>启动等待时间(秒)</p>
@@ -398,7 +338,7 @@
             <hr class="line">
         </div>
         <button type="submit" class="deny" style="float: left;margin-left: 10px;margin-right: 10px;" onclick="loading()">重置</button>
-        <button type="submit" class="allow" style="float: right;margin-left: 10px;margin-right: 10px;" onclick="loading()">更改</button>
+        <button type="submit" class="add" style="float: right;margin-left: 10px;margin-right: 10px;" onclick="loading()">更改</button>
     </form>
 
     
@@ -501,7 +441,6 @@ $(".txtb input").on("blur",function(){
 $(".li").on("click",function(){
     var now = $("li.current").val()
     var target = $(this).val()
-    alert(target)
     $(".current").removeClass("current")
     $(this).addClass("current")
     $('#'+now).fadeOut(1)
@@ -618,7 +557,7 @@ $(".edit").on('click',function() {
             type: $('#Type'+id).val() ,
             url: $('#Url'+id).val() ,
             APIkey: $('#APIkey'+id).val() ,
-            LcCompiler: $('#LcCompiler'+id).val() ,
+            LcCompiler: $('#LcCompiler'+id).val(),
             LcUrl: $('#LcUrl'+id).val() ,
         },
         success: function(response) {
@@ -673,27 +612,24 @@ $("#add").on('click',
         },
         success: function(response) {
             $('#ModelTable').append('<input type="hidden" name="{{ ModelCount }}id" id="{{ ModelCount }}id" value={{ ModelCount }}>')
-            $('#ModelTable').append('<tr><td><select name="type" id="{{ ModelCount }}Type">            <option>' + $('#Type-1').val() + '</option>            <option>OpenAI</option>            <option>WebUI</option>            <option>API</option>        </select></td>    <td> <input type="text" name="comment" id="{{ ModelCount }}Comment" placeholder="ChatGLM" value=' + $('#Comment-1').val() + ' ></td>    <td><input type="text" class="url" id="{{ ModelCount }}Url" name="url" placeholder="127.0.0.1:8000" value=' + $('#Url-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value=' + $('#APIkey-1').val() + '></td>    <td><input type="TEXT" class="url" id="{{ ModelCount }}LcCompiler" name="LcCompiler" placeholder=".\\venv\\python.exe & OpenAI" value=' + $('#LcCompiler-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}LcUrl" name="LCurl" placeholder=".\\ChatGLM\\launch.py" value=' + $('#LcUrl-1').val() + '></td>    <td><button type="submit" class="allow" id="{{ ModelCount }}run"><i class="fa fa-play"></i></button><button type="submit" class="deny" id="{{ ModelCount }}stop" style="display: none;"><i class="fa fa-stop"></i></button></td>    <td><button type="submit" class="edit" id="{{ ModelCount }}edit"><i class="fa fa-edit"></i></button></td>    <td><button type="submit" class="deny" id="{{ ModelCount }}del"><i class="fa fa-trash"></i></button></td></tr>')
+            $('#ModelTable').append('<tr><td><select name="type" id="{{ ModelCount }}Type">            <option>' + $('#Type-1').val() + '</option>            <option>OpenAI</option>            <option>WebUI</option>            <option>API</option>        </select></td>    <td> <input type="text" name="comment" id="{{ ModelCount }}Comment" placeholder="ChatGLM" value=' + $('#Comment-1').val() + ' ></td>    <td><input type="text" class="url" id="{{ ModelCount }}Url" name="url" placeholder="127.0.0.1:8000" value=' + $('#Url-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value=' + $('#APIkey-1').val() + '></td>    <td><input type="TEXT" class="url" id="{{ ModelCount }}LcCompiler" name="LcCompiler" placeholder=".\\venv\\python.exe & OpenAI" value=' + $('#LcCompiler-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}LcUrl" name="LCurl" placeholder=".\\ChatGLM\\launch.py" value=' + $('#LcUrl-1').val() + '></td>    <td><button type="submit" class="run" id="{{ ModelCount }}run"><i class="fa fa-play"></i></button><button type="submit" class="deny" id="{{ ModelCount }}stop" style="display: none;"><i class="fa fa-stop"></i></button></td>    <td><button type="submit" class="edit" id="{{ ModelCount }}edit"><i class="fa fa-edit"></i></button></td>    <td><button type="submit" class="deny" id="{{ ModelCount }}del"><i class="fa fa-trash"></i></button></td></tr>')
             $("#loading").fadeOut(100)
             $('#id-1').remove()
             $('#AddTr').remove()
             $('#ModelTable').append('<input type="hidden" id="id-1" value="-1">')
-            $('#ModelTable').append('<tr id="AddTr"><td><select id="Type-1" name="type"><option selected>OpenAI</option><option>WebUI</option><option>API</option></select></td><td> <input type="text" id="Comment-1" placeholder="ChatGLM"></td><td><input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000"></td><td><input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none"></td><td><input type="TEXT" class="url" id="LcCompiler-1p" placeholder=".\\venv\\scripts\\python.exe"></td><td><input type="TEXT" class="url" id="LcUrl-1" placeholder=".\\venv\\launch.py"></td><td><button type="submit" class="allow" name="launch" id="add"><i class="fa fa-plus"></i></button></td><td><button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button></td><td><button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button></td></tr>')
+            $('#ModelTable').append('<tr id="AddTr"><td><select id="Type-1" name="type"><option selected>OpenAI</option><option>WebUI</option><option>API</option></select></td><td> <input type="text" id="Comment-1" placeholder="ChatGLM"></td><td><input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000"></td><td><input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none"></td><td><input type="TEXT" class="url" id="LcCompiler-1p" placeholder=".\\venv\\scripts\\python.exe"></td><td><input type="TEXT" class="url" id="LcUrl-1" placeholder=".\\venv\\launch.py"></td><td><button type="submit" class="add" name="launch" id="add"><i class="fa fa-plus"></i></button></td><td><button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button></td><td><button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button></td></tr>')
             $('#add').removeAttr("disabled")
         }
     });
 });
 
-
-    //CommitModel
+//CommitModel
 function loading(){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
 }
 
-
-
-//launch model
+//get FilePath
 
 
 

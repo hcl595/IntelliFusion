@@ -6,9 +6,10 @@ stable-diffusion-webui
 stable-diffusion-webui.zip
 stable-diffusion-webui/*
 tmp
-src/data/*
-src/__pycache__
-src/templates/test.html
+src/views/data/*
+src/views/__pycache__
+src/views/widgets/__pycache__
+src/views/templates/test.html
 release/
 exe.json
 setup.iss
