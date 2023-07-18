@@ -12,7 +12,7 @@ from loguru import logger
 import openai
 import psutil
 import requests
-from flask import (Flask, json, jsonify, redirect, render_template, request,current_app,
+from flask import (Flask, json, jsonify, redirect, render_template, request,
                    session)
 from flaskwebgui import FlaskUI, close_application
 
@@ -28,7 +28,7 @@ pool=ThreadPoolExecutor()
 #configs
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SECRET_KEY'] = 'UMAVERSIONZPONEPSIX'
+app.config['SECRET_KEY'] = 'UMAVERSIONZPONEPSEV'
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
 LOG_FILE = DATA_DIR / "models.log"
@@ -273,7 +273,7 @@ app.register_blueprint(widgets_blue)
 def ai(ModelID:str,question:str):
     response = ""
     openai.api_base = db.session.query(models.url).filter(models.name == ModelID).one()[0]
-    openai.api_key = db.session.query(models.APIkey).filter(models.name == ModelID).one()
+    openai.api_key = db.session.query(models.APIkey).filter(models.name == ModelID).one()[0]
     for chunk in openai.ChatCompletion.create(
         model=ModelID,
         messages=[

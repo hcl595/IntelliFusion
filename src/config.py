@@ -1,4 +1,4 @@
-# config.py | Realizer Version 0.1.6(202307152000) Developer Alpha
+# config.py | Realizer Version 0.1.7(202307182000) Developer Alpha
 import json
 from pathlib import Path
 from loguru import logger
