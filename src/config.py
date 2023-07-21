@@ -1,12 +1,10 @@
 # config.py | Realizer Version 0.1.7(202307182000) Developer Alpha
 import json
 from pathlib import Path
-from loguru import logger
 from typing import Any
 
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
-LOG_FILE = DATA_DIR / "models.log"
 CONFIG_FILE = DATA_DIR / "config.json"
 
 

@@ -9,7 +9,6 @@ from sqlalchemy.orm import sessionmaker
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
 DATABASE_FILE = DATA_DIR / "models.sqlite"
-LOG_FILE = DATA_DIR / "models.log"
 
 Base = declarative_base()
 engine = create_engine(f"sqlite:///{DATABASE_FILE}", echo=True)
@@ -55,7 +54,6 @@ class models(Base):
 
 
 def SetupDatabase():
-    logger.info("models.sqlite does not exist and is being created automatically...")
     Base.metadata.create_all(engine)
     user_instance = userInfo(
         account="admin",
@@ -64,7 +62,7 @@ def SetupDatabase():
     session.add(user_instance)
     BasisModel = models(
         type="OpenAI",
-        name="text-davinci-002",
+        name="text-davinci-003",
         url="https:\\\\ai.fakeopen.com\\v1",
         APIkey="None",
         LaunchCompiler="NONE",
@@ -72,5 +70,4 @@ def SetupDatabase():
     )
     session.add(BasisModel)
     session.commit()
-    logger.info("models.sqlite is created successfully!")
 
