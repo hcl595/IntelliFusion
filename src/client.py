@@ -8,7 +8,6 @@ from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse
 from loguru import logger
 
-from pyecharts import options as opts
 from pyecharts.charts import Pie
 import openai
 import psutil

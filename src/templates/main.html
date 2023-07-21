@@ -473,8 +473,9 @@ $(document).on('click',"#SendOpenaiInput",
 $(document).on('click',"#SendAPIInput",
     function() {
     var id = $(this).val();
-    $("#loading").fadeIn(100)
-    $('#api-output').append('<div class="item item-right"><div class="bubble bubble-right">' + $('#api-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+    alert(id); //TODO: doesn't work
+    $("#loading").fadeIn(100);
+    $('#api-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#api-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
     $.ajax({
         url: '/llm',
         type: 'POST',
