@@ -1,4 +1,5 @@
 import json
+import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse
@@ -6,38 +7,28 @@ from urllib.parse import urlparse
 import openai
 import psutil
 import requests
-from client.config import Settings
-from client.models import ModelList
-from django.http import ( HttpResponseRedirect, JsonResponse,
-                         request)
+from django.http import HttpResponseRedirect, JsonResponse, request
 from django.shortcuts import render
-from flaskwebgui import  close_application
+from flaskwebgui import close_application
 from loguru import logger
 from pyecharts.charts import Pie
 
-logger.add('./data/log.log')
+from client.config import Settings
+from client.models import ModelList
 
 # Create your views here.
-global historys,NeedLogin,GPT_response,login_error
-login_error = ""
-response = {
-        'response': '',
-        'history': [['', '']],
-        'status': 200,
-        'time': '1234-05-06 07:08:09'}
-GPT_response = []
 LLM_response = []
 GLM_response = []
 result = None
 NeedLogin = True
-historys = response['history']
 
+#SetUp
 cfg = Settings()
 pool=ThreadPoolExecutor()
+logger.add('./data/log.log')
 
 #main
 def root(request):
-    print(login_error)
     Models = ModelList.objects.all()
     try:
         ThirdBoxURL = ModelList.objects.filter(ModelList.name == cfg.read("ModelConfig","ThirdModel")).first()
@@ -59,30 +50,30 @@ def root(request):
                 'ThirdModel' : cfg.read("ModelConfig","ThirdModel"),
                 'username' : 'NONE'})
 
-def request_api_response():
+def request_api_response(request):
     global result,LLM_response
-    InputInfo = request.form['userinput']
-    InputModel =request.form["modelinput"]
+    InputInfo = request.POST['userinput']
+    InputModel =request.POST["modelinput"]
     print(InputInfo,InputModel)
     LLM_response = llm(InputModel,InputInfo)
-    return JsonResponse({'response': LLM_response})
+    return JsonResponse(request,{'response': LLM_response})
 
-def request_openai_response():
+def request_openai_response(request):
     global GLM_response
-    InputInfo = request.form['userinput']
-    InputModel = request.form["modelinput"]
-    logger.client("request:{}.model:{}",InputInfo,InputModel)
+    InputInfo = request.POST.POST['userinput']
+    InputModel = request.POST.POST["modelinput"]
+    logger.debug("request:{}.model:{}",InputInfo,InputModel)
     openai_response = ai(InputModel,InputInfo)
-    return JsonResponse({'response': openai_response})#ajax返回
+    return JsonResponse(request,{'response': openai_response})#ajax返回
 
-def EditSetting():
+def EditSetting(request):
     InputDefaultModel = request.POST.get("DefaultModel")
-    InputSecondModel = request.form.get("SecondModel")
-    InputThirdModel = request.form.get("ThirdModel")
-    InputiPv4 = request.form.get("iPv4")
-    InputPort = request.form.get("Port")
-    InputWebMode = request.form.get("Mode")
-    InputclientMode = request.form.get("BugM")
+    InputSecondModel = request.POST.get("SecondModel")
+    InputThirdModel = request.POST.get("ThirdModel")
+    InputiPv4 = request.POST.get("iPv4")
+    InputPort = request.POST.get("Port")
+    InputWebMode = request.POST.get("Mode")
+    InputclientMode = request.POST.get("BugM")
     cfg.write("BaseConfig","devmode",InputWebMode)
     cfg.write("BaseConfig","client",InputclientMode)
     cfg.write("RemoteConfig","host",InputiPv4)
@@ -92,20 +83,19 @@ def EditSetting():
     cfg.write("ModelConfig","ThirdModel",InputThirdModel)
     return HttpResponseRedirect("/")
 
-def ManageModel():
-    InputState = request.form.get("state")
-    InputID = request.form.get("number")
-    InputType = request.form.get("type")
-    InputComment = request.form.get("comment")
-    InputUrl = request.form.get("url")
-    InputAPIkey = request.form.get("APIkey")
-    LaunchCompiler = request.form.get("LcCompiler")
-    LaunchUrl = request.form.get("LcUrl")
+def ManageModel(request):
+    InputState = request.POST.get("state")
+    InputID = request.POST.get("number")
+    InputType = request.POST.get("type")
+    InputComment = request.POST.get("comment")
+    InputUrl = request.POST.get("url")
+    InputAPIkey = request.POST.get("APIkey")
+    LaunchCompiler = request.POST.get("LcCompiler")
+    LaunchUrl = request.POST.get("LcUrl")
     try:
         port = int(urlparse(InputUrl).port)
     except:
         port = 80
-    logger.client(LaunchCompiler)
     if InputState == "edit":
         db.session.query(db.models).filter(models.id == InputID).update({
                                 db.models.type: InputType,
@@ -122,7 +112,7 @@ def ManageModel():
         db.session.commit()
         return JsonResponse({'response': "complete"})
     elif InputState == "run":
-        launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LcUrl")
+        launchCMD = request.POST.get("LcCompiler") + " " + request.POST.get("LcUrl")
         pool.submit(subprocess.run, launchCMD)
         count = 0
         while True:
@@ -157,8 +147,8 @@ def ManageModel():
 
 # def login_check():
 #     global login_error,choose,page
-#     account = request.form.get("logid")
-#     password = request.form.get("password")
+#     account = request.POST.get("logid")
+#     password = request.POST.get("password")
 #     acc_result = db.session.query(userInfo.account).filter(userInfo.account == account).first()
 #     pwd_result = db.session.query(userInfo.password).filter(userInfo.account == account,userInfo.password == password).first()
 #     if account and password:
@@ -189,10 +179,10 @@ def ManageModel():
     
 # def register():
 #     global login_error,page
-#     account = request.form.get("reg_txt")
-#     mail = request.form.get("email")
-#     password = request.form.get("set_password")
-#     check_password = request.form.get("check_password")
+#     account = request.POST.get("reg_txt")
+#     mail = request.POST.get("email")
+#     password = request.POST.get("set_password")
+#     check_password = request.POST.get("check_password")
 #     if account and password and mail:
 #         if password == check_password:
 #             info = db.userInfo(
@@ -211,11 +201,11 @@ def ManageModel():
 #         login_error = '完整填写信息'
 #     return HttpResponseRedirect('/')
 
-def logout():
+def logout(request):
     logger.info('Application Closed')
     close_application()
 
-def WidgetsCorePercent():
+def WidgetsCorePercent(request):
     cpu_percent = psutil.cpu_percent()
     c = Pie().add("", [["占用", cpu_percent], ["空闲", 100 - cpu_percent]])
     return c.render_embed().replace(
@@ -223,7 +213,7 @@ def WidgetsCorePercent():
         "./static/js/echarts.min.js",
     )
 
-def WigetsRamPercent():
+def WigetsRamPercent(request):
     memory_percent = psutil.virtual_memory().percent
     c = Pie().add("", [["占用", memory_percent], ["空闲", 100 - memory_percent]])
     return c.render_embed().replace(
@@ -231,7 +221,7 @@ def WigetsRamPercent():
         "/static/js/echarts.min.js",
     )
 
-def js():
+def js(request):
     with open("src\static\js\echarts.min.js", "rb") as f:
         data = f.read().decode()
     return data
