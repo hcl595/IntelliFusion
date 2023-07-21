@@ -492,7 +492,7 @@ ul.tab li.li:last-child{border-right: 1px solid #C5D0DC;}
   backdrop-filter: blur(18px);
 }
 .content{
-  max-width: 100%;
+  max-width: calc(100% - 40px);
   max-height: 90vh;
   overflow-y: auto;
   flex: 1;

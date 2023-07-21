@@ -1,0 +1,17 @@
+{
+    "BaseConfig": {
+        "devmode": false,
+        "debug": false,
+        "keeplogin": true,
+        "TimeOut": 60
+    },
+    "RemoteConfig": {
+        "host": "127.0.0.1",
+        "port": "5000"
+    },
+    "ModelConfig": {
+        "DefaultModel": "text-davinci-002",
+        "SecondModel": null,
+        "ThirdModel": null
+    }
+}

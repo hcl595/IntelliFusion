@@ -1,12 +1,11 @@
-sqlalchemy
-flask
-flaskwebgui
-requests
+django
 openai
+psutil
+flaskwebgui
+pyecharts
 pyautogui
-loguru
+requests
 
-
-# dev
+#dev
 black
 auto-py-to-exe

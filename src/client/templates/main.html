@@ -1,9 +1,4 @@
 {% extends 'base.html' %}
-<head>
-{% block include %}
-{{ super() }}
-<title>Realizer v0.1.5 TEST</title>
-{% endblock %}
 </head>
 
 
@@ -15,55 +10,55 @@
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
             {% for Model in ModelList %}
-            <li id="li" class="li" value={{ Model[0] }}><span>{{ Model[2] }}</span></li>
+            <li id="li" class="li" value={{ Model.0 }}><span>{{ Model.2 }}</span></li>
             {% endfor %}
             <li id="li" class="li current" value="-1"><span>Widgets</span></li>
         </ul>
 
         {% for Model in ModelList %}
-        {% if Model[1] == 'API' %}
-        <div class="dialogbox_container" id='{{ Model[0] }}' style="display: none;"> 
-            <div class="content" id="api-output-{{ Model[0] }}">
+        {% if Model.1 == 'API' %}
+        <div class="dialogbox_container" id={{ Model.0 }} style="display: none;"> 
+            <div class="content" id="api-output">
 
             </div>
             <div class="input-area">
                 <div class="txtb">
                     <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
-                        <input name="check_password" type="reg_check_password" id="api-user-input-{{ Model[0] }}" />
+                        <input name="check_password" type="reg_check_password" name="api-user-input" id="api-user-input" />
                         <span data-placeholder="输入内容" ></span>
                     </div>
                 </div>
-                <input id="api-model-input-{{ Model[0] }}" type="hidden" value='{{ Model[2] }}' />
+                <input id="api-model-input" name="api-model-input" type="hidden" value={{ Model.2 }} />
                 <div class="button-area">
                     <button type="button" id="Start"><i class="fa fa-microphone"></i></button>
-                    <button type="submit" id="SendAPIInput" vlaue="{{ Model[0] }}">发 送</button>
+                    <button type="submit" id="SendAPIInput">发 送</button>
                 </div>
             </div>
         </div>
         {% endif %}
-        {% if Model[1] == 'OpenAI' %}
-        <div class="dialogbox_container" id={{ Model[0] }} style="display: none;">
-                <div class="content" id="openai-output-{{ Model[0] }}">
+        {% if Model.1 == 'OpenAI' %}
+        <div class="dialogbox_container" id={{ Model.0 }} style="display: none;">
+                <div class="content" id="openai-output">
 
                 </div>
                 <div class="input-area">
                     <div class="txtb">
                         <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
-                            <input name="check_password" type="reg_check_password" id="openai-user-input-{{ Model[0] }}" />
+                            <input name="check_password" type="reg_check_password" name="openai-user-input" id="openai-user-input" />
                             <span data-placeholder="输入内容" ></span>
                         </div>
                     </div>
-                    <input name="openai-model-input" id="openai-model-input-{{ Model[0] }}" type="hidden" value={{ Model[2] }} />
+                    <input name="openai-model-input" id="openai-model-input" type="hidden" value={{ Model.2 }} />
                     <div class="button-area">
                         <button type="button" id="Start"><i class="fa fa-microphone"></i></button>
-                        <button type="submit" id="SendOpenaiInput" value="{{ Model[0] }}">发 送</button>
+                        <button type="submit" id="SendOpenaiInput">发 送</button>
                     </div>
                 </div>
             </div>
         {% endif %}
-        {% if Model[1] == 'WebUI' %}
-        <div  id={{ Model[0] }} style="display: none;">
-            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src={{ Model[3] }}></iframe>
+        {% if Model.1 == 'WebUI' %}
+        <div  id={{ Model.0 }} style="display: none;">
+            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src={{ Model.3 }}></iframe>
         </div>
         {% endif %}
         {% endfor %}
@@ -71,19 +66,19 @@
             <div class="widgets_container">
                 <div class="widgets_contentbox">
                     <h5 style="margin-left: 30%;">CPU占用率</h5>
-                    <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                    <iframe src="/widgets/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
                 </div>
                 <div class="widgets_contentbox">
                     <h5 style="margin-left: 30%;">RAM占用率</h5>
-                    <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                    <iframe src="/widgets/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
                 </div>
                 <div class="widgets_contentbox">
                     <h5 style="margin-left: 30%;">CPU占用率</h5>
-                    <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                    <iframe src="/widgets/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
                 </div>
                 <div class="widgets_contentbox">
                     <h5 style="margin-left: 30%;">RAM占用率</h5>
-                    <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                    <iframe src="/widgets/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
                 </div>
             </div>
         </div>
@@ -133,40 +128,40 @@
                     </td>
                 </tr>
                 {% for Model in ModelList %}
-                <input type="hidden" id="id{{ Model[0] }}" value={{ Model[0] }}>
-                <tr id="ModelTr{{Model[0]}}">
+                <input type="hidden" id="id{{ Model.0 }}" value={{ Model.0 }}>
+                <tr id="ModelTr{{Model.0}}">
                     <td>
-                        <select name="type" id="Type{{ Model[0] }}">
-                            <option>{{ Model[1] }}</option>
+                        <select name="type" id="Type{{ Model.0 }}">
+                            <option>{{ Model.1 }}</option>
                             <option>OpenAI</option>
                             <option>WebUI</option>
                             <option>API</option>
                         </select>
                     </td>
                     <td> 
-                        <input type="text" name="comment" id="Comment{{ Model[0] }}" placeholder="ChatGLM" value={{ Model[2] }}>
+                        <input type="text" name="comment" id="Comment{{ Model.0 }}" placeholder="ChatGLM" value={{ Model.2 }}>
                     </td>
                     <td>
-                        <input type="text" class="url" id="Url{{ Model[0] }}" name="url" placeholder="127.0.0.1:8000" value={{ Model[3] }}>
+                        <input type="text" class="url" id="Url{{ Model.0 }}" name="url" placeholder="127.0.0.1:8000" value={{ Model.3 }}>
                     </td>
                     <td>
-                        <input type="text" class="url" id="APIkey{{ Model[0] }}" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value={{ Model[4] }}>
+                        <input type="text" class="url" id="APIkey{{ Model.0 }}" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value={{ Model.4 }}>
                     </td>
                     <td>
-                        <input type="text" class="url" id="LcCompiler{{ Model[0] }}" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model[5] }}>
+                        <input type="text" class="url" id="LcCompiler{{ Model.0 }}" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model.5 }}>
                     </td>
                     <td>
-                        <input type="text" class="url" id="LcUrl{{ Model[0] }}" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model[6] }}>
+                        <input type="text" class="url" id="LcUrl{{ Model.0 }}" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model.6 }}>
                     </td>
                     <td>
-                        <button type="submit" class="run" id="run-{{ Model[0] }}" value="{{ Model[0] }}"><i class="fa fa-play"></i></button>
-                        <button type="submit" class="stop" id="stop-{{ Model[0] }}" value="{{ Model[0] }}"><i class="fa fa-stop"></i></button>
+                        <button type="submit" class="run" id="run" value="{{ Model.0 }}"><i class="fa fa-play"></i></button>
+                        <button type="submit" class="stop" id="stop" value="{{ Model.0 }}"><i class="fa fa-stop"></i></button>
                     </td>
                     <td>
-                        <button type="submit" class="edit" id="edit-{{ Model[0] }}" value="{{ Model[0] }}"><i class="fa fa-edit"></i></button>
+                        <button type="submit" class="edit" id="edit" value="{{ Model.0 }}"><i class="fa fa-edit"></i></button>
                     </td>
                     <td>
-                        <button type="submit" class="deny" id="del-{{ Model[0] }}" value="{{ Model[0] }}"><i class="fa fa-trash"></i></button>
+                        <button type="submit" class="deny" id="del" value="{{ Model.0 }}"><i class="fa fa-trash"></i></button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -213,11 +208,11 @@
     <div class="widgets_container">
         <div class="widgets_contentbox">
             <h5 style="margin-left: 30%;">CPU占用率</h5>
-            <iframe src="/CorePercent" style="width: 300PX; height: 300px; margin-right: auto;" frameborder=0></iframe>
+            <iframe src="/widgets/CorePercent" style="width: 300PX; height: 300px; margin-right: auto;" frameborder=0></iframe>
         </div>
         <div class="widgets_contentbox">
             <h5 style="margin-left: 30%;">RAM占用率</h5>
-            <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+            <iframe src="/widgets/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
         </div>
     </div>
 </div>
@@ -450,21 +445,20 @@ $(".li").on("click",function(){
 //ajax交互
 $(document).on('click',"#SendOpenaiInput",
         function() {
-        var id = $(this).val();
-        alert($(this).val())
         $("#loading").fadeIn(100);
-        $('#openai-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#openai-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+        var userInput = $('#openai-user-input').val();
+        $('#openai-output').append('<div class="item item-right"><div class="bubble bubble-right">' + userInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
         $.ajax({
             url: '/openai',
             type: 'POST',
             data: {
-                userinput: $('#openai-user-input-' + id).val(),
-                modelinput: $('#openai-model-input-' + id).val(),
+                userinput: userInput,
+                modelinput: modelInput,
             },
             success: function(response) {
                 var chatGptResponse = response.response;
-                $('#openai-output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-                $('#openai-user-input-' + id).val('');
+                $('#openai-output').append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+                $('#openai-user-input').val('');
                 $("#loading").fadeOut(100)
             }
         });
@@ -472,21 +466,20 @@ $(document).on('click',"#SendOpenaiInput",
 
 $(document).on('click',"#SendAPIInput",
     function() {
-    var id = $(this).val();
-    alert(id); //TODO: doesn't work
-    $("#loading").fadeIn(100);
-    $('#api-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#api-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+    $("#loading").fadeIn(100)
+    var userInput = $('#api-user-input').val();
+    $('#api-output').append('<div class="item item-right"><div class="bubble bubble-right">' + userInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
     $.ajax({
         url: '/llm',
         type: 'POST',
         data: {
-            userinput: $('#api-user-input-' + id).val() ,
-            modelinput: $('#api-model-input-' + id).val()
+            userinput: $('#api-user-input').val() ,
+            modelinput: $('#api-model-input').val()
             },
         success: function(response) {
             var chatGptResponse = response.response;
-            $('#api-output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-            $('#api-user-input-' + id).val('');
+            $('#api-output').append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+            $('#api-user-input').val('');
             $("#loading").fadeOut(100)
         }
     });
@@ -517,7 +510,7 @@ $(".run").on('click',function() {
                 $(this).removeAttr("disabled")
             }
             $("#loading").fadeOut(100)
-            $("#run-" + id).removeAttr("disabled")
+            $(this).removeAttr("disabled")
         }
     });
 });
@@ -539,8 +532,9 @@ $(".stop").on('click',function() {
             LcUrl: $('#LcUrl'+id).val() ,
         },
         success: function(response) {
+            var Response = response.response;
             $("#loading").fadeOut(100)
-            $('#stop-'+ id).removeAttr("disabled")
+            $('#stop').removeAttr("disabled")
         }
     });
 });
@@ -561,9 +555,10 @@ $(".edit").on('click',function() {
             LcCompiler: $('#LcCompiler'+id).val(),
             LcUrl: $('#LcUrl'+id).val() ,
         },
-        success: function() {
+        success: function(response) {
+            var Response = response.response;
             $("#loading").fadeOut(100)
-            $("#edit-"+ id).removeAttr("disabled")
+            $(this).removeAttr("disabled")
         }
     });
 });
@@ -588,7 +583,7 @@ $(".deny").on('click',function() {
             $('#id'+id).remove()
             $('#ModelTr'+id).remove()
             $("#loading").fadeOut(100)
-            $("#del-"+ id).removeAttr("disabled")
+            $(this).removeAttr("disabled")
         }
     });
 });
