@@ -14,4 +14,5 @@ urlpatterns = [
     path('CorePercent/', views.WidgetsCorePercent, name="CorePercent"),#CPU占用状态
     path('RamPercent/', views.WigetsRamPercent, name="RamPercent"),#内存占用状态
     path('static/js/echarts.min.js/', views.js, name="echarts"),#数据可视化JavaScripts
+    path('test/', views.test, name="Test"),
 ]

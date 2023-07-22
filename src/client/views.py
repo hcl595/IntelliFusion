@@ -28,13 +28,13 @@ pool=ThreadPoolExecutor()
 logger.add('./data/log.log')
 
 #main
-def root(request):
+def root(InputRequest):
     Models = ModelList.objects.all()
     try:
         ThirdBoxURL = ModelList.objects.filter(ModelList.name == cfg.read("ModelConfig","ThirdModel")).first()
     except:
         ThirdBoxURL = None
-    return render(request,'main.html',
+    return render(InputRequest,'main.html',
                 {'result' : result,
                 'NeedLogin' : NeedLogin,
                 'ModelList' : Models,
@@ -50,30 +50,30 @@ def root(request):
                 'ThirdModel' : cfg.read("ModelConfig","ThirdModel"),
                 'username' : 'NONE'})
 
-def request_api_response(request):
+def request_api_response(InputRequest):
     global result,LLM_response
     InputInfo = request.POST['userinput']
     InputModel =request.POST["modelinput"]
     print(InputInfo,InputModel)
     LLM_response = llm(InputModel,InputInfo)
-    return JsonResponse(request,{'response': LLM_response})
+    return JsonResponse(InputRequest,{'response': LLM_response})
 
-def request_openai_response(request):
+def request_openai_response(InputRequest):
     global GLM_response
-    InputInfo = request.POST.POST['userinput']
-    InputModel = request.POST.POST["modelinput"]
+    InputInfo = request.HttpRequest.POST.get('userinput')
+    InputModel = request.HttpRequest.POST.get("modelinput")
     logger.debug("request:{}.model:{}",InputInfo,InputModel)
     openai_response = ai(InputModel,InputInfo)
-    return JsonResponse(request,{'response': openai_response})#ajax返回
+    return JsonResponse(InputRequest,{'response': openai_response})#ajax返回
 
-def EditSetting(request):
-    InputDefaultModel = request.POST.get("DefaultModel")
-    InputSecondModel = request.POST.get("SecondModel")
-    InputThirdModel = request.POST.get("ThirdModel")
-    InputiPv4 = request.POST.get("iPv4")
-    InputPort = request.POST.get("Port")
-    InputWebMode = request.POST.get("Mode")
-    InputclientMode = request.POST.get("BugM")
+def EditSetting(InputRequest):
+    InputDefaultModel = request.HttpRequest.POST.get("DefaultModel")
+    InputSecondModel = request.HttpRequest.POST.get("SecondModel")
+    InputThirdModel = request.HttpRequest.POST.get("ThirdModel")
+    InputiPv4 = request.HttpRequest.POST.get("iPv4")
+    InputPort = request.HttpRequest.POST.get("Port")
+    InputWebMode = request.HttpRequest.POST.get("Mode")
+    InputclientMode = request.HttpRequest.POST.get("BugM")
     cfg.write("BaseConfig","devmode",InputWebMode)
     cfg.write("BaseConfig","client",InputclientMode)
     cfg.write("RemoteConfig","host",InputiPv4)
@@ -83,36 +83,36 @@ def EditSetting(request):
     cfg.write("ModelConfig","ThirdModel",InputThirdModel)
     return HttpResponseRedirect("/")
 
-def ManageModel(request):
-    InputState = request.POST.get("state")
-    InputID = request.POST.get("number")
-    InputType = request.POST.get("type")
-    InputComment = request.POST.get("comment")
-    InputUrl = request.POST.get("url")
-    InputAPIkey = request.POST.get("APIkey")
-    LaunchCompiler = request.POST.get("LcCompiler")
-    LaunchUrl = request.POST.get("LcUrl")
+def ManageModel(InputRequest):
+    InputState = request.HttpRequest.POST.get("state")
+    InputID = request.HttpRequest.POST.get("number")
+    InputType = request.HttpRequest.POST.get("type")
+    InputName = request.HttpRequest.POST.get("comment")
+    InputUrl = request.HttpRequest.POST.get("url")
+    InputAPIkey = request.HttpRequest.POST.get("APIkey")
+    LaunchCompiler = request.HttpRequest.POST.get("LcCompiler")
+    LaunchPath = request.HttpRequest.POST.get("LcUrl")
     try:
         port = int(urlparse(InputUrl).port)
     except:
         port = 80
     if InputState == "edit":
-        db.session.query(db.models).filter(models.id == InputID).update({
-                                db.models.type: InputType,
-                                db.models.name: InputComment,
-                                db.models.url: InputUrl,
-                                db.models.APIkey: InputAPIkey,
-                                db.models.LaunchCompiler: LaunchCompiler,
-                                db.models.LaunchUrl: LaunchUrl,
-                                })
-        db.session.commit()
+        ModelList.objects.filter(ModelList.id == InputID).update(
+            ModelList.type == InputType,
+            ModelList.name == InputName,
+            ModelList.url == InputUrl,
+            ModelList.APIKey == InputAPIkey,
+            ModelList.LaunchCompiler == LaunchCompiler,
+            ModelList.LaunchPath == LaunchPath,
+        )
+        ModelList.save()
         return JsonResponse({'response': "complete"})
     elif InputState == "del":
-        db.session.query(models).filter(models.id == InputID).delete()
-        db.session.commit()
+        ModelList.objects.filter(ModelList.id == InputID).delete()
+        ModelList.save()
         return JsonResponse({'response': "complete"})
     elif InputState == "run":
-        launchCMD = request.POST.get("LcCompiler") + " " + request.POST.get("LcUrl")
+        launchCMD = request.HttpRequest.POST.get("LcCompiler") + " " + request.HttpRequest.POST.get("LcUrl")
         pool.submit(subprocess.run, launchCMD)
         count = 0
         while True:
@@ -123,7 +123,7 @@ def ManageModel(request):
             time.sleep(1)
             if count == cfg.read('BaseConfig',"TimeOut"):
                 logger.error('Model: {} launch maybe failed,because of Time Out({}),LaunchCompilerPath: {},LaunchFile: {}'
-                             ,InputComment,cfg.read('BaseConfig',"TimeOut"),LaunchCompiler,LaunchUrl)
+                             ,InputName,cfg.read('BaseConfig',"TimeOut"),LaunchCompiler,LaunchPath)
                 return JsonResponse({'response': "TimeOut"})
     elif InputState == "stop":
         for conn in psutil.net_connections():
@@ -134,21 +134,21 @@ def ManageModel(request):
                 break
         return JsonResponse({'response': "complete"})
     elif InputState == "add":
-        info = db.models(
-                    type = InputType,
-                    name = InputComment,
-                    url = InputUrl,
-                    APIkey = InputAPIkey,
-                    LaunchCompiler = LaunchCompiler,
-                    LaunchUrl = LaunchUrl,)
-        db.session.add(info)
-        db.session.commit()
+        ModelList.objects.create(
+            name = InputName,
+            type = InputType,
+            Url = InputUrl,
+            APIKey = InputAPIkey,
+            LaunchCompiler = LaunchCompiler,
+            LaunchPath = LaunchPath,
+        )
+        ModelList.save()
         return JsonResponse({'response': "complete"})
 
 # def login_check():
 #     global login_error,choose,page
-#     account = request.POST.get("logid")
-#     password = request.POST.get("password")
+#     account = request.HttpRequest.POST.get("logid")
+#     password = request.HttpRequest.POST.get("password")
 #     acc_result = db.session.query(userInfo.account).filter(userInfo.account == account).first()
 #     pwd_result = db.session.query(userInfo.password).filter(userInfo.account == account,userInfo.password == password).first()
 #     if account and password:
@@ -179,10 +179,10 @@ def ManageModel(request):
     
 # def register():
 #     global login_error,page
-#     account = request.POST.get("reg_txt")
-#     mail = request.POST.get("email")
-#     password = request.POST.get("set_password")
-#     check_password = request.POST.get("check_password")
+#     account = request.HttpRequest.POST.get("reg_txt")
+#     mail = request.HttpRequest.POST.get("email")
+#     password = request.HttpRequest.POST.get("set_password")
+#     check_password = request.HttpRequest.POST.get("check_password")
 #     if account and password and mail:
 #         if password == check_password:
 #             info = db.userInfo(
@@ -201,11 +201,11 @@ def ManageModel(request):
 #         login_error = '完整填写信息'
 #     return HttpResponseRedirect('/')
 
-def logout(request):
+def logout(InputRequest):
     logger.info('Application Closed')
     close_application()
 
-def WidgetsCorePercent(request):
+def WidgetsCorePercent(InputRequest):
     cpu_percent = psutil.cpu_percent()
     c = Pie().add("", [["占用", cpu_percent], ["空闲", 100 - cpu_percent]])
     return c.render_embed().replace(
@@ -213,7 +213,7 @@ def WidgetsCorePercent(request):
         "./static/js/echarts.min.js",
     )
 
-def WigetsRamPercent(request):
+def WigetsRamPercent(InputRequest):
     memory_percent = psutil.virtual_memory().percent
     c = Pie().add("", [["占用", memory_percent], ["空闲", 100 - memory_percent]])
     return c.render_embed().replace(
@@ -221,16 +221,20 @@ def WigetsRamPercent(request):
         "/static/js/echarts.min.js",
     )
 
-def js(request):
+def js(InputRequest):
     with open("src\static\js\echarts.min.js", "rb") as f:
         data = f.read().decode()
     return data
 
+def test(InputRequest):
+    a = request.HttpRequest.POST.get("")
+    return render(InputRequest,'test.html')
+
 #functions
 def ai(ModelID:str,question:str): #TODO:把response转化为json
     response = ""
-    openai.api_base = db.session.query(models.url).filter(models.name == ModelID).first()[0]
-    openai.api_key = db.session.query(models.APIkey).filter(models.name == ModelID).first()[0]
+    openai.api_base = ModelList.objects.filter(ModelList.name == ModelID).get(ModelList.url)
+    openai.api_key = ModelList.objects.filter(ModelList.name == ModelID).get(ModelList.APIKey)
     for chunk in openai.ChatCompletion.create(
         model=ModelID,
         messages=[
@@ -245,12 +249,12 @@ def ai(ModelID:str,question:str): #TODO:把response转化为json
             print(type(chunk.choices[0].delta.content))
     print(type(response))
     logger.info('model: {},url: {}/v1/completions.\nquestion: {},response: {}.'
-                ,ModelID,db.session.query(models.url).filter(models.name == ModelID).first()[0],question,response)
+                ,ModelID,ModelList.objects.filter(ModelList.name == ModelID).get(ModelList.url),question,response)
     return response
 
 def llm(ModelID:str,question:str):
     response = requests.post(
-        url = db.session.query(models.url).filter(models.name == ModelID).one()[0],
+        url = ModelList.objects.filter(ModelList.name == ModelID).get(ModelList.url),
         data=json.dumps({"prompt": question,"history": []}),
         headers={'Content-Type': 'application/json'})
     return response.json()['history'][0][1]
