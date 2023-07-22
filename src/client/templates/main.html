@@ -66,19 +66,19 @@
             <div class="widgets_container">
                 <div class="widgets_contentbox">
                     <h5 style="margin-left: 30%;">CPU占用率</h5>
-                    <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                    <iframe src="/CorePercent" style="width: 320px; height: 320px; margin-right: auto;overflow: hidden !important;" frameborder=0></iframe>
                 </div>
                 <div class="widgets_contentbox">
                     <h5 style="margin-left: 30%;">RAM占用率</h5>
-                    <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                    <iframe src="/RamPercent" style="width: 320px; height: 320px; margin-right: auto;" frameborder=0></iframe>
                 </div>
                 <div class="widgets_contentbox">
                     <h5 style="margin-left: 30%;">CPU占用率</h5>
-                    <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                    <iframe src="/CorePercent" style="width: 320px; height: 320px; margin-right: auto;" frameborder=0></iframe>
                 </div>
                 <div class="widgets_contentbox">
                     <h5 style="margin-left: 30%;">RAM占用率</h5>
-                    <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                    <iframe src="/RamPercent" style="width: 320px; height: 320px; margin-right: auto;" frameborder=0></iframe>
                 </div>
             </div>
         </div>
@@ -208,11 +208,11 @@
     <div class="widgets_container">
         <div class="widgets_contentbox">
             <h5 style="margin-left: 30%;">CPU占用率</h5>
-            <iframe src="/widgets/CorePercent" style="width: 300PX; height: 300px; margin-right: auto;" frameborder=0></iframe>
+            <iframe src="/CorePercent" style="width: 300px; height: 300px; margin-right: auto;" frameborder=0></iframe>
         </div>
         <div class="widgets_contentbox">
             <h5 style="margin-left: 30%;">RAM占用率</h5>
-            <iframe src="/widgets/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+            <iframe src="/RamPercent" style="width: 320px; height: 320px; margin-right: auto;" frameborder=0></iframe>
         </div>
     </div>
 </div>
@@ -490,7 +490,7 @@ $(".run").on('click',function() {
     $(this).attr("disabled",true)
     var id = $(this).val()
     $.ajax({
-        url: '/ManageModel',
+        url: '/ManageModel/',
         type: 'POST',
         data: {
             state: 'run' ,
@@ -519,7 +519,7 @@ $(".stop").on('click',function() {
     $('#stop').attr("disabled",true)
     var id = $(this).val()
     $.ajax({
-        url: '/ManageModel',
+        url: '/ManageModel/',
         type: 'POST',
         data: {
             state: 'stop' ,
@@ -543,7 +543,7 @@ $(".edit").on('click',function() {
     $(this).attr("disabled",true)
     var id = $(this).val()
     $.ajax({
-        url: '/ManageModel',
+        url: '/ManageModel/',
         type: 'POST',
         data: {
             state: 'edit' ,
@@ -567,7 +567,7 @@ $(".deny").on('click',function() {
     $(this).attr("disabled",true)
     var id = $(this).val()
     $.ajax({
-        url: '/ManageModel',
+        url: '/ManageModel/',
         type: 'POST',
         data: {
             state: 'del' ,
@@ -593,7 +593,7 @@ $("#add").on('click',
     $("#loading").fadeIn(100)
     $('#add').attr("disabled",true)
     $.ajax({
-        url: '/ManageModel',
+        url: '/ManageModel/',
         type: 'POST',
         data: {
             state: 'add' ,

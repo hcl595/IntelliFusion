@@ -676,8 +676,8 @@ textarea{
   backdrop-filter: blur(20px);
 }
 .widgets_contentbox {
-  width: 320px;
-  height: 320px;
+  width: 350px;
+  height: 350px;
   margin: 10px;
   position: relative;
   display: inline-block;
@@ -687,7 +687,7 @@ textarea{
   transition: 0.3s;
   word-break:break-word;
   white-space: nowrap; 
-  overflow: auto;
+  overflow: hidden;
 }
 .widgets_contentbox h2 {
   margin-left: 20px;
