@@ -9,8 +9,9 @@ tmp
 /data/*
 src/src/__pycache__
 src/client/__pycache__
-src/templates/test.html
+src/client/templates/test.html
 release/
+src/models.sqite
 exe.json
 setup.iss
 output/

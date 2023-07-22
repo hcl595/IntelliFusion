@@ -1,6 +1,7 @@
 django
 openai
 psutil
+loguru
 flaskwebgui
 pyecharts
 pyautogui
