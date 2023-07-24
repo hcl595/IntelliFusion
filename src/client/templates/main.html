@@ -10,14 +10,14 @@
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
             {% for Model in ModelList %}
-            <li id="li" class="li" value={{ Model.0 }}><span>{{ Model.2 }}</span></li>
+            <li id="li" class="li" value={{ Model.id }}><span>{{ Model.name }}</span></li>
             {% endfor %}
             <li id="li" class="li current" value="-1"><span>Widgets</span></li>
         </ul>
 
         {% for Model in ModelList %}
         {% if Model.1 == 'API' %}
-        <div class="dialogbox_container" id={{ Model.0 }} style="display: none;"> 
+        <div class="dialogbox_container" id={{ Model.id }} style="display: none;"> 
             <div class="content" id="api-output">
 
             </div>
@@ -28,7 +28,7 @@
                         <span data-placeholder="输入内容" ></span>
                     </div>
                 </div>
-                <input id="api-model-input" name="api-model-input" type="hidden" value={{ Model.2 }} />
+                <input id="api-model-input" name="api-model-input" type="hidden" value={{ Model.name }} />
                 <div class="button-area">
                     <button type="button" id="Start"><i class="fa fa-microphone"></i></button>
                     <button type="submit" id="SendAPIInput">发 送</button>
@@ -37,7 +37,7 @@
         </div>
         {% endif %}
         {% if Model.1 == 'OpenAI' %}
-        <div class="dialogbox_container" id={{ Model.0 }} style="display: none;">
+        <div class="dialogbox_container" id={{ Model.id }} style="display: none;">
                 <div class="content" id="openai-output">
 
                 </div>
@@ -48,7 +48,7 @@
                             <span data-placeholder="输入内容" ></span>
                         </div>
                     </div>
-                    <input name="openai-model-input" id="openai-model-input" type="hidden" value={{ Model.2 }} />
+                    <input name="openai-model-input" id="openai-model-input" type="hidden" value={{ Model.name }} />
                     <div class="button-area">
                         <button type="button" id="Start"><i class="fa fa-microphone"></i></button>
                         <button type="submit" id="SendOpenaiInput">发 送</button>
@@ -57,8 +57,8 @@
             </div>
         {% endif %}
         {% if Model.1 == 'WebUI' %}
-        <div  id={{ Model.0 }} style="display: none;">
-            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src={{ Model.3 }}></iframe>
+        <div  id={{ Model.id }} style="display: none;">
+            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src={{ Model.url }}></iframe>
         </div>
         {% endif %}
         {% endfor %}
@@ -128,40 +128,40 @@
                     </td>
                 </tr>
                 {% for Model in ModelList %}
-                <input type="hidden" id="id{{ Model.0 }}" value={{ Model.0 }}>
-                <tr id="ModelTr{{Model.0}}">
+                <input type="hidden" id="id{{ Model.id }}" value={{ Model.id }}>
+                <tr id="ModelTr{{Model.id}}">
                     <td>
-                        <select name="type" id="Type{{ Model.0 }}">
-                            <option>{{ Model.1 }}</option>
+                        <select name="type" id="Type{{ Model.id }}">
+                            <option>{{ Model.type }}</option>
                             <option>OpenAI</option>
                             <option>WebUI</option>
                             <option>API</option>
                         </select>
                     </td>
                     <td> 
-                        <input type="text" name="comment" id="Comment{{ Model.0 }}" placeholder="ChatGLM" value={{ Model.2 }}>
+                        <input type="text" name="comment" id="Comment{{ Model.id }}" placeholder="ChatGLM" value={{ Model.name }}>
                     </td>
                     <td>
-                        <input type="text" class="url" id="Url{{ Model.0 }}" name="url" placeholder="127.0.0.1:8000" value={{ Model.3 }}>
+                        <input type="text" class="url" id="Url{{ Model.id }}" name="url" placeholder="127.0.0.1:8000" value={{ Model.url }}>
                     </td>
                     <td>
-                        <input type="text" class="url" id="APIkey{{ Model.0 }}" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value={{ Model.4 }}>
+                        <input type="text" class="url" id="APIkey{{ Model.id }}" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value={{ Model.APIKey }}>
                     </td>
                     <td>
-                        <input type="text" class="url" id="LcCompiler{{ Model.0 }}" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model.5 }}>
+                        <input type="text" class="url" id="LcCompiler{{ Model.id }}" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model.LaunchCompiler }}>
                     </td>
                     <td>
-                        <input type="text" class="url" id="LcUrl{{ Model.0 }}" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model.6 }}>
+                        <input type="text" class="url" id="LcUrl{{ Model.id }}" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model.LaunchPath }}>
                     </td>
                     <td>
-                        <button type="submit" class="run" id="run" value="{{ Model.0 }}"><i class="fa fa-play"></i></button>
-                        <button type="submit" class="stop" id="stop" value="{{ Model.0 }}"><i class="fa fa-stop"></i></button>
+                        <button type="submit" class="run" id="run" value="{{ Model.id }}"><i class="fa fa-play"></i></button>
+                        <button type="submit" class="stop" id="stop" value="{{ Model.id }}"><i class="fa fa-stop"></i></button>
                     </td>
                     <td>
-                        <button type="submit" class="edit" id="edit" value="{{ Model.0 }}"><i class="fa fa-edit"></i></button>
+                        <button type="submit" class="edit" id="edit" value="{{ Model.id }}"><i class="fa fa-edit"></i></button>
                     </td>
                     <td>
-                        <button type="submit" class="deny" id="del" value="{{ Model.0 }}"><i class="fa fa-trash"></i></button>
+                        <button type="submit" class="deny" id="del" value="{{ Model.id }}"><i class="fa fa-trash"></i></button>
                     </td>
                 </tr>
                 {% endfor %}

@@ -29,8 +29,8 @@ logger.add('./data/log.log')
 
 #main
 def root(InputRequest):
-    Models = ModelList.objects.all().order_by("order")
-    logger.debug(list(Models))
+    Models = ModelList.objects.all().values("id","order","type","name","url","APIKey","LaunchCompiler","LaunchPath")
+    logger.debug(type(Models[0]))
     try:
         ThirdBoxURL = ModelList.objects.filter(ModelList.name == cfg.read("ModelConfig","ThirdModel")).first()
     except:
@@ -38,7 +38,7 @@ def root(InputRequest):
     return render(InputRequest,'main.html',
                 {'result' : result,
                 'NeedLogin' : NeedLogin,
-                'ModelList' : list(Models),
+                'ModelList' : Models,
                 'ModelCount' : 3,
                 'historys' : LLM_response,
                 'ThirdBoxURL' : ThirdBoxURL,
