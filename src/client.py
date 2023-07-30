@@ -61,9 +61,33 @@ def root():
                 models.APIkey,  
                 models.LaunchCompiler,
                 models.LaunchUrl,).all()
+    ActiveModels = []
+    i = 0
+    for Model in ModelList:
+        id = ModelList[i][0]
+        url = ModelList[i][3]
+        port = 0
+        try:
+            port = int(urlparse(url).port)
+        except:
+            port = 0
+        for conn in psutil.net_connections():
+            if conn.laddr.port == port:
+                ActiveModels.append(db.session.query(
+                    models.id,
+                    models.type,
+                    models.name,
+                    models.url,
+                    models.APIkey,  
+                    models.LaunchCompiler,
+                    models.LaunchUrl,
+                ).filter(models.id == id).all()[0]) #TODO:会导致内容重复
+        i = i + 1
+    logger.debug("ActiveModels: {}", ActiveModels)
     return render_template('main.html',
                             result = result,
                             NeedLogin = NeedLogin,
+                            ActiveModels = ActiveModels,
                             ModelList = ModelList,
                             ModelCount = len(ModelList) + 1,
                             historys = LLM_response,
@@ -71,6 +95,7 @@ def root():
                             port = cfg.read("RemoteConfig","port"),
                             Mode = cfg.read("BaseConfig","devmode"),
                             BugM = cfg.read("BaseConfig","debug"),
+                            TimeOut = cfg.read("BaseConfig","debug"),
                             username = session.get('username'),)
 
 @app.post('/llm')#GLM请求与回复1

@@ -10,14 +10,13 @@
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
-            {% for Model in ModelList %}
+            {% for Model in ActiveModels %}
             <li id="li" class="li" value={{ Model[0] }}><span>{{ Model[2] }}</span></li>
             {% endfor %}
             <li id="li" class="li current" value="-1"><span>Widgets</span></li>
-            <li id="li" class="li"><<i class="fa fa-play"></i></li>
         </ul>
 
-        {% for Model in ModelList %}
+        {% for Model in ActiveModels %}
         {% if Model[1] == 'API' %}
         <div class="dialogbox_container" id='{{ Model[0] }}' style="display: none;"> 
             <div class="content" id="api-output-{{ Model[0] }}">
@@ -400,8 +399,8 @@
 </div> -->
 
 <div class="copyright" id="rights-box" style="display: none;">
-    <img style="margin: 50px;width: 100px;height: 100px;" src="/static/res/test.ico" alt="Realizer">
-    <h3 style="margin: 50px;">Realizer Version 0.1.7(202307292000) Developer Alpha</h3>
+    <img style="margin: 50px;width: 100px;height: 100px;" src="/static/res/icon-o.ico" alt="iF">
+    <h3 style="margin: 50px;">inteliFusi0n Version 0.1.7(202307292000) Developer Alpha</h3>
     <a href="https://www.github.com/hcl595/universalmodelassistant/">learn more...</a>
 </div>
 
@@ -624,41 +623,6 @@ function loading(){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
 }
-
-import * as echarts from 'echarts';
-
-var chartDom = document.getElementById('main');
-var myChart = echarts.init(chartDom);
-var option;
-
-option = {
-  tooltip: {
-    formatter: '{a} <br/>{b} : {c}%'
-  },
-  series: [
-    {
-      name: 'Pressure',
-      type: 'gauge',
-      progress: {
-        show: true
-      },
-      detail: {
-        valueAnimation: true,
-        formatter: '{value}'
-      },
-      data: [
-        {
-          value: 50,
-          name: 'SCORE'
-        }
-      ]
-    }
-  ]
-};
-
-option && myChart.setOption(option);
-
-
 
 
 

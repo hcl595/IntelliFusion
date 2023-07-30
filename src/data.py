@@ -44,7 +44,6 @@ class models(Base):
     APIkey = Column(Integer, nullable=False, comment="密钥")
     LaunchCompiler = Column(String(32), nullable=True, comment="启动编译器")
     LaunchUrl = Column(String(32), nullable=True, comment="启动地址")
-    Display = Column(String(32), nullable=True, comment="显示")
     __table__args__ = (
         UniqueConstraint("id", "url"),  # 联合唯一约束
         Index("url", unique=True),       # 联合唯一索引
