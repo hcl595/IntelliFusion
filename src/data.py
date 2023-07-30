@@ -37,6 +37,7 @@ class userInfo(Base):
 class models(Base):
     __tablename__ = "models"
     id = Column(Integer, primary_key=True, autoincrement=True, comment="主键")
+    order = Column(Integer, nullable=False, comment="排序")
     type = Column(String(32), nullable=False, comment="类型")
     name = Column(String(32), nullable=False, comment="模型")
     url = Column(String(32), nullable=False, comment="地址")

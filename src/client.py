@@ -36,7 +36,6 @@ LOG_FILE = DATA_DIR / "models.log"
 setup()
 logger.add(LOG_FILE)
 cfg = Settings()
-global historys,NeedLogin,GPT_response,login_error
 login_error = ""
 response = {
         'response': '',
