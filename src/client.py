@@ -61,24 +61,16 @@ def root():
                 models.APIkey,  
                 models.LaunchCompiler,
                 models.LaunchUrl,).all()
-    try:
-        ThirdBoxURL = db.session.query(models.url).filter(models.name == cfg.read("ModelConfig","ThirdModel")).first()
-    except:
-        ThirdBoxURL = None
     return render_template('main.html',
                             result = result,
                             NeedLogin = NeedLogin,
                             ModelList = ModelList,
                             ModelCount = len(ModelList) + 1,
                             historys = LLM_response,
-                            ThirdBoxURL = ThirdBoxURL,
                             host = cfg.read("RemoteConfig","host"),
                             port = cfg.read("RemoteConfig","port"),
                             Mode = cfg.read("BaseConfig","devmode"),
                             BugM = cfg.read("BaseConfig","debug"),
-                            DefaultModel = cfg.read("ModelConfig","DefaultModel"),
-                            SecondModel = cfg.read("ModelConfig","SecondModel"),
-                            ThirdModel = cfg.read("ModelConfig","ThirdModel"),
                             username = session.get('username'),)
 
 @app.post('/llm')#GLM请求与回复1
@@ -307,13 +299,13 @@ def llm(ModelID:str,question:str):
 
 #launch
 if __name__ == '__main__':
-    logger.info('Application Launched!')
+    logger.info('Application Launched by Dev Mode {}!',cfg.read("BaseConfig","devmode"))
     if cfg.read("BaseConfig","devmode") == "True":
     #WEB MODE
         app.run(debug=cfg.read("BaseConfig","debug"),port=cfg.read("RemoteConfig","port"),host=cfg.read("RemoteConfig","host"))
     #GUI MODE
-    else:
-        print(cfg.read("BaseConfig","devMode"))
+    elif cfg.read("BaseConfig","devmode") == "False":
+        print(cfg.read("BaseConfig","devmode"))
         try:
             ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
         except:

@@ -4,12 +4,8 @@
 {{ super() }}
 <title>Realizer v0.1.7 Alpha</title>
 {% endblock %}
-</head>
-
-
 {% block body %}
 <body>
- 
 <iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
@@ -345,7 +341,7 @@
     
 </div>
 
-<div class="login-container" id="login-box" style="display: none;">
+<!-- <div class="login-container" id="login-box" style="display: none;">
     <div class="login-form-container sign-up-container" id="SignUp">
         <form action="/register" method="POST" id="SignUpDiv">
                 <h1>注册</h1>           
@@ -401,11 +397,11 @@
                 </div>
             </div>
     </div>
-</div>
+</div> -->
 
 <div class="copyright" id="rights-box" style="display: none;">
     <img style="margin: 50px;width: 100px;height: 100px;" src="/static/res/test.ico" alt="Realizer">
-    <h3 style="margin: 50px;">Realizer Version 0.1.5(202307082000) Developer Alpha</h3>
+    <h3 style="margin: 50px;">Realizer Version 0.1.7(202307292000) Developer Alpha</h3>
     <a href="https://www.github.com/hcl595/universalmodelassistant/">learn more...</a>
 </div>
 
@@ -416,7 +412,6 @@
     <span></span>
     <span></span>
 </div>
-
 </body>
 <script type="text/javascript">
 let height = document.querySelector('.content').scrollHeight;
@@ -630,7 +625,39 @@ function loading(){
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
 }
 
-//get FilePath
+import * as echarts from 'echarts';
+
+var chartDom = document.getElementById('main');
+var myChart = echarts.init(chartDom);
+var option;
+
+option = {
+  tooltip: {
+    formatter: '{a} <br/>{b} : {c}%'
+  },
+  series: [
+    {
+      name: 'Pressure',
+      type: 'gauge',
+      progress: {
+        show: true
+      },
+      detail: {
+        valueAnimation: true,
+        formatter: '{value}'
+      },
+      data: [
+        {
+          value: 50,
+          name: 'SCORE'
+        }
+      ]
+    }
+  ]
+};
+
+option && myChart.setOption(option);
+
 
 
 
