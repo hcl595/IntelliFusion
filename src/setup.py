@@ -22,7 +22,7 @@ def setup():
             logger.info("config.json doesn't exist")
             logger.info("create config.json")
             data = {
-                "BaseConfig": {"devmode": False, "debug": False, "keeplogin": True, "TimeOut": 60},
+                "BaseConfig": {"devmode": "False", "debug": "False", "keeplogin": True, "TimeOut": 60},
                 "RemoteConfig": {"host": "127.0.0.1", "port": "5000"},
                 "ModelConfig": {
                     "DefaultModel": "text-davinci-002",
