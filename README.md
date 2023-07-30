@@ -1,9 +1,9 @@
-# UniversalModelAssistant
+# IntelliFusion
 A project that allows you to start and manage models such as LLM model and GPT model with one click.
 
-# Version Realizer Version 0.1.7(202307182000V) Developer Alpha
+# Version IntelliFusion Version 0.1.7(202307292000V) Developer Alpha
 1. Support running and stopping your models on 'Accounts' page
-2. Support Widgets on 'Wigets' page
+2. Support Widgets on 'Wigets' page (Not available)
 3. Now you'll be able to talk to the AI more fluidly
 
 

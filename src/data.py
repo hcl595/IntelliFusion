@@ -62,6 +62,7 @@ def SetupDatabase():
     )
     session.add(user_instance)
     BasisModel = models(
+        order=1,
         type="OpenAI",
         name="text-davinci-003",
         url="https:\\\\ai.fakeopen.com\\v1",
