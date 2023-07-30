@@ -1,4 +1,4 @@
-# config.py | Realizer Version 0.1.7(202307182000) Developer Alpha
+# config.py | IntelliFusion Version 0.1.7(202307292000) Developer Alpha
 import json
 from pathlib import Path
 from typing import Any

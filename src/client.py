@@ -1,4 +1,4 @@
-#main.py | Realizer Version 0.1.7(202307182000) Developer Alpha
+#main.py | Intellifusion Version 0.1.7(202307292000) Developer Alpha
 #headers
 import ctypes
 import json
