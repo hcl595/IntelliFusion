@@ -1,21 +1,20 @@
 function ChangeToMainA(){
     $("#main-box").fadeIn(200)
 }
-
 function ChangeToAccA(){
     $("#account-box").fadeIn(200)
 }
-
 function ChangeToSetA(){
     $("#setting-box").fadeIn(200)
 }
-
 function ChangeToMdlA(){
     $("#models-box").fadeIn(200)
 }
-
 function ChangeToWdgA(){
     $("#widgets-box").fadeIn(200)
+}
+function ChangeToRtsA(){
+    $("#rights-box").fadeIn(200)
 }
 
 function ChangeToMain(){
@@ -24,12 +23,14 @@ function ChangeToMain(){
     $("#models-box").fadeOut(200)
     $("#widgets-box").fadeOut(200)
     $("#setting-box").fadeOut(200)
+    $("#rights-box").fadeOut(200)
     setTimeout(ChangeToMainA,250)
     $("#main").addClass("active")
     $("#acc").removeClass("active")
     $("#wig").removeClass("active")
     $("#mod").removeClass("active")
     $("#set").removeClass("active")
+    $("#rts").removeClass("active")
 }
 
 function ChangeToAcc(){
@@ -38,12 +39,14 @@ function ChangeToAcc(){
     $("#models-box").fadeOut(200)
     $("#widgets-box").fadeOut(200)
     $("#setting-box").fadeOut(200)
+    $("#rights-box").fadeOut(200)
     setTimeout(ChangeToAccA,250)
     $("#main").removeClass("active")
     $("#acc").addClass("active")
     $("#wig").removeClass("active")
     $("#mod").removeClass("active")
     $("#set").removeClass("active")
+    $("#rts").removeClass("active")
 }
 
 function ChangeToSet(){
@@ -52,12 +55,14 @@ function ChangeToSet(){
     $("#account-box").fadeOut(200)
     $("#models-box").fadeOut(200)
     $("#widgets-box").fadeOut(200)
+    $("#rights-box").fadeOut(200)
     setTimeout(ChangeToSetA,250)
     $("#main").removeClass("active")
     $("#acc").removeClass("active")
     $("#wig").removeClass("active")
     $("#mod").removeClass("active")
     $("#set").addClass("active")
+    $("#rts").removeClass("active")
 }
 
 function ChangeToMdl(){
@@ -66,12 +71,14 @@ function ChangeToMdl(){
     $("#account-box").fadeOut(200)
     $("#widgets-box").fadeOut(200)
     $("#setting-box").fadeOut(200)
+    $("#rights-box").fadeOut(200)
     setTimeout(ChangeToMdlA,250)
     $("#main").removeClass("active")
     $("#acc").removeClass("active")
     $("#wig").removeClass("active")
     $("#mod").addClass("active")
     $("#set").removeClass("active")
+    $("#rts").removeClass("active")
 }
 
 function ChangeToWdg(){
@@ -80,12 +87,25 @@ function ChangeToWdg(){
     $("#account-box").fadeOut(200)
     $("#models-box").fadeOut(200)
     $("#setting-box").fadeOut(200)
+    $("#rights-box").fadeOut(200)
     setTimeout(ChangeToWdgA,250)
     $("#main").removeClass("active")
     $("#acc").removeClass("active")
     $("#wig").addClass("active")
     $("#mod").removeClass("active")
     $("#set").removeClass("active")
+    $("#rts").removeClass("active")
+}
+
+function ChangeToRts(){
+    $("#login-box").fadeOut(1)
+    setTimeout(ChangeToRtsA,250)    
+    $("#main").removeClass("active")
+    $("#acc").removeClass("active")
+    $("#wig").removeClass("active")
+    $("#mod").removeClass("active")
+    $("#set").removeClass("active")
+    $("#rts").addClass("active")
 }
 
 function showLogin(){

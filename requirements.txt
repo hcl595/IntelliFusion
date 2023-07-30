@@ -1,8 +1,11 @@
+sqlalchemy
 flask
 flaskwebgui
 requests
 openai
-sqlalchemy
+pyautogui
+loguru
+
 
 # dev
 black

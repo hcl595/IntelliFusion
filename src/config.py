@@ -1,43 +1,28 @@
-#config.py | Realizer Version 0.1.5(202307082000) Developer Alpha
-import configparser
+# config.py | IntelliFusion Version 0.1.7(202307292000) Developer Alpha
+import json
 from pathlib import Path
-import os
+from typing import Any
+
+APP_DIR = Path(__file__).parent
+DATA_DIR = APP_DIR / "data"
+CONFIG_FILE = DATA_DIR / "config.json"
 
 
-config_file = Path(__file__).parent / "data" / "config.cfg"
-folder = Path(__file__).parent / "data"
-
-class Settings(object):
+class Settings:
     def __init__(self):
-        if not folder.exists():
-            os.makedirs(folder)
-        if not config_file.exists():
-            print("Config does not exist and is being created automatically...")
-            f = open(config_file,'w')
-            f.write('[BaseConfig]\n')
-            f.write('devmode = False\n')
-            f.write('debug = False\n')
-            f.write('keeplogin = True\n')
-            f.write('\n')
-            f.write('[RemoteConfig]\n')
-            f.write('host = 127.0.0.1\n')
-            f.write('port = 5000\n')
-            f.write('\n')
-            f.write('[ModelConfig]\n')
-            f.write('DefaultModel = NONE\n')
-            f.write('SecondModel = text-davinci-002\n')
-            f.write('\n')
-            f.close()
-            print("config is created successfully!")
-        self.cfg = configparser.ConfigParser()
-        self.cfg.read(config_file)
+        with CONFIG_FILE.open(encoding="utf-8") as f:
+            self.cfg = json.load(f)
 
-    def write(self, section, option, value):
-        value = str(value)
-        self.cfg.set(section,option,value)
-        self.cfg.write(open(config_file, "w"))
+    def write(self, section: str, option: str, value: Any) -> Any:
+        """
+        >>> s = Settings()
+        >>> s.write("BaseConfig", "devmode", True)
+        >>> s.read("BaseConfig", "devmode")
+        True
+        """
+        self.cfg[section][option] = value
+        with CONFIG_FILE.open("w", encoding="utf-8") as f:
+            json.dump(self.cfg, f, ensure_ascii=False, indent=4)
 
-    def read(self, section, option):
-        out = self.cfg.get(section,option)
-        return out
-    
+    def read(self, section: str, option: str) -> Any:
+        return self.cfg.get(section).get(option)

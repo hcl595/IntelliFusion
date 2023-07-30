@@ -1,4 +1,4 @@
-<!--Realizer Version 0.1.5(202307082000) Developer Alpha-->
+<!--Realizer Version 0.1.6(202307152000) Developer Alpha-->
 <!--头文件-->
 {% block include %}
 <!DOCTYPE html>
@@ -11,6 +11,7 @@
 <link rel="shortcut icon" href="static\res\test.ico">
 <script src="..\static\js\jquery.min.js" charset="utf-8"></script>
 <script src="..\static\js\javascripts.js" charset="utf-8"></script>
+<script type="text/javascript" src="./static/js/echarts.min.js"></script>
 {% endblock %}
 
 
@@ -39,7 +40,7 @@
           </li>
           <li class="" id="wig" onclick="ChangeToWdg()">
             <i class="fa fa-bars"></i>
-            <span>插件管理</span>
+            <span>插件中心</span>
           </li>
           <li class="" id="mod" onclick="ChangeToMdl()">
               <i class="fa fa-inbox" id="models"></i>
@@ -57,10 +58,10 @@
               <span>退出程序</span>
           </li>
           </a>
-          <a href="https://www.github.com/hcl595/">
-          <li>
+          <a>
+          <li class="" id="rts" onclick="ChangeToRts()">
               <i class="fa fa-copyright"></i>
-              <span>Model Assistant v1.1.4</span>
+              <span>Model Assistant v0.1.6</span>
           </li>
           </a>
         </ul>

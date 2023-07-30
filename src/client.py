@@ -1,27 +1,41 @@
-#main.py | Realizer Version 0.1.5(202307082000) Developer Alpha
+#main.py | Intellifusion Version 0.1.7(202307292000) Developer Alpha
 #headers
-from flask import Flask, render_template, redirect, request, session, json, jsonify
-import openai
-from flaskwebgui import FlaskUI
-from flaskwebgui import FlaskUI,close_application
-from config import Settings
-import data as db
-from data import userInfo,models,setup
 import ctypes
-import requests
 import json
-import os
+import subprocess
+import time
+from concurrent.futures import ThreadPoolExecutor
+from urllib.parse import urlparse
+from loguru import logger
+
+
+import openai
 import psutil
+import requests
+from flask import (Flask, json, jsonify, redirect, render_template, request,
+                   session)
+from flaskwebgui import FlaskUI, close_application
+
+import data as db
+from config import Settings
+from data import models, userInfo
+from setup import setup
+from pathlib import Path
+
+pool=ThreadPoolExecutor()
 
 #configs
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SECRET_KEY'] = 'UMAVERSIONZPONEPFIV'
+app.config['SECRET_KEY'] = 'UMAVERSIONZPONEPSEV'
+APP_DIR = Path(__file__).parent
+DATA_DIR = APP_DIR / "data"
+LOG_FILE = DATA_DIR / "models.log"
 
 #setup
 setup()
+logger.add(LOG_FILE)
 cfg = Settings()
-global historys,NeedLogin,GPT_response,login_error
 login_error = ""
 response = {
         'response': '',
@@ -47,12 +61,17 @@ def root():
                 models.APIkey,  
                 models.LaunchCompiler,
                 models.LaunchUrl,).all()
+    try:
+        ThirdBoxURL = db.session.query(models.url).filter(models.name == cfg.read("ModelConfig","ThirdModel")).first()
+    except:
+        ThirdBoxURL = None
     return render_template('main.html',
                             result = result,
                             NeedLogin = NeedLogin,
                             ModelList = ModelList,
+                            ModelCount = len(ModelList) + 1,
                             historys = LLM_response,
-                            ThirdBoxURL = db.session.query(models.url).filter(models.name == cfg.read("ModelConfig","ThirdModel")).one()[0],
+                            ThirdBoxURL = ThirdBoxURL,
                             host = cfg.read("RemoteConfig","host"),
                             port = cfg.read("RemoteConfig","port"),
                             Mode = cfg.read("BaseConfig","devmode"),
@@ -62,27 +81,25 @@ def root():
                             ThirdModel = cfg.read("ModelConfig","ThirdModel"),
                             username = session.get('username'),)
 
-@app.route("/exchange")
-def LoadExchange():
-    return redirect("/")
-
 @app.post('/llm')#GLM请求与回复1
 def upload():
     global result,LLM_response
     InputInfo = request.form['userinput']
     InputModel =request.form["modelinput"]
+    print(InputInfo,InputModel)
     LLM_response = llm(InputModel,InputInfo)
     return jsonify({'response': LLM_response})
 
-@app.route('/openai', methods=['POST'])
+@app.route('/openai', methods=['POST'])#openAI请求端口
 def get_glm_response():
     global GLM_response
     InputInfo = request.form['userinput']
     InputModel = request.form["modelinput"]
+    logger.debug("request:{}.model:{}",InputInfo,InputModel)
     openai_response = ai(InputModel,InputInfo)
-    return jsonify({'response': openai_response})
+    return jsonify({'response': openai_response})#ajax返回
 
-@app.post('/EditSetting')
+@app.post('/EditSetting')#编辑设置
 def EditSetting():
     InputDefaultModel = request.form.get("DefaultModel")
     InputSecondModel = request.form.get("SecondModel")
@@ -100,61 +117,69 @@ def EditSetting():
     cfg.write("ModelConfig","ThirdModel",InputThirdModel)
     return redirect("/")
 
-@app.post('/exchange')#添加模型
+@app.post('/exchange')
 def AddModel():
-    Number = request.form.get("id")
-    Number = request.form["id"]
-    if Number == "-1":
-            InputType = request.form.get("type")
-            InputType = request.form["type"]
-            InputComment = request.form.get("comment")
-            InputUrl = request.form.get("url")
-            InputAPIkey = request.form.get("APIkey")
-            LaunchCompiler = request.form.get("LcCompiler")
-            LaunchUrl = request.form.get("LCurl")
-            info = db.models(
-                        type = InputType,
-                        name = InputComment,
-                        url = InputUrl,
-                        APIkey = InputAPIkey,
-                        LaunchCompiler = LaunchCompiler,
-                        LaunchUrl = LaunchUrl,)
-            db.session.add(info)
-    else:
-        InputState = request.form.get(Number + "state")
-        if InputState == "edit":
-            InputID = request.form.get("id")
-            InputType = request.form.get("type")
-            InputComment = request.form.get("comment")
-            InputUrl = request.form.get("url")
-            InputAPIkey = request.form.get("APIkey")
-            LaunchCompiler = request.form.get("LcCompiler")
-            LaunchUrl = request.form.get("LCurl")
-            db.session.query(db.models).filter(models.id == InputID).update({
-                    db.models.type: InputType,
-                    db.models.name: InputComment,
-                    db.models.url: InputUrl,
-                    db.models.APIkey: InputAPIkey,
-                    db.models.LaunchCompiler: LaunchCompiler,
-                    db.models.LaunchUrl: LaunchUrl,
-                    })
-        elif InputState == "del":
-            InputID = request.form.get("id")
-            db.session.query(models).filter(models.id == InputID).delete()
-        elif InputState == "run":
-            InputID = request.form.get("id")
-            launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LCurl")
-            os.system(launchCMD)
-    db.session.commit()
-    return redirect('/')
-
-@app.post("/UpdateSettings")
-def UpdateSettings():
-    UpdateHost = request.form.get("host")
-    UpdatePort = request.form.get("port")
-    UpdateMode = request.form.get("mode")
-    UpdateKey = request.form.get("key")
-    return redirect("/")
+    InputState = request.form.get("state")
+    InputID = request.form.get("number")
+    InputType = request.form.get("type")
+    InputComment = request.form.get("comment")
+    InputUrl = request.form.get("url")
+    InputAPIkey = request.form.get("APIkey")
+    LaunchCompiler = request.form.get("LcCompiler")
+    LaunchUrl = request.form.get("LcUrl")
+    try:
+        port = int(urlparse(InputUrl).port)
+    except:
+        port = 80
+    logger.debug(LaunchCompiler)
+    if InputState == "edit":
+        db.session.query(db.models).filter(models.id == InputID).update({
+                                db.models.type: InputType,
+                                db.models.name: InputComment,
+                                db.models.url: InputUrl,
+                                db.models.APIkey: InputAPIkey,
+                                db.models.LaunchCompiler: LaunchCompiler,
+                                db.models.LaunchUrl: LaunchUrl,
+                                })
+        db.session.commit()
+        return jsonify({'response': "complete"})
+    elif InputState == "del":
+        db.session.query(models).filter(models.id == InputID).delete()
+        db.session.commit()
+        return jsonify({'response': "complete"})
+    elif InputState == "run":
+        launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LcUrl")
+        pool.submit(subprocess.run, launchCMD)
+        count = 0
+        while True:
+            for conn in psutil.net_connections():
+                if conn.laddr.port == port:
+                    return jsonify({'response': "complete"})
+            count += 1
+            time.sleep(1)
+            if count == cfg.read('BaseConfig',"TimeOut"):
+                logger.error('Model: {} launch maybe failed,because of Time Out({}),LaunchCompilerPath: {},LaunchFile: {}'
+                             ,InputComment,cfg.read('BaseConfig',"TimeOut"),LaunchCompiler,LaunchUrl)
+                return jsonify({'response': "TimeOut"})
+    elif InputState == "stop":
+        for conn in psutil.net_connections():
+            if conn.laddr.port == port:
+                pid = conn.pid
+                p = psutil.Process(pid)
+                p.kill()
+                break
+        return jsonify({'response': "complete"})
+    elif InputState == "add":
+        info = db.models(
+                    type = InputType,
+                    name = InputComment,
+                    url = InputUrl,
+                    APIkey = InputAPIkey,
+                    LaunchCompiler = LaunchCompiler,
+                    LaunchUrl = LaunchUrl,)
+        db.session.add(info)
+        db.session.commit()
+        return jsonify({'response': "complete"})
 
 @app.post('/login')#登录
 def login_check():
@@ -188,6 +213,7 @@ def login_check():
         page = 'login'
         login_error = "请写入信息"
         return redirect('/')
+    
 @app.post('/register')#注册
 def register():
     global login_error,page
@@ -203,8 +229,8 @@ def register():
                             mail=mail,)
             db.session.add(info)
             db.session.commit()
-            db.session.remove()
             login_error = '注册成功'
+            logger.info('User: {account} ,has created an account.Password: {password}',account=account,password=password)
             page = 'login'
         else:
             login_error = '两次密码不一'
@@ -215,29 +241,38 @@ def register():
 
 @app.get('/logout')#登出
 def logout():
+    logger.info('Application Closed')
     close_application()
 
+# if PyEcharts == True:
+#     @app.route('/CorePercent')
+#     def WidgetsCorePercent():
+#         cpu_percent = psutil.cpu_percent()
+#         c = Pie().add("", [["占用", cpu_percent], ["空闲", 100 - cpu_percent]])
+#         return c.render_embed().replace(
+#             "https://assets.pyecharts.org/assets/v5/echarts.min.js",
+#             "./static/js/echarts.min.js",
+#         )
 
-@app.get('/ModelList')
-def GetModelList():
-    ModelList = db.session.query(
-            models.id,
-            models.type,
-            models.name,
-            models.url,
-            models.APIkey,
-            models.LaunchCompiler,
-            models.LaunchUrl,).all()
-    return ModelList
-@app.route("/test")
-def DevTest():
-    return render_template("test.html")
+#     @app.route('/RamPercent')
+#     def WigetsRamPercent():
+#         memory_percent = psutil.virtual_memory().percent
+#         c = Pie().add("", [["占用", memory_percent], ["空闲", 100 - memory_percent]])
+#         return c.render_embed().replace(
+#             "https://assets.pyecharts.org/assets/v5/echarts.min.js",
+#             "/static/js/echarts.min.js",
+#         )
 
-@app.get("/SettingData")
-def GetSettingData():
-    iPv4 = cfg.read("RemoteSetting","host")
-    port = cfg.read("RemoteSetting","port")
-    return iPv4,port
+#     @app.route("/static/js/echarts.min.js")
+#     def js():
+#         with open("src\static\js\echarts.min.js", "rb") as f:
+#             data = f.read().decode()
+#         return data
+
+#     if cfg.read("BaseConfig","devmode") == "True":
+#         @app.route("/test")
+#         def DevTest():
+#             return render_template("test.html")
 
 @app.before_request
 def before_NeedLogin():
@@ -255,12 +290,11 @@ def error404(error):
     return render_template('404.html'),404
 
 
-
 #functions
-def ai(ModelID:str,question:str):
+def ai(ModelID:str,question:str): #TODO:把response转化为json
     response = ""
-    openai.api_base = db.session.query(models.url).filter(models.name == ModelID).one()[0]
-    openai.api_key = db.session.query(models.APIkey).filter(models.name == ModelID).one()
+    openai.api_base = db.session.query(models.url).filter(models.name == ModelID).first()[0]
+    openai.api_key = db.session.query(models.APIkey).filter(models.name == ModelID).first()[0]
     for chunk in openai.ChatCompletion.create(
         model=ModelID,
         messages=[
@@ -272,7 +306,10 @@ def ai(ModelID:str,question:str):
         if hasattr(chunk.choices[0].delta, "content"):
             print(chunk.choices[0].delta.content, end="", flush=True)
             response = response + chunk.choices[0].delta.content
-    print(response, flush=True)
+            print(type(chunk.choices[0].delta.content))
+    print(type(response))
+    logger.info('model: {},url: {}/v1/completions.\nquestion: {},response: {}.'
+                ,ModelID,db.session.query(models.url).filter(models.name == ModelID).first()[0],question,response)
     return response
 
 def llm(ModelID:str,question:str):
@@ -285,10 +322,15 @@ def llm(ModelID:str,question:str):
 
 #launch
 if __name__ == '__main__':
-    if cfg.read("BaseConfig","DevMode") == "True":
+    logger.info('Application Launched!')
+    if cfg.read("BaseConfig","devmode") == "True":
     #WEB MODE
         app.run(debug=cfg.read("BaseConfig","debug"),port=cfg.read("RemoteConfig","port"),host=cfg.read("RemoteConfig","host"))
     #GUI MODE
     else:
-        ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
+        print(cfg.read("BaseConfig","devMode"))
+        try:
+            ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
+        except:
+            pass
         FlaskUI(app=app,server='flask',port=cfg.read("RemoteConfig","port"),width=1000,height=800).run()
