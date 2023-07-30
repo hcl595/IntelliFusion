@@ -244,35 +244,20 @@ def logout():
     logger.info('Application Closed')
     close_application()
 
-# if PyEcharts == True:
-#     @app.route('/CorePercent')
-#     def WidgetsCorePercent():
-#         cpu_percent = psutil.cpu_percent()
-#         c = Pie().add("", [["占用", cpu_percent], ["空闲", 100 - cpu_percent]])
-#         return c.render_embed().replace(
-#             "https://assets.pyecharts.org/assets/v5/echarts.min.js",
-#             "./static/js/echarts.min.js",
-#         )
+@app.route('/CorePercent')
+def WidgetsCorePercent():
+    cpu_percent = psutil.cpu_percent()
+    return cpu_percent
 
-#     @app.route('/RamPercent')
-#     def WigetsRamPercent():
-#         memory_percent = psutil.virtual_memory().percent
-#         c = Pie().add("", [["占用", memory_percent], ["空闲", 100 - memory_percent]])
-#         return c.render_embed().replace(
-#             "https://assets.pyecharts.org/assets/v5/echarts.min.js",
-#             "/static/js/echarts.min.js",
-#         )
+@app.route('/RamPercent')
+def WigetsRamPercent():
+    memory_percent = psutil.virtual_memory().percent
+    return memory_percent
 
-#     @app.route("/static/js/echarts.min.js")
-#     def js():
-#         with open("src\static\js\echarts.min.js", "rb") as f:
-#             data = f.read().decode()
-#         return data
-
-#     if cfg.read("BaseConfig","devmode") == "True":
-#         @app.route("/test")
-#         def DevTest():
-#             return render_template("test.html")
+if cfg.read("BaseConfig","devmode") == "True":
+    @app.route("/test")
+    def DevTest():
+        return render_template("test.html")
 
 @app.before_request
 def before_NeedLogin():
