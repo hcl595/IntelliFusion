@@ -18,7 +18,7 @@ from flaskwebgui import FlaskUI, close_application
 
 import data as db
 from config import Settings
-from data import models, userInfo
+from data import Models
 from setup import setup
 from pathlib import Path
 
@@ -53,17 +53,10 @@ historys = response['history']
 @app.route('/')#根目录
 def root():
     print(login_error)
-    ModelList = db.session.query(
-                models.id,
-                models.type,
-                models.name,
-                models.url,
-                models.APIkey,  
-                models.LaunchCompiler,
-                models.LaunchUrl,).all()
+    ModelList = Models.get()
     ActiveModels = []
     i = 0
-    for Model in ModelList:
+    for _ in ModelList:
         id = ModelList[i][0]
         url = ModelList[i][3]
         port = 0
@@ -71,18 +64,20 @@ def root():
             port = int(urlparse(url).port)
         except:
             port = 0
+        s = set()
         for conn in psutil.net_connections():
             if conn.laddr.port == port:
-                ActiveModels.append(db.session.query(
-                    models.id,
-                    models.type,
-                    models.name,
-                    models.url,
-                    models.APIkey,  
-                    models.LaunchCompiler,
-                    models.LaunchUrl,
-                ).filter(models.id == id).all()[0]) #TODO:会导致内容重复
-        i = i + 1
+                s.add(id)
+        for i in s:
+            ActiveModels.append(db.session.query(
+                models.id,
+                models.type,
+                models.name,
+                models.url,
+                models.APIkey,  
+                models.LaunchCompiler,
+                models.LaunchUrl,
+            ).filter(models.id == i).all()[0]) #TODO:会导致内容重复
     logger.debug("ActiveModels: {}", ActiveModels)
     return render_template('main.html',
                             result = result,
@@ -98,8 +93,8 @@ def root():
                             TimeOut = cfg.read("BaseConfig","debug"),
                             username = session.get('username'),)
 
-@app.post('/llm')#GLM请求与回复1
-def upload():
+@app.post('/llm')
+def upload():#GLM请求与回复1
     global result,LLM_response
     InputInfo = request.form['userinput']
     InputModel =request.form["modelinput"]
@@ -107,8 +102,8 @@ def upload():
     LLM_response = llm(InputModel,InputInfo)
     return jsonify({'response': LLM_response})
 
-@app.route('/openai', methods=['POST'])#openAI请求端口
-def get_glm_response():
+@app.route('/openai', methods=['POST'])
+def get_glm_response():#openAI请求端口
     global GLM_response
     InputInfo = request.form['userinput']
     InputModel = request.form["modelinput"]
@@ -198,65 +193,7 @@ def AddModel():
         db.session.commit()
         return jsonify({'response': "complete"})
 
-@app.post('/login')#登录
-def login_check():
-    global login_error,choose,page
-    account = request.form.get("logid")
-    password = request.form.get("password")
-    acc_result = db.session.query(userInfo.account).filter(userInfo.account == account).first()
-    pwd_result = db.session.query(userInfo.password).filter(userInfo.account == account,userInfo.password == password).first()
-    if account and password:
-        if acc_result:
-            if pwd_result:
-                session['username']=account
-                session['password']=password
-                uid =db.session.query(userInfo.id).filter(userInfo.account==account,userInfo.password==password).first()
-                uid = uid[0]
-                session['uid']= uid
-                if cfg.read("BaseConfig","KeepLogin") == 'True':
-                    session.permanent=True
-                login_error = "已登录"
-                choose = 0
-                return redirect('/')
-            else:
-                page = 'login'
-                login_error = "密码错误"
-                return redirect('/')
-        else:
-            page = 'login'
-            login_error = "未知用户名"
-            return redirect('/')
-    else:
-        page = 'login'
-        login_error = "请写入信息"
-        return redirect('/')
-    
-@app.post('/register')#注册
-def register():
-    global login_error,page
-    account = request.form.get("reg_txt")
-    mail = request.form.get("email")
-    password = request.form.get("set_password")
-    check_password = request.form.get("check_password")
-    if account and password and mail:
-        if password == check_password:
-            info = db.userInfo(
-                            account=account,
-                            password=password,
-                            mail=mail,)
-            db.session.add(info)
-            db.session.commit()
-            login_error = '注册成功'
-            logger.info('User: {account} ,has created an account.Password: {password}',account=account,password=password)
-            page = 'login'
-        else:
-            login_error = '两次密码不一'
-    else:
-        page = "register"
-        login_error = '完整填写信息'
-    return redirect('/')
-
-@app.get('/logout')#登出
+@app.get('/close')#关闭
 def logout():
     logger.info('Application Closed')
     close_application()
@@ -275,17 +212,6 @@ if cfg.read("BaseConfig","devmode") == "True":
     @app.route("/test")
     def DevTest():
         return render_template("test.html")
-
-@app.before_request
-def before_NeedLogin():
-    global NeedLogin
-    if 'username' in session:
-        if request.path == '/':
-            NeedLogin = False
-        else:
-            pass
-    else:
-        NeedLogin = True
 
 @app.errorhandler(404)
 def error404(error):
@@ -325,11 +251,11 @@ def llm(ModelID:str,question:str):
 #launch
 if __name__ == '__main__':
     logger.info('Application Launched by Dev Mode {}!',cfg.read("BaseConfig","devmode"))
-    if cfg.read("BaseConfig","devmode") == "True":
+    if cfg.read("BaseConfig","devmode") == "true":
     #WEB MODE
         app.run(debug=cfg.read("BaseConfig","debug"),port=cfg.read("RemoteConfig","port"),host=cfg.read("RemoteConfig","host"))
     #GUI MODE
-    elif cfg.read("BaseConfig","devmode") == "False":
+    elif cfg.read("BaseConfig","devmode") == "false":
         print(cfg.read("BaseConfig","devmode"))
         try:
             ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
