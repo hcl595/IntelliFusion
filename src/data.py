@@ -20,17 +20,10 @@ class BaseModel(Model):
         database = db
 
 class Models(BaseModel):
-<<<<<<< Updated upstream
-    apikey = IntegerField(column_name='APIkey')
-    display = CharField(column_name='Display', null=True)
-    launch_compiler = CharField(column_name='LaunchCompiler', null=True)
-    launch_path = CharField(column_name='LaunchUrl', null=True)
-=======
     api_key = IntegerField(column_name="APIkey", null=True)
     display = CharField(column_name="Display", null=True)
     launch_compiler = CharField(column_name="LaunchCompiler", null=True)
     launch_path = CharField(column_name="LaunchPath", null=True)
->>>>>>> Stashed changes
     name = CharField()
     type = CharField()
     url = CharField()
