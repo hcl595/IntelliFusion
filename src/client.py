@@ -222,10 +222,10 @@ def error404(error):
 def ai(ModelID: str, question: str):  # TODO:把response转化为json
     response = ""
     openai.api_base = (
-        db.session.query(models.url).filter(models.name == ModelID).first()[0]
+        Models.get(Models.id == ModelID).url
     )
     openai.api_key = (
-        db.session.query(models.APIkey).filter(models.name == ModelID).first()[0]
+        Models.get(Models.id == ModelID).api_key
     )
     for chunk in openai.ChatCompletion.create(
         model=ModelID,
@@ -241,7 +241,7 @@ def ai(ModelID: str, question: str):  # TODO:把response转化为json
     logger.info(
         "model: {},url: {}/v1/completions.\nquestion: {},response: {}.",
         ModelID,
-        db.session.query(models.url).filter(models.name == ModelID).first()[0],
+        Models.get(Models.id == ModelID).url,
         question,
         response,
     )
@@ -250,7 +250,7 @@ def ai(ModelID: str, question: str):  # TODO:把response转化为json
 
 def llm(ModelID: str, question: str):
     response = requests.post(
-        url=db.session.query(models.url).filter(models.name == ModelID).one()[0],
+        url=Models.get(Models.id == ModelID).url,
         data=json.dumps({"prompt": question, "history": []}),
         headers={"Content-Type": "application/json"},
     )
