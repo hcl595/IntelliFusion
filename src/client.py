@@ -52,8 +52,15 @@ historys = response['history']
 #main
 @app.route('/')#根目录
 def root():
+<<<<<<< Updated upstream
     print(login_error)
     ModelList = Models.get()
+=======
+    # breakpoint()
+    logger.debug("login error: {}".format(login_error))
+    ModelList = Models.select()
+    logger.debug("ModelList: {}",list(ModelList))
+>>>>>>> Stashed changes
     ActiveModels = []
     i = 0
     for _ in ModelList:
@@ -79,6 +86,7 @@ def root():
                 models.LaunchUrl,
             ).filter(models.id == i).all()[0]) #TODO:会导致内容重复
     logger.debug("ActiveModels: {}", ActiveModels)
+<<<<<<< Updated upstream
     return render_template('main.html',
                             result = result,
                             NeedLogin = NeedLogin,
@@ -92,6 +100,23 @@ def root():
                             BugM = cfg.read("BaseConfig","debug"),
                             TimeOut = cfg.read("BaseConfig","debug"),
                             username = session.get('username'),)
+=======
+    return render_template(
+        "main.html",
+        result=result,
+        NeedLogin=NeedLogin,
+        ActiveModels=ActiveModels,
+        ModelList=list(ModelList),
+        ModelCount=len(ModelList) + 1,
+        historys=LLM_response,
+        host=cfg.read("RemoteConfig", "host"),
+        port=cfg.read("RemoteConfig", "port"),
+        Mode=cfg.read("BaseConfig", "devmode"),
+        BugM=cfg.read("BaseConfig", "debug"),
+        TimeOut=cfg.read("BaseConfig", "debug"),
+        username=session.get("username"),
+    )
+>>>>>>> Stashed changes
 
 @app.post('/llm')
 def upload():#GLM请求与回复1
@@ -138,13 +163,15 @@ def AddModel():
     InputUrl = request.form.get("url")
     InputAPIkey = request.form.get("APIkey")
     LaunchCompiler = request.form.get("LcCompiler")
-    LaunchUrl = request.form.get("LcUrl")
+    LaunchPath = request.form.get("LcUrl")
+    logger.info("User Inputs: {}, {}, {}", InputState, InputID,InputAPIkey)
     try:
         port = int(urlparse(InputUrl).port)
     except:
         port = 80
     logger.debug(LaunchCompiler)
     if InputState == "edit":
+<<<<<<< Updated upstream
         db.session.query(db.models).filter(models.id == InputID).update({
                                 db.models.type: InputType,
                                 db.models.name: InputComment,
@@ -159,8 +186,25 @@ def AddModel():
         db.session.query(models).filter(models.id == InputID).delete()
         db.session.commit()
         return jsonify({'response': "complete"})
+=======
+        u = Models.update({
+            Models.type: InputType,
+            Models.name: InputComment,
+            Models.url: InputUrl,
+            Models.api_key: InputAPIkey,
+            Models.launch_compiler: LaunchCompiler,
+            Models.launch_path: LaunchPath,
+        }).where(Models.id == InputID)
+        u.execute()
+        return jsonify({"response": "complete"})
+    elif InputState == "del":
+        u = Models.get(id = InputID)
+        u.delete_instance()
+        return jsonify({"response": "complete"})
+>>>>>>> Stashed changes
     elif InputState == "run":
         launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LcUrl")
+        logger.debug(launchCMD)
         pool.submit(subprocess.run, launchCMD)
         count = 0
         while True:
@@ -169,10 +213,22 @@ def AddModel():
                     return jsonify({'response': "complete"})
             count += 1
             time.sleep(1)
+<<<<<<< Updated upstream
             if count == cfg.read('BaseConfig',"TimeOut"):
                 logger.error('Model: {} launch maybe failed,because of Time Out({}),LaunchCompilerPath: {},LaunchFile: {}'
                              ,InputComment,cfg.read('BaseConfig',"TimeOut"),LaunchCompiler,LaunchUrl)
                 return jsonify({'response': "TimeOut"})
+=======
+            if count == cfg.read("BaseConfig", "TimeOut"):
+                logger.error(
+                    "Model: {} launch maybe failed,because of Time Out({}),LaunchCompilerPath: {},LaunchFile: {}",
+                    InputComment,
+                    cfg.read("BaseConfig", "TimeOut"),
+                    LaunchCompiler,
+                    LaunchPath,
+                )
+                return jsonify({"response": "TimeOut"})
+>>>>>>> Stashed changes
     elif InputState == "stop":
         for conn in psutil.net_connections():
             if conn.laddr.port == port:
@@ -182,6 +238,7 @@ def AddModel():
                 break
         return jsonify({'response': "complete"})
     elif InputState == "add":
+<<<<<<< Updated upstream
         info = db.models(
                     type = InputType,
                     name = InputComment,
@@ -192,6 +249,17 @@ def AddModel():
         db.session.add(info)
         db.session.commit()
         return jsonify({'response': "complete"})
+=======
+        Models.create(
+            type=InputType,
+            name=InputComment,
+            url=InputUrl,
+            api_key=InputAPIkey,
+            launch_compiler=LaunchCompiler,
+            launch_path=LaunchPath,
+        )
+        return jsonify({"response": "complete"})
+>>>>>>> Stashed changes
 
 @app.get('/close')#关闭
 def logout():
@@ -248,6 +316,7 @@ def llm(ModelID:str,question:str):
     return response.json()['history'][0][1]
 
 
+<<<<<<< Updated upstream
 #launch
 if __name__ == '__main__':
     logger.info('Application Launched by Dev Mode {}!',cfg.read("BaseConfig","devmode"))
@@ -257,6 +326,26 @@ if __name__ == '__main__':
     #GUI MODE
     elif cfg.read("BaseConfig","devmode") == "false":
         print(cfg.read("BaseConfig","devmode"))
+=======
+# launch
+if __name__ == "__main__":
+    logger.info(
+        "Application Launched by Dev Mode {}!", cfg.read("BaseConfig", "devmode")
+    )
+    if cfg.read("BaseConfig", "debug") == "True":
+        logger.level("DEBUG")
+        logger.debug("run in debug mode")
+    if cfg.read("BaseConfig", "devmode") == "True":
+        logger.debug("run in web mode")
+        app.run(
+            debug=cfg.read("BaseConfig", "debug"),
+            port=cfg.read("RemoteConfig", "port"),
+            host=cfg.read("RemoteConfig", "host"),
+        )
+    elif cfg.read("BaseConfig", "devmode") == "False" or cfg.read("BaseConfig", "devmode") == False:
+        logger.debug("run in GUI mode")
+        print(cfg.read("BaseConfig", "devmode"))
+>>>>>>> Stashed changes
         try:
             ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
         except:
