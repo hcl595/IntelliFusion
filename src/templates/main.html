@@ -10,6 +10,13 @@
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
+            {% for Model in ModelList %}
+            <li id="li" class="li" value={{ Model.id }}><span>{{ Model.name }}</span></li>
+            {% endfor %}
+            <li id="li" class="li current" value="-1"><span>Widgets</span></li>
+            <li id="li" class="li"><<i class="fa fa-play"></i></li>
+        </ul>
+
         {% for Model in ActiveModels %}
         {% if Model.type == 'API' %}
         <div class="dialogbox_container" id='{{ Model.id }}' style="display: none;"> 
