@@ -10,7 +10,7 @@
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
-            {% for Model in ModelList %}
+            {% for Model in ActiveModels %}
             <li id="li" class="li" value={{ Model.id }}><span>{{ Model.name }}</span></li>
             {% endfor %}
             <li id="li" class="li current" value="-1"><span>Widgets</span></li>
@@ -76,23 +76,19 @@
                 <div class="widgets_container">
                     <div class="widgets_contentbox">
                         <h5 style="margin-left: 30%;">CPU占用率</h5>
-                        <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;"
-                            frameborder=0></iframe>
+                        <!-- <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe> -->
                     </div>
                     <div class="widgets_contentbox">
                         <h5 style="margin-left: 30%;">RAM占用率</h5>
-                        <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;"
-                            frameborder=0></iframe>
+                        <!-- <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe> -->
                     </div>
                     <div class="widgets_contentbox">
                         <h5 style="margin-left: 30%;">CPU占用率</h5>
-                        <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;"
-                            frameborder=0></iframe>
+                        <!-- <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe> -->
                     </div>
                     <div class="widgets_contentbox">
                         <h5 style="margin-left: 30%;">RAM占用率</h5>
-                        <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;"
-                            frameborder=0></iframe>
+                        <!-- <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe> -->
                     </div>
                 </div>
             </div>
@@ -223,11 +219,11 @@
     <div class="widgets_container">
         <div class="widgets_contentbox">
             <h5 style="margin-left: 30%;">CPU占用率</h5>
-            <iframe src="/CorePercent" style="width: 300PX; height: 300px; margin-right: auto;" frameborder=0></iframe>
+            <!-- <iframe src="/CorePercent" style="width: 300PX; height: 300px; margin-right: auto;" frameborder=0></iframe> -->
         </div>
         <div class="widgets_contentbox">
             <h5 style="margin-left: 30%;">RAM占用率</h5>
-            <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+            <!-- <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe> -->
         </div>
     </div>
 </div>

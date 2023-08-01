@@ -2,16 +2,15 @@ from widgets import widgets_blue
 import psutil
 from flask import Flask, render_template
 
-@widgets_blue.route('/')
-def widgets_blue_root():
-    return render_template('CorePercent.html')
 
-@widgets_blue.route('/CorePercent')
+@widgets_blue.route('/Core_Percent')
 def CorePercent():
     cpu_percent = psutil.cpu_percent()
-    return cpu_percent
+    return render_template("CPU_Percent.html",
+                           cpu_percent = cpu_percent)
 
-@widgets_blue.route('/RamPercent')
+@widgets_blue.route('/Ram_Percent')
 def RAMPercent():
     memory_percent = psutil.virtual_memory().percent
-    return memory_percent
+    return render_template("RAM_Percent.html",
+                           memory_percent = memory_percent) 

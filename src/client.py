@@ -217,6 +217,10 @@ if cfg.read("BaseConfig", "devmode") == "True":
 def error404(error):
     return render_template("404.html"), 404
 
+from widgets import widgets_blue
+
+@app.register_blueprint(widgets_blue)
+
 
 # functions
 def ai(ModelID: str, question: str):  # TODO:把response转化为json
