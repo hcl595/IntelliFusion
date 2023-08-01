@@ -1,4 +1,4 @@
-# main.py | Intellifusion Version 0.1.7(202307292000) Developer Alpha
+# main.py | Intellifusion Version 0.1.8(202308012000) Developer Alpha
 # headers
 import ctypes
 import json
@@ -24,7 +24,7 @@ pool = ThreadPoolExecutor()
 # configs
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config["SECRET_KEY"] = "UMAVERSIONZPONEPSEV"
+app.config["SECRET_KEY"] = "UMAVERSIONZPONEPEHT"
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
 LOG_FILE = DATA_DIR / "models.log"
@@ -51,7 +51,6 @@ historys = response["history"]
 # main
 @app.route("/")  # 根目录
 def root():
-    # breakpoint()
     logger.debug("login error: {}".format(login_error))
     ModelList = Models.select()
     logger.debug("ModelList: {}",list(ModelList))
@@ -74,7 +73,7 @@ def root():
         port=cfg.read("RemoteConfig", "port"),
         Mode=cfg.read("BaseConfig", "devmode"),
         BugM=cfg.read("BaseConfig", "debug"),
-        TimeOut=cfg.read("BaseConfig", "debug"),
+        TimeOut=cfg.read("BaseConfig", "TimeOut"),
         username=session.get("username"),
     )
 
@@ -219,7 +218,7 @@ def error404(error):
 
 from widgets import widgets_blue
 
-@app.register_blueprint(widgets_blue)
+app.register_blueprint(widgets_blue)
 
 
 # functions
@@ -264,7 +263,7 @@ def llm(ModelID: str, question: str):
 # launch
 if __name__ == "__main__":
     logger.info(
-        "Application Launched by Dev Mode {}!", cfg.read("BaseConfig", "devmode")
+        "Application(v0.1.8a) Launched with Dev Mode {}!", cfg.read("BaseConfig", "devmode")
     )
     if cfg.read("BaseConfig", "debug") == "True":
         logger.level("DEBUG")

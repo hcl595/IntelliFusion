@@ -1,4 +1,4 @@
-# config.py | IntelliFusion Version 0.1.7(202307182000) Developer Alpha
+# config.py | IntelliFusion Version 0.1.8(202308012000) Developer Alpha
 from pathlib import Path
 from loguru import logger
 import json
