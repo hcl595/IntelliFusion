@@ -68,19 +68,19 @@
             <div class="widgets_container">
                 <div class="widgets_contentbox">
                     <h5 style="margin-left: 30%;">CPU占用率</h5>
-                    <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                    <!-- TODO <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe> -->
                 </div>
                 <div class="widgets_contentbox">
                     <h5 style="margin-left: 30%;">RAM占用率</h5>
-                    <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                    <!-- TODO <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe> -->
                 </div>
                 <div class="widgets_contentbox">
                     <h5 style="margin-left: 30%;">CPU占用率</h5>
-                    <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                    <!-- TODO <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe> -->
                 </div>
                 <div class="widgets_contentbox">
                     <h5 style="margin-left: 30%;">RAM占用率</h5>
-                    <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe>
+                    <!-- TODO <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe> -->
                 </div>
             </div>
         </div>
@@ -624,42 +624,6 @@ function loading(){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
 }
-
-import * as echarts from 'echarts';
-
-var chartDom = document.getElementById('main');
-var myChart = echarts.init(chartDom);
-var option;
-
-option = {
-  tooltip: {
-    formatter: '{a} <br/>{b} : {c}%'
-  },
-  series: [
-    {
-      name: 'Pressure',
-      type: 'gauge',
-      progress: {
-        show: true
-      },
-      detail: {
-        valueAnimation: true,
-        formatter: '{value}'
-      },
-      data: [
-        {
-          value: 50,
-          name: 'SCORE'
-        }
-      ]
-    }
-  ]
-};
-
-option && myChart.setOption(option);
-
-
-
 
 
 </script>
