@@ -16,7 +16,7 @@
         </ul>
 
         {% for Model in ModelList %}
-        {% if Model.1 == 'API' %}
+        {% if Model.type == 'API' %}
         <div class="dialogbox_container" id={{ Model.id }} style="display: none;"> 
             <div class="content" id="api-output">
 
@@ -36,7 +36,7 @@
             </div>
         </div>
         {% endif %}
-        {% if Model.1 == 'OpenAI' %}
+        {% if Model.type == 'OpenAI' %}
         <div class="dialogbox_container" id={{ Model.id }} style="display: none;">
                 <div class="content" id="openai-output">
 
@@ -56,29 +56,21 @@
                 </div>
             </div>
         {% endif %}
-        {% if Model.1 == 'WebUI' %}
+        {% if Model.type == 'WebUI' %}
         <div  id={{ Model.id }} style="display: none;">
             <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src={{ Model.url }}></iframe>
         </div>
         {% endif %}
         {% endfor %}
         <div id="-1">
-            <div class="widgets_container">
-                <div class="widgets_contentbox">
-                    <h5 style="margin-left: 30%;">CPU占用率</h5>
-                    <iframe src="/CorePercent" style="width: 320px; height: 320px; margin-right: auto;overflow: hidden !important;" frameborder=0></iframe>
-                </div>
-                <div class="widgets_contentbox">
-                    <h5 style="margin-left: 30%;">RAM占用率</h5>
-                    <iframe src="/RamPercent" style="width: 320px; height: 320px; margin-right: auto;" frameborder=0></iframe>
-                </div>
-                <div class="widgets_contentbox">
-                    <h5 style="margin-left: 30%;">CPU占用率</h5>
-                    <iframe src="/CorePercent" style="width: 320px; height: 320px; margin-right: auto;" frameborder=0></iframe>
-                </div>
-                <div class="widgets_contentbox">
-                    <h5 style="margin-left: 30%;">RAM占用率</h5>
-                    <iframe src="/RamPercent" style="width: 320px; height: 320px; margin-right: auto;" frameborder=0></iframe>
+            <div class="widgets">
+                <div class="widgets_container">
+                    <div class="widgets_contentbox">
+                        <iframe src="/widgets/CPU_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
+                    </div>
+                    <div class="widgets_contentbox">
+                        <iframe src="/widgets/RAM_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
+                    </div>
                 </div>
             </div>
         </div>
@@ -207,12 +199,10 @@
 <div class="widgets" id="widgets-box" style="display: none;">
     <div class="widgets_container">
         <div class="widgets_contentbox">
-            <h5 style="margin-left: 30%;">CPU占用率</h5>
-            <iframe src="/CorePercent" style="width: 300px; height: 300px; margin-right: auto;" frameborder=0></iframe>
+            <iframe src="widgets/CPU_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
         </div>
         <div class="widgets_contentbox">
-            <h5 style="margin-left: 30%;">RAM占用率</h5>
-            <iframe src="/RamPercent" style="width: 320px; height: 320px; margin-right: auto;" frameborder=0></iframe>
+            <iframe src="widgets/RAM_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
         </div>
     </div>
 </div>
@@ -334,73 +324,14 @@
         </div>
         <button type="submit" class="deny" style="float: left;margin-left: 10px;margin-right: 10px;" onclick="loading()">重置</button>
         <button type="submit" class="add" style="float: right;margin-left: 10px;margin-right: 10px;" onclick="loading()">更改</button>
-    </form>
-
-    
+    </form>    
 </div>
 
-<div class="login-container" id="login-box" style="display: none;">
-    <div class="login-form-container sign-up-container" id="SignUp">
-        <form action="/register" method="POST" id="SignUpDiv">
-                <h1>注册</h1>           
-                <div class="txtb">
-                    <input name="reg_txt" type="reg_text">
-                    <span data-placeholder="Useranme" ></span>
-                </div>
-                <div class="txtb">
-                    <input name="email" type="reg_email">
-                    <span data-placeholder="Email" ></span>
-                </div> 
-                <div class="txtb">
-                    <input name="set_password" type="reg_set_password">
-                    <span data-placeholder="Password" ></span>
-                </div>
-                <div class="txtb">
-                    <input name="check_password" type="reg_check_password">
-                    <span data-placeholder="Confirm Password" ></span>
-                </div>            
-                <button type="submit" herf="/register">注册</button>
-                <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
-        </form>
-
-    </div>
-
-    <div class="login-form-container sign-in-container" id="SignIn">
-        <form action="/login" method="POST" id="login">
-            <h1>登录</h1>
-            <div class="txtb">
-                <input name="logid" type="log_id">
-                <span data-placeholder="Username" ></span>
-            </div>
-            <div class="txtb">
-                <input name="password" type="log_password">
-                <span data-placeholder="Password"></span>
-            </div>
-            <button class="submit" type="submit" herf='/login'>登录</button>
-            <p onclick="CloseLogin()" class="submit" style="margin-top: 2%;">取消</p>
-        </form>
-    </div>
-
-    <div class="overlay-container">
-            <div class="overlay">
-                <div class="overlay-panel overlay-left">
-                    <h1>已有账号？</h1>
-                    <p>请使用您的账号进行登录</p>
-                    <button class="ghost" id="signIn" onclick="SignIn()">登录</button>
-                </div>
-                <div class="overlay-panel overlay-right">
-                    <h1>没有账号?</h1>
-                    <p>立即注册加入我们</p>
-                    <button class="ghost" id="signUp" onclick="SignUp()">注册</button>
-                </div>
-            </div>
-    </div>
-</div>
 
 <div class="copyright" id="rights-box" style="display: none;">
     <img style="margin: 50px;width: 100px;height: 100px;" src="/static/res/test.ico" alt="Realizer">
-    <h3 style="margin: 50px;">Realizer Version 0.1.5(202307082000) Developer Alpha</h3>
-    <a href="https://www.github.com/hcl595/universalmodelassistant/">learn more...</a>
+    <h3 style="margin: 50px;">IntelliFusi0n Version 0.2.1(202308012000) Developer Beta</h3>
+    <a href="https://www.github.com/hcl595/intellifusion/">learn more...</a>
 </div>
 
 <div class="loadingOne" id="loading" style="display: none;">

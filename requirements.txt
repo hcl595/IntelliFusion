@@ -3,7 +3,6 @@ openai
 psutil
 loguru
 flaskwebgui
-pyecharts
 pyautogui
 requests
 

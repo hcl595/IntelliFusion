@@ -185,7 +185,7 @@ stable-diffusion-webui.zip
 stable-diffusion-webui/*
 tmp
 Llama2
-/data/*
+**/data/*
 src/client/templates/test.html
 release/
 src/models.sqite

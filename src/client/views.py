@@ -11,7 +11,6 @@ from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, reques
 from django.shortcuts import render
 from flaskwebgui import close_application
 from loguru import logger
-from pyecharts.charts import Pie
 
 from client.config import Settings
 from client.models import ModelList
@@ -46,9 +45,7 @@ def root(InputRequest):
                 'port' : cfg.read("RemoteConfig","port"),
                 'Mode' : cfg.read("BaseConfig","devmode"),
                 'BugM' : cfg.read("BaseConfig","client"),
-                'DefaultModel' : cfg.read("ModelConfig","DefaultModel"),
-                'SecondModel' : cfg.read("ModelConfig","SecondModel"),
-                'ThirdModel' : cfg.read("ModelConfig","ThirdModel"),
+                'TimeOut' : cfg.read("BaseConfig","TimeOut"),
                 'username' : 'NONE'})
 
 def request_api_response(InputRequest):
@@ -145,82 +142,11 @@ def ManageModel(InputRequest):
         )
         n.save()
         return JsonResponse({'response': "complete"})
-
-# def login_check():
-#     global login_error,choose,page
-#     account = InputRequest.POST.get("logid")
-#     password = InputRequest.POST.get("password")
-#     acc_result = db.session.query(userInfo.account).filter(userInfo.account == account).first()
-#     pwd_result = db.session.query(userInfo.password).filter(userInfo.account == account,userInfo.password == password).first()
-#     if account and password:
-#         if acc_result:
-#             if pwd_result:
-#                 session['username']=account
-#                 session['password']=password
-#                 uid =db.session.query(userInfo.id).filter(userInfo.account==account,userInfo.password==password).first()
-#                 uid = uid[0]
-#                 session['uid']= uid
-#                 if cfg.read("BaseConfig","KeepLogin") == 'True':
-#                     session.permanent=True
-#                 login_error = "已登录"
-#                 choose = 0
-#                 return HttpResponseRedirect('/')
-#             else:
-#                 page = 'login'
-#                 login_error = "密码错误"
-#                 return HttpResponseRedirect('/')
-#         else:
-#             page = 'login'
-#             login_error = "未知用户名"
-#             return HttpResponseRedirect('/')
-#     else:
-#         page = 'login'
-#         login_error = "请写入信息"
-#         return HttpResponseRedirect('/')
     
-# def register():
-#     global login_error,page
-#     account = InputRequest.POST.get("reg_txt")
-#     mail = InputRequest.POST.get("email")
-#     password = InputRequest.POST.get("set_password")
-#     check_password = InputRequest.POST.get("check_password")
-#     if account and password and mail:
-#         if password == check_password:
-#             info = db.userInfo(
-#                             account=account,
-#                             password=password,
-#                             mail=mail,)
-#             db.session.add(info)
-#             db.session.commit()
-#             login_error = '注册成功'
-#             logger.info('User: {account} ,has created an account.Password: {password}',account=account,password=password)
-#             page = 'login'
-#         else:
-#             login_error = '两次密码不一'
-#     else:
-#         page = "register"
-#         login_error = '完整填写信息'
-#     return HttpResponseRedirect('/')
 
 def logout(InputRequest):
     logger.info('Application Closed')
     close_application()
-
-def WidgetsCorePercent(InputRequest):
-    cpu_percent = psutil.cpu_percent()
-    c = Pie().add("", [["占用", cpu_percent], ["空闲", 100 - cpu_percent]])
-    return HttpResponse(c.render_embed().replace(
-        "https://assets.pyecharts.org/assets/v5/echarts.min.js",
-        "/static/js/echarts.min.js",
-    ))
-
-def WigetsRamPercent(InputRequest):
-    memory_percent = psutil.virtual_memory().percent
-    c = Pie().add("", [["占用", memory_percent], ["空闲", 100 - memory_percent]])
-    return HttpResponse(c.render_embed().replace(
-        "https://assets.pyecharts.org/assets/v5/echarts.min.js",
-        "/static/js/echarts.min.js",
-    ))
 
 def js(InputRequest):
     with open("src\static\js\echarts.min.js", "rb") as f:
