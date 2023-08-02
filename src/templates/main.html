@@ -73,12 +73,15 @@
             {% endif %}
             {% endfor %}
             <div id="-1">
-                <div class="widgets_container">
-                    <div class="widgets_contentbox">
-                        <iframe src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
+                <div class="widgets">
+                    <div class="widgets_container">
+                        <div class="widgets_contentbox">
+                            <iframe id= "widgets_cpu_percent_-1" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
+                        </div>
+                        <div class="widgets_contentbox">
+                            <iframe id= "widgets_ram_percent_-1" src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
+                        </div>
                     </div>
-                    <div class="widgets_contentbox">
-                        <iframe src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
                     </div>
                 </div>
             </div>
@@ -208,10 +211,10 @@
 <div class="widgets" id="widgets-box" style="display: none;">
     <div class="widgets_container">
         <div class="widgets_contentbox">
-            <iframe src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
+            <iframe id= "widgets_cpu_percent" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
         </div>
         <div class="widgets_contentbox">
-            <iframe src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
+            <iframe id= "widgets_ram_percent" src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
         </div>
     </div>
 </div>
@@ -563,6 +566,31 @@ function loading(){
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
 }
 
+//auto refresh
+
+// $(function () {
+//     	setInterval(function () {
+//         	document.load("#widgets_cpu_percent");
+//    		}, 1000);
+// })
+
+// $(function () {
+//     	setInterval(function () {
+//         	$("#widgets_cpu_percent_-1").load("#widgets_cpu_percent_-1");
+//    		}, 100000);
+// })
+
+// $(function () {
+//     	setInterval(function () {
+//         	$("#widgets_ram_percent").load("#widgets_ram_percent");
+//    		}, 100000);
+// })
+
+// $(function () {
+//     	setInterval(function () {
+//         	$("#widgets_ram_percent_-1").load("#widgets_ram_percent_-1");
+//    		}, 100000);
+// })
 
 
 </script>
