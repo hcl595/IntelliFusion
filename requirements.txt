@@ -1,11 +1,10 @@
-sqlalchemy
 flask
 flaskwebgui
 requests
 openai
 pyautogui
 loguru
-
+peewee
 
 # dev
 black

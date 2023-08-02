@@ -1,33 +1,29 @@
-<!--Realizer Version 0.1.6(202307152000) Developer Alpha-->
+<!--Realizer Version 0.1.8(202308012000) Developer Alpha-->
 <!--头文件-->
 {% block include %}
 <!DOCTYPE html>
 <html lang="cn">
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="static\css\bootstrap.min.css">
-<link rel="stylesheet" href="static\css\font-awesome.css">
-<link rel="stylesheet" href="static\css\style.css">
-<link rel="shortcut icon" href="static\res\test.ico">
-<script src="..\static\js\jquery.min.js" charset="utf-8"></script>
-<script src="..\static\js\javascripts.js" charset="utf-8"></script>
-<script type="text/javascript" src="./static/js/echarts.min.js"></script>
-{% endblock %}
-
-
+<link rel="stylesheet" href="static\css\bootstrap.min.css"> <!-- bootstrap.css -->
+<link rel="stylesheet" href="static\css\font-awesome.css"> <!-- font-awesome.css -->
+<link rel="stylesheet" href="static\css\style.css"> <!-- [ style.css ] -->
+<link rel="shortcut icon" href="static\res\icon-o.ico">
+<script src="..\static\js\jquery.min.js" charset="utf-8"></script> <!-- jquery.js -->
+<script src="..\static\js\javascripts.js" charset="utf-8"></script> <!-- javascripts.js -->
 </head>
+{% endblock %}
 <!--导航栏-->
 <div class="icon-bar">
   <nav>
     <!-- 头像 -->
       <div class="brand">
-          <img src="/static/res/test.ico" alt="...">
+          <img src="/static/res/icon-o.ico" alt="...">
           <p>
-              Welcome Back,
-              <span onclick="showLogin()">{{ username }}</span>
+              Let's Create!
           </p>
       </div>
-      <hr class="line">
+      <el-divider></el-divider>
       <!-- 分割线 -->
       <ul class="list">
           <li class="active" id="main" onclick="ChangeToMain()">
@@ -52,7 +48,7 @@
           </li>
           <hr class="line">
           <!-- 分割线 -->
-          <a href="/logout">
+          <a href="/close">
           <li>
               <i class="fa fa-sign-out" id="logout"></i>
               <span>退出程序</span>
@@ -61,7 +57,7 @@
           <a>
           <li class="" id="rts" onclick="ChangeToRts()">
               <i class="fa fa-copyright"></i>
-              <span>Model Assistant v0.1.6</span>
+              <span>Model Assistant v0.1.8</span>
           </li>
           </a>
         </ul>
