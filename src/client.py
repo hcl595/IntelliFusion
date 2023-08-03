@@ -55,11 +55,12 @@ def root():
     ModelList = Models.select()
     logger.debug("ModelList: {}",list(ModelList))
     ActiveModels = []
-    model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
+    model_ports = {port: m for m in ModelList if (port := get_ports(m.url))}
     for conn in psutil.net_connections():
         port = conn.laddr.port
         if port in model_ports:
             ActiveModels.append(model_ports[port])
+            logger.debug("model_ports: {}", model_ports[port])
     logger.debug("ActiveModels: {}", ActiveModels)
     return render_template(
         "main.html",
@@ -259,6 +260,13 @@ def llm(ModelID: str, question: str):
     )
     return response.json()["history"][0][1]
 
+
+def get_ports(url: str):
+    port = urlparse(url).port
+    if port == None:
+        port = 5000
+    logger.debug("parse ports: {}", port)
+    return port
 
 # launch
 if __name__ == "__main__":

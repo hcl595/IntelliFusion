@@ -432,7 +432,7 @@ nav:hover .list li:nth-child(8) span {
   width: 100%;
   background-color: rgba(255, 255, 255, 0.212);
   backdrop-filter: blur(18px);
-  border: 2px solid rgba(230, 235, 240, .7);
+  border: 2px solid rgba(230, 235, 240, .5);
   border-radius: 2%;
   transition: .6s cubic-bezier(.8, .5, .5, .8);
 }
@@ -446,7 +446,7 @@ ul.tab {
   border-radius: 1%;
   border-bottom: 1px solid #ccc;
   padding-bottom:1px;
-  height: 30px;
+  height: 40px;
   line-height: 30px;
   color: #696969;
 }
@@ -458,10 +458,10 @@ ul.tab li {
 }
 ul.tab li.li {
   padding: 0px 25px 0px;
-  border-radius: 10%;
+  border-radius: 14px;
   font-size: 13px;
-  height: 30px;
-  line-height: 30px;
+  height: 40px;
+  line-height: 40px;
   background:#f4f5f900;
   border-top: 1px solid #007bff;
   border-left: 1px solid #C5D0DC;
@@ -469,7 +469,7 @@ ul.tab li.li {
   background-color: rgba(0, 0, 0, .05);
 }
 ul.tab li.current {
-  border-radius: 10%;
+  border-radius: 14px;
   border-bottom: 0px;
   border-top: 2px solid #7599DE;
   font-size: 13px;
@@ -610,11 +610,7 @@ textarea{
 }
 
 
-/* Widgets */
 
-.widgets_container {
-  float: right;
-}
 
 /* Loading */
 
@@ -663,7 +659,7 @@ textarea{
   animation-delay:0.8s;
 }
 
-/* Cards */
+/* Widgets */
 
 .widgets_container {
   max-width: 100%;
@@ -673,7 +669,7 @@ textarea{
   flex-wrap: wrap;
   justify-content: center;
   overflow: auto;
-  backdrop-filter: blur(20px);
+  float: right;
 }
 .widgets_contentbox {
   width: 320px;
@@ -702,6 +698,7 @@ textarea{
   box-shadow: none;
 } 
 
+/* Cards */
 
 .card_container {
   max-width: 100%;
@@ -709,7 +706,6 @@ textarea{
   flex-wrap: wrap;
   justify-content: center;
   overflow: auto;
-  backdrop-filter: blur(20px);
 }
 .card_contentbox {
   width: 320px;
@@ -758,14 +754,14 @@ textarea{
   flex-flow: column;
   border-radius: 12px;
   backdrop-filter: blur(18px);
-  background: rgba(230, 235, 240, .7);
-  border: 2px solid rgba(230, 235, 240, .7);
+  background: rgba(230, 235, 240, .5);
+  border: 2px solid rgba(230, 235, 240, .5);
   box-shadow: 0 0 30px rgba(0, 0, 0, .05);
   overflow: auto;
 }
 .account table{
   margin: 20px;
-  overflow: auto;
+  overflow-x: scroll;
 }
 .account table select{
   border-radius: 20px;
@@ -797,6 +793,11 @@ textarea{
   min-width: 60%;
   max-width: 100%;
   overflow: hidden;
+  backdrop-filter: blur(18px);
+  background: rgba(230, 235, 240, .5);
+  border: 2px solid rgba(230, 235, 240, .5);
+  box-shadow: 0 0 30px rgba(0, 0, 0, .05);
+  border-radius: 12px;
 }
 
 .widgets {
@@ -808,6 +809,20 @@ textarea{
   flex-flow: column;
 }
 
+.widgets_box {
+  height: 100vh;
+  min-width: 60%;
+  max-width: 100%;
+  display: flex;
+  overflow: hidden;
+  flex-flow: column;
+  backdrop-filter: blur(18px);
+  background: rgba(230, 235, 240, .5);
+  border: 2px solid rgba(230, 235, 240, .5);
+  box-shadow: 0 0 30px rgba(0, 0, 0, .05);
+  border-radius: 12px;
+}
+
 .settings {
   height: 100vh;
   min-width: 40px;
@@ -816,10 +831,11 @@ textarea{
   flex-flow: column;
   border-radius: 12px;
   backdrop-filter: blur(18px);
-  background: rgba(230, 235, 240, .7);
-  border: 2px solid rgba(230, 235, 240, .7);
+  background: rgba(230, 235, 240, .5);
+  border: 2px solid rgba(230, 235, 240, .5);
   box-shadow: 0 0 30px rgba(0, 0, 0, .05);
   overflow: auto;
+  border-radius: 12px;
 }
 .settings .content .table{
   margin: 20px;
@@ -858,14 +874,13 @@ textarea{
   box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
   position: relative;
   overflow: hidden;
-  margin: auto;
-  min-width: 768px;
-  max-width: 100%;
-  min-height: 480px;   
+  margin-top: auto;
+  width: 50vw;
+  min-height: 30vh;   
   z-index: 3;
   position:fixed;
-  top:30%;
-  left: 20%;
+  top:  20vh;
+  left: 30vw;
 }
 .copyright p{
   word-break: break-all;
@@ -896,4 +911,47 @@ textarea{
 }
 a {
   TEXT-DECORATION:none;
+}
+
+
+/*copyright_close*/
+
+/* #box {
+  display: none;
+}
+#btn:checked ~ #box {
+  display: block; 
+} */
+
+.btn {
+  background-color: none;
+  border: none;
+  color: rgb(0, 0, 0);
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  /* display: inline-block; */
+  float: right;
+  font-size: 16px;
+  margin: 4px 4px;
+  cursor: pointer;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+}
+
+.btn {
+  background-color: none; 
+  color: rgb(151, 151, 151);
+}
+
+.Hyperlink {
+  color: #000;
+  width:200px; 
+  height:30px; 
+  margin:0 auto; 
+  /* border:1px solid #ccc;  */
+  background: none; 
+  opacity:0.5;
+  border-radius: 8px;
+  border: none; 
 }
