@@ -310,6 +310,6 @@ if __name__ == "__main__":
             app=app,
             server="flask",
             port=cfg.read("RemoteConfig", "port"),
-            width=1000,
-            height=800,
+            width=1800,
+            height=100,
         ).run()
