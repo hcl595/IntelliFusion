@@ -211,9 +211,15 @@ if (check_judge == 0)
     document.getElementById(check_id).checked = False
 }
 
+//版本号
 
 
-
+$(document).ready(function(){
+    $("button").click(function(){
+      $("#rights-box").fadeOut(100);
+      $("#rts").removeClass("active")
+    });
+});
 //单个组件
 
 

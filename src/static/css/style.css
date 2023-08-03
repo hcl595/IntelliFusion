@@ -446,7 +446,7 @@ ul.tab {
   border-radius: 1%;
   border-bottom: 1px solid #ccc;
   padding-bottom:1px;
-  height: 30px;
+  height: 40px;
   line-height: 30px;
   color: #696969;
 }
@@ -460,8 +460,8 @@ ul.tab li.li {
   padding: 0px 25px 0px;
   border-radius: 10%;
   font-size: 13px;
-  height: 30px;
-  line-height: 30px;
+  height: 40px;
+  line-height: 40px;
   background:#f4f5f900;
   border-top: 1px solid #007bff;
   border-left: 1px solid #C5D0DC;
@@ -896,4 +896,47 @@ textarea{
 }
 a {
   TEXT-DECORATION:none;
+}
+
+
+/*copyright_close*/
+
+/* #box {
+  display: none;
+}
+#btn:checked ~ #box {
+  display: block; 
+} */
+
+.btn {
+  background-color: none;
+  border: none;
+  color: rgb(0, 0, 0);
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  /* display: inline-block; */
+  float: right;
+  font-size: 16px;
+  margin: 4px 4px;
+  cursor: pointer;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+}
+
+.btn {
+  background-color: none; 
+  color: rgb(151, 151, 151);
+}
+
+.Hyperlink {
+  color: #000;
+  width:200px; 
+  height:30px; 
+  margin:0 auto; 
+  /* border:1px solid #ccc;  */
+  background: none; 
+  opacity:0.5;
+  border-radius: 8px;
+  border: none; 
 }

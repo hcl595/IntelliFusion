@@ -187,8 +187,5 @@ release/
 exe.json
 setup.iss
 output/
-<<<<<<< HEAD
 don't/
-=======
 src/test.py/
->>>>>>> 501b70526d8d18729b1f97aa1e0a6a0a2d306941

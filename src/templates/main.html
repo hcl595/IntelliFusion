@@ -13,7 +13,7 @@
             {% for Model in ActiveModels %}
             <li id="li" class="li" value={{ Model.id }}><span>{{ Model.name }}</span></li>
             {% endfor %}
-            <li id="li" class="li current" value="-1"><span>Widgets</span></li>
+            <li id="li" class="li current" value="-1"><span><font size="3">Widgets</font></span></li>
         </ul>
 
         {% for Model in ActiveModels %}
@@ -46,9 +46,7 @@
             {% endif %}
             {% if Model.type == 'OpenAI' %}
             <div class="dialogbox_container" id={{ Model.id }} style="display: none;">
-            <div class="content" id="openai-output-{{ Model.id }}">
-
-                </div>
+                <div class="content" id="openai-output-{{ Model.id }}"></div>
                 <div class="input-area">
                     <div class="txtb">
                         <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
@@ -65,32 +63,6 @@
                     </div>
                 </div>
             </div>
-<<<<<<< HEAD
-        {% endif %}
-        {% if Model[1] == 'WebUI' %}
-        <div  id={{ Model[0] }} style="display: none;">
-            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;"  src={{ Model[3] }}></iframe>
-        </div>
-        {% endif %}
-        {% endfor %}
-        <div id="-1">
-            <div class="widgets_container">
-                <div class="widgets_contentbox">
-                    <h5 style="margin-left: 30%;">CPU占用率</h5>
-                    <!-- TODO <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe> -->
-                </div>
-                <div class="widgets_contentbox">
-                    <h5 style="margin-left: 30%;">RAM占用率</h5>
-                    <!-- TODO <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe> -->
-                </div>
-                <div class="widgets_contentbox">
-                    <h5 style="margin-left: 30%;">CPU占用率</h5>
-                    <!-- TODO <iframe src="/CorePercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe> -->
-                </div>
-                <div class="widgets_contentbox">
-                    <h5 style="margin-left: 30%;">RAM占用率</h5>
-                    <!-- TODO <iframe src="/RamPercent" style="width: 85%; height: 85%; margin-right: auto;" frameborder=0></iframe> -->
-=======
             {% endif %}
             {% if Model.type == 'WebUI' %}
             <div id={{ Model.id }} style="display: none;">
@@ -99,14 +71,15 @@
             {% endif %}
             {% endfor %}
             <div id="-1">
-                <div class="widgets_container">
-                    <div class="widgets_contentbox">
-                        <iframe src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
+                <div class="widgets">
+                    <div class="widgets_container">
+                        <div class="widgets_contentbox">
+                            <iframe id= "widgets_cpu_percent_-1" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
+                        </div>
+                        <div class="widgets_contentbox">
+                            <iframe id= "widgets_ram_percent_-1" src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
+                        </div>
                     </div>
-                    <div class="widgets_contentbox">
-                        <iframe src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
-                    </div>
->>>>>>> 501b70526d8d18729b1f97aa1e0a6a0a2d306941
                 </div>
             </div>
         </div>
@@ -235,10 +208,10 @@
 <div class="widgets" id="widgets-box" style="display: none;">
     <div class="widgets_container">
         <div class="widgets_contentbox">
-            <iframe src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
+            <iframe id= "widgets_cpu_percent" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
         </div>
         <div class="widgets_contentbox">
-            <iframe src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
+            <iframe id= "widgets_ram_percent" src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
         </div>
     </div>
 </div>
@@ -358,16 +331,18 @@
         </div>
         <button type="submit" class="deny" style="float: left;margin-left: 10px;margin-right: 10px;" onclick="loading()">重置</button>
         <button type="submit" class="add" style="float: right;margin-left: 10px;margin-right: 10px;" onclick="loading()">更改</button>
-    </form>
-
-    
+    </form>    
 </div>
 
-
-<div class="copyright" id="rights-box" style="display: none;">
-    <img style="margin: 50px;width: 100px;height: 100px;" src="/static/res/icon-o.ico" alt="iF">
-    <h3 style="margin: 50px;">inteliFusi0n Version 0.1.8(202308012000) Developer Alpha</h3>
-    <a href="https://www.github.com/hcl595/intellifusion/">learn more...</a>
+<div class="copyright" id="rights-box" style="display: none;" type="checkbox">
+    <button class="btn">X</button>
+    <div id="box">
+        <img style="margin: 50px;width: 100px;height: 100px;" src="/static/res/icon-o.ico" alt="iF">
+        <h3 style="margin: 50px;">inteliFusi0n Version 0.1.8(202308012000) Developer Alpha</h3>
+        <a href="https://www.github.com/hcl595/intellifusion/">
+            <button class="Hyperlink">learn more...</button>
+        </a>
+    </div>
 </div>
 
 <div class="loadingOne" id="loading" style="display: none;">
@@ -377,6 +352,7 @@
     <span></span>
     <span></span>
 </div>
+
 </body>
 <script type="text/javascript">
 let height = document.querySelector('.content').scrollHeight;
@@ -590,10 +566,33 @@ function loading(){
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
 }
 
-<<<<<<< HEAD
-=======
+//定时刷新
 
->>>>>>> 501b70526d8d18729b1f97aa1e0a6a0a2d306941
+// $(function () {
+//     	setInterval(function () {
+//         	$("#widgets_cpu_percent").load(location.href + " #widgets_cpu_percent");
+//    		}, 10000);
+// })
+
+// $(function () {
+//     	setInterval(function () {
+//         	$("#widgets_cpu_percent_-1").load(location.href + " #widgets_cpu_percent_-1");
+//    		}, 10000);
+// })
+
+// $(function () {
+//     	setInterval(function () {
+//         	$("#widgets_ram_percent").load(location.href + " #widgets_ram_percent");
+//    		}, 10000);
+// })
+
+// $(function () {
+//     	setInterval(function () {
+//         	$("#widgets_ram_percent_-1").load(location.href + " #widgets_ram_percent_-1");
+//    		}, 10000);
+// })
+
+
 
 </script>
 {% endblock %}
