@@ -56,12 +56,15 @@ def root():
     logger.debug("ModelList: {}",list(ModelList))
     ActiveModels = []
     model_ports = {port: m for m in ModelList if (port := get_ports(m.url))}
-    for conn in psutil.net_connections():
-        port = conn.laddr.port
-        if port in model_ports:
-            ActiveModels.append(model_ports[port])
-            logger.debug("model_ports: {}", model_ports[port])
-    logger.debug("ActiveModels: {}", ActiveModels)
+    if cfg.read("BaseConfig","ActiveExamine") == "True":
+        for conn in psutil.net_connections():
+            port = conn.laddr.port
+            if port in model_ports:
+                ActiveModels.append(model_ports[port])
+                logger.debug("model_ports: {}", model_ports[port])
+        logger.debug("ActiveModels: {}", ActiveModels)
+    else:
+        ActiveModels = ModelList
     return render_template(
         "main.html",
         result=result,
@@ -264,7 +267,7 @@ def llm(ModelID: str, question: str):
 def get_ports(url: str):
     port = urlparse(url).port
     if port == None:
-        port = 5000
+        pass
     logger.debug("parse ports: {}", port)
     return port
 

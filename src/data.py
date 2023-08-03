@@ -37,7 +37,7 @@ def SetupDatabase():
         order=1,
         type="OpenAI",
         name="text-davinci-003",
-        url="https:\\\\ai.fakeopen.com\\v1",
+        url="https://ai.fakeopen.com/v1",
         APIkey="None",
         LaunchCompiler="NONE",
         LaunchUrl="NONE",
