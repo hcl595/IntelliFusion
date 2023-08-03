@@ -940,3 +940,22 @@ a {
   border-radius: 8px;
   border: none; 
 }
+
+
+/* 404 */
+.container_404{
+  text-align: center;
+  width: 600px;
+  height: 400px;
+  margin: auto;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+
+.container_404_btn{
+  font-size:30px;
+}
+
