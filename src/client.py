@@ -4,7 +4,6 @@ import ctypes
 import json
 import subprocess
 import time
-import validators
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import urlparse
@@ -12,7 +11,9 @@ from urllib.parse import urlparse
 import openai
 import psutil
 import requests
-from flask import Flask, json, jsonify, redirect, render_template, request, session
+import validators
+from flask import (Flask, json, jsonify, redirect, render_template, request,
+                   session)
 from flaskwebgui import FlaskUI, close_application
 from loguru import logger
 
