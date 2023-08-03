@@ -5,6 +5,7 @@ openai
 pyautogui
 loguru
 peewee
+validators
 
 # dev
 black

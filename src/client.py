@@ -1,9 +1,10 @@
-# main.py | Intellifusion Version 0.1.8(202308012000) Developer Alpha
+# main.py | Intellifusion Version 0.1.9(202308032000) Developer Alpha
 # headers
 import ctypes
 import json
 import subprocess
 import time
+import validators
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import urlparse
@@ -62,6 +63,8 @@ def root():
             if port in model_ports:
                 ActiveModels.append(model_ports[port])
                 logger.debug("model_ports: {}", model_ports[port])
+        if 12140 in model_ports:
+            ActiveModels.append(model_ports[12140])
         logger.debug("ActiveModels: {}", ActiveModels)
     else:
         ActiveModels = ModelList
@@ -267,20 +270,27 @@ def llm(ModelID: str, question: str):
 def get_ports(url: str):
     port = urlparse(url).port
     if port == None:
-        pass
+        # try:
+        #     context = ssl._create_default_https_context()
+        #     url_request.urlopen(url[0:-4], context=context)
+        #     port = 12140
+        # except url_error.URLError:
+        #     port = None
+        if not validators.url(url):
+            pass
+        else:
+            port = 12140
     logger.debug("parse ports: {}", port)
     return port
 
 # launch
 if __name__ == "__main__":
     logger.info(
-        "Application(v0.1.8a) Launched with Dev Mode {}!", cfg.read("BaseConfig", "devmode")
+        "Application(v0.1.9a) Launched!", cfg.read("BaseConfig", "devmode")
     )
-    if cfg.read("BaseConfig", "debug") == "True":
+    if cfg.read("BaseConfig", "devmode") == "True":
         logger.level("DEBUG")
         logger.debug("run in debug mode")
-    if cfg.read("BaseConfig", "devmode") == "True":
-        logger.debug("run in web mode")
         app.run(
             debug=cfg.read("BaseConfig", "debug"),
             port=cfg.read("RemoteConfig", "port"),
