@@ -1,4 +1,4 @@
-# config.py | IntelliFusion Version 0.1.8(202308012000) Developer Alpha
+# config.py | IntelliFusion Version 0.1.9(202308032000) Developer Alpha
 from pathlib import Path
 from loguru import logger
 import json
@@ -22,7 +22,7 @@ def setup():
             logger.info("config.json doesn't exist")
             logger.info("create config.json")
             data = {
-                "BaseConfig": {"devmode": "False", "debug": "False", "TimeOut": 60},
+                "BaseConfig": {"devmode": "False", "TimeOut": 60, "ActiveExamine": "True",},
                 "RemoteConfig": {"host": "127.0.0.1", "port": "5000"},
             }
             with CONFIG_FILE.open("w", encoding="utf-8") as f:

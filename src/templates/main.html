@@ -2,7 +2,7 @@
 <head>
 {% block include %}
 {{ super() }}
-<title>Realizer v0.1.8 Alpha</title>
+<title>Realizer v0.1.9 Alpha</title>
 {% endblock %}
 {% block body %}
 <body>
@@ -11,9 +11,9 @@
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
             {% for Model in ActiveModels %}
-            <li id="li" class="li" value={{ Model.id }}><span>{{ Model.name }}</span></li>
+            <li id="li" draggable="true" class="li" value={{ Model.id }}><span>{{ Model.name }}</span></li>
             {% endfor %}
-            <li id="li" class="li current" value="-1"><span><font size="3">Widgets</font></span></li>
+            <li id="li" draggable="true" class="li current" value="-1"><span><font size="3">小组件</font></span></li>
         </ul>
 
         {% for Model in ActiveModels %}
@@ -205,7 +205,7 @@
     </div>
 </div>
 
-<div class="widgets" id="widgets-box" style="display: none;">
+<div class="widgets_box" id="widgets-box" style="display: none;">
     <div class="widgets_container">
         <div class="widgets_contentbox">
             <iframe id= "widgets_cpu_percent" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
@@ -311,14 +311,6 @@
                 <tbody>
                     <tr>
                         <td>
-                            <p>Web模式</p>
-                        </td>
-                        <td>
-                            <input type="text" name="Mode" placeholder="False" value={{ Mode }} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
                             <p>DeBug模式</p>
                         </td>
                         <td>
@@ -338,7 +330,7 @@
     <button class="btn">X</button>
     <div id="box">
         <img style="margin: 50px;width: 100px;height: 100px;" src="/static/res/icon-o.ico" alt="iF">
-        <h3 style="margin: 50px;">inteliFusi0n Version 0.1.8(202308012000) Developer Alpha</h3>
+        <h3 style="margin: 50px;">inteliFusi0n Version 0.1.9(202308032000) Developer Alpha</h3>
         <a href="https://www.github.com/hcl595/intellifusion/">
             <button class="Hyperlink">learn more...</button>
         </a>
@@ -380,8 +372,8 @@ $(".li").on("click",function(){
     var target = $(this).val()
     $(".current").removeClass("current")
     $(this).addClass("current")
-    $('#'+now).fadeOut(1)
-    $('#'+target).fadeIn(10)
+    $('#'+now).fadeOut(100)
+    $('#'+target).fadeIn(110)
 })
 
 //ajax交互
@@ -566,31 +558,6 @@ function loading(){
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
 }
 
-//定时刷新
-
-// $(function () {
-//     	setInterval(function () {
-//         	$("#widgets_cpu_percent").load(location.href + " #widgets_cpu_percent");
-//    		}, 10000);
-// })
-
-// $(function () {
-//     	setInterval(function () {
-//         	$("#widgets_cpu_percent_-1").load(location.href + " #widgets_cpu_percent_-1");
-//    		}, 10000);
-// })
-
-// $(function () {
-//     	setInterval(function () {
-//         	$("#widgets_ram_percent").load(location.href + " #widgets_ram_percent");
-//    		}, 10000);
-// })
-
-// $(function () {
-//     	setInterval(function () {
-//         	$("#widgets_ram_percent_-1").load(location.href + " #widgets_ram_percent_-1");
-//    		}, 10000);
-// })
 
 
 
