@@ -108,9 +108,6 @@ def get_glm_response():  # openAI请求端口
 
 @app.post("/EditSetting")  # 编辑设置
 def EditSetting():
-    InputDefaultModel = request.form.get("DefaultModel")
-    InputSecondModel = request.form.get("SecondModel")
-    InputThirdModel = request.form.get("ThirdModel")
     InputiPv4 = request.form.get("iPv4")
     InputPort = request.form.get("Port")
     InputWebMode = request.form.get("Mode")
@@ -119,9 +116,6 @@ def EditSetting():
     cfg.write("BaseConfig", "debug", InputDebugMode)
     cfg.write("RemoteConfig", "host", InputiPv4)
     cfg.write("RemoteConfig", "port", InputPort)
-    cfg.write("ModelConfig", "DefaultModel", InputDefaultModel)
-    cfg.write("ModelConfig", "SecondModel", InputSecondModel)
-    cfg.write("ModelConfig", "ThirdModel", InputThirdModel)
     return redirect("/")
 
 
@@ -135,20 +129,20 @@ def AddModel():
     InputAPIkey = request.form.get("APIkey")
     LaunchCompiler = request.form.get("LcCompiler")
     LaunchPath = request.form.get("LcUrl")
-    logger.info("User Inputs: {}, {}, {}", InputState, InputID,InputAPIkey)
     try:
         port = int(urlparse(InputUrl).port)
     except:
         port = 80
     logger.debug(LaunchCompiler)
     if InputState == "edit":
+        logger.info("User Inputs: {}, {}, {}", InputType, InputID,InputAPIkey)
         u = Models.update({
-            Models.type: InputType,
             Models.name: InputComment,
             Models.url: InputUrl,
             Models.api_key: InputAPIkey,
             Models.launch_compiler: LaunchCompiler,
             Models.launch_path: LaunchPath,
+            Models.type: InputType,
         }).where(Models.id == InputID)
         u.execute()
         return jsonify({"response": "complete"})
@@ -232,11 +226,10 @@ app.register_blueprint(widgets_blue)
 # functions
 def ai(ModelID: str, question: str):  # TODO:把response转化为json
     response = ""
-    openai.api_base = (
-        Models.get(Models.id == ModelID).url
-    )
+    logger.debug("{}", Models.get(Models.name == ModelID).url)
+    openai.api_base = (Models.get(Models.name == ModelID).url)
     openai.api_key = (
-        Models.get(Models.id == ModelID).api_key
+        Models.get(Models.name == ModelID).api_key
     )
     for chunk in openai.ChatCompletion.create(
         model=ModelID,
@@ -252,7 +245,7 @@ def ai(ModelID: str, question: str):  # TODO:把response转化为json
     logger.info(
         "model: {},url: {}/v1/completions.\nquestion: {},response: {}.",
         ModelID,
-        Models.get(Models.id == ModelID).url,
+        Models.get(Models.name == ModelID).url,
         question,
         response,
     )
@@ -261,7 +254,7 @@ def ai(ModelID: str, question: str):  # TODO:把response转化为json
 
 def llm(ModelID: str, question: str):
     response = requests.post(
-        url=Models.get(Models.id == ModelID).url,
+        url=Models.get(Models.name == ModelID).url,
         data=json.dumps({"prompt": question, "history": []}),
         headers={"Content-Type": "application/json"},
     )
