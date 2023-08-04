@@ -10,26 +10,33 @@
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
-            {% for Model in ActiveModels %}
+            {% for Model in ActiveModels %}<!-- TODO:Use Javascripts Templates instead of Flask Templates -->
             <li id="li" draggable="true" class="li" value={{ Model.id }}><span>{{ Model.name }}</span></li>
             {% endfor %}
             <li id="li" draggable="true" class="li current" value="-1"><span><font size="3">小组件</font></span></li>
         </ul>
 
-        {% for Model in ActiveModels %}
+        {% for Model in ActiveModels %}<!-- TODO:Use Javascripts Templates instead of Flask Templates -->
         {% if Model.type == 'API' %}
         <div class="dialogbox_container" id={{ Model.id }} style="display: none;"> 
             <div class="content" id="api-output-{{ Model.id }}"></div>
+            <div class="prompt_container" id="livePromptPlaceholder">
+                <button class="prompt" >Prompt</button>
+                <button class="prompt" >Prompt</button>
+                <button class="prompt" >Prompt</button>
+                <button class="prompt" >Prompt</button>
+                <button class="prompt" >Prompt</button>
+                <button class="prompt" >Prompt</button>
+            </div>
             <div class="input-area">
                 <div class="txtb">
                     <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
-                        <input name="check_password" id="api-user-input-{{ Model.id }}" />
-                        <span data-placeholder="输入内容"></span>
+                        <input class="userInputArea" placeholder="输入内容" id="api-user-input-{{ Model.id }}" />
                     </div>
                 </div>
                 <input id="api-model-input-{{ Model.id }}" type="hidden" value={{ Model.name }} />
                 <div class="button-area">
-                    <button type="button" id="Start"><i class="fa fa-microphone"></i></button>
+                    <button type="button" id="Start"><i class="fa fa-microphone"></i></button><!-- TODO:Use Token instead of microphone -->
                     <button type="submit" id="SendAPIinput" value="{{ Model.id }}">发 送</button>
                 </div>
             </div>
@@ -38,21 +45,22 @@
             {% if Model.type == 'OpenAI' %}
             <div class="dialogbox_container" id={{ Model.id }} style="display: none;">
                 <div class="content" id="openai-output-{{ Model.id }}"></div>
+                <div class="prompt_container" id="livePromptPlaceholder"><!-- TODO:Complete prompts -->
+                    <button class="prompt" >Prompt</button>
+                    <button class="prompt" >Prompt</button>
+                    <button class="prompt" >Prompt</button>
+                    <button class="prompt" >Prompt</button>
+                    <button class="prompt" >Prompt</button>
+                    <button class="prompt" >Prompt</button>
+                </div>
                 <div class="input-area">
-                    <div class="prompt_container" id="livePromptPlaceholder">
-                        <button value=",let's think step by step">逐步分析</button>
-                    </div>
                     </br>
                     <div class="txtb">
-                        <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
-                            <input name="check_password" type="reg_check_password"
-                                id="openai-user-input-{{ Model.id }}" />
-                            <span data-placeholder="输入内容"></span>
-                        </div>
+                        <input class="userInputArea" placeholder="输入内容" id="openai-user-input-{{ Model.id }}" />
                     </div>
                     <input id="openai-model-input-{{ Model.id }}" type="hidden" value={{ Model.name}} />
                     <div class="button-area">
-                        <button type="button" id="Start"><i class="fa fa-microphone"></i></button>
+                        <button type="button" id="Start"><i class="fa fa-microphone"></i></button><!-- TODO:Use Token instead of microphone -->
                         <button type="submit" id="SendOpenaiInput" value="{{ Model.id }}">发 送</button>
                     </div>
                 </div>
@@ -82,7 +90,7 @@
 </div>
 
 <div class="account" id="account-box" style="display: none;">
-    <div style="margin-left:20px">
+    <div style="margin-left:20px"><!-- TODO:Use Javascripts Templates instead of Flask Templates -->
         <table>
             <thead>
                 <tr>
@@ -201,7 +209,7 @@
 </div>
 
 <div class="widgets_box" id="widgets-box" style="display: none;">
-    <div class="widgets_container">
+    <div class="widgets_container"><!-- TODO:List Widgets -->
         <div class="widgets_contentbox">
             <iframe id= "widgets_cpu_percent" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
         </div>
@@ -237,7 +245,7 @@
 </div>
 
 <div class="settings" id="setting-box" style="display: none;">
-    <form action="/EditSetting" target="commit" method="post">
+    <form action="/EditSetting" target="commit" method="post"><!-- TODO:Use Javascripts Templates&Ajax instead of form -->
         <div style="margin-left:20px" class="content">
             <table>
                 <thead>
@@ -251,6 +259,27 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td>
+                            <p>语言设置</p>
+                        </td>
+                        <td>
+                            <select id="Language">
+                                <option selected>简体中文</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>活跃检测</p>
+                        </td>
+                        <td>
+                            <select id="ActiveExamin"><!-- TODO:更改按钮 -->
+                                <option>True</option>
+                                <option>False</option>
+                            </select>
+                        </td>
+                    </tr>
                     <tr>
                         <td>
                             <p>启动超时限制</p>
@@ -309,7 +338,7 @@
                             <p>DeBug模式</p>
                         </td>
                         <td>
-                            <input type="text" name="BugM" placeholder="False" value={{ BugM }} />
+                            <input type="text" name="BugM" placeholder="False" value={{ BugM }} /><!-- TODO:更改按钮 -->
                         </td>
                     </tr>
                 </thead>
@@ -345,26 +374,12 @@
 </div>
 
 </body>
+<script id="TemplatesTemple" type="text/html">
+    {{each result}}
+    <button class="prompt" value={$value}>{$value}</button>
+    {{/each}}
+</script>
 <script type="text/javascript">
-let height = document.querySelector('.content').scrollHeight;
-document.querySelector(".content").scrollTop = height;
-
-function SignUp(){
-    $("#login-box").addClass('right-panel-active')
-}
-
-function SignIn(){
-    $("#login-box").removeClass('right-panel-active')
-}
-
-$(".txtb input").on("focus",function(){
-    $(this).addClass("focus")
-})
-
-$(".txtb input").on("blur",function(){
-    if($(this).val() == '')
-    $(this).removeClass("focus")
-})
 
 $(".li").on("click",function(){
     var now = $("li.current").val()
@@ -377,7 +392,20 @@ $(".li").on("click",function(){
 
 //ajax交互
 //prompt
-var UserInput = 
+$(document).on('input',".userInputArea",
+        function(){
+            var text = $(this).val();
+            $.ajax({
+                url: '/prompts',
+                type: 'POST',
+                data: {
+                    text: text,
+                },
+                success: function(prompts) {
+                    //TODO: Complete ajax
+                }
+            })
+        })
 //send request
 $(document).on('click',"#SendOpenaiInput",
         function() {
@@ -396,6 +424,8 @@ $(document).on('click',"#SendOpenaiInput",
                 $('#openai-output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
                 $('#openai-user-input-' + id).val('');
                 $("#loading").fadeOut(100)
+                let height = document.querySelector('.content').scrollHeight;
+                document.querySelector(".content").scrollTop = height;
             }
         });
     });
@@ -417,6 +447,8 @@ $(document).on('click',"#SendAPIinput",
                 $('#api-output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
                 $('#api-user-input-' + id).val('');
                 $("#loading").fadeOut(100)
+                let height = document.querySelector('.content').scrollHeight;
+                document.querySelector(".content").scrollTop = height;
             }
         });
     });

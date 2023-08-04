@@ -297,7 +297,7 @@ if __name__ == "__main__":
         logger.level("DEBUG")
         logger.debug("run in debug mode")
         app.run(
-            debug=cfg.read("BaseConfig", "debug"),
+            debug=cfg.read("BaseConfig", "devmode"),
             port=cfg.read("RemoteConfig", "port"),
             host=cfg.read("RemoteConfig", "host"),
         )
