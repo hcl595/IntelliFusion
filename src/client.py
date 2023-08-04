@@ -1,5 +1,6 @@
 # main.py | Intellifusion Version 0.1.9(202308042000) Developer Alpha
 # headers
+from thefuzz import process, fuzz
 import ctypes
 import json
 import subprocess
@@ -9,6 +10,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import openai
+import jieba
 import psutil
 import requests
 import validators
@@ -17,7 +19,7 @@ from flask import (Flask, json, jsonify, redirect, render_template, request,
 from flaskwebgui import FlaskUI, close_application
 from loguru import logger
 
-from config import Settings
+from config import Settings, Prompt
 from data import Models
 from setup import setup
 
@@ -35,6 +37,7 @@ LOG_FILE = DATA_DIR / "models.log"
 setup()
 logger.add(LOG_FILE)
 cfg = Settings()
+pmt = Prompt()
 login_error = ""
 response = {
     "response": "",
@@ -67,8 +70,8 @@ def root():
             if port in model_ports:
                 ActiveModels.append(model_ports[port])
                 logger.debug("model_ports: {}", model_ports[port])
-        if 12140 in model_ports:
-            ActiveModels.append(model_ports[12140])
+        if "url" in model_ports:
+            ActiveModels.append(model_ports["url"])
         logger.debug("ActiveModels: {}", ActiveModels)
     else:
         ActiveModels = ModelList
@@ -212,20 +215,22 @@ def logout():
     close_application()
 
 
-@app.route("/CorePercent")
-def WidgetsCorePercent():
-    cpu_percent = psutil.cpu_percent()
-    return cpu_percent
-
-
-@app.route("/RamPercent")
-def WigetsRamPercent():
-    memory_percent = psutil.virtual_memory().percent
-    return memory_percent
-
+@app.post("/prompts")
+def Prompts():
+    userinput = request.form.get("text")
+    if userinput:
+        prompt = pmt.read_config()
+        prompt = {i["act"]: i["prompt"] for i in prompt}
+        keywords = jieba.lcut_for_search(userinput)
+        keywords = " ".join(keywords)
+        result = process.extract(
+            keywords, prompt.keys(), limit=20, scorer=fuzz.partial_token_sort_ratio
+        )
+    else:
+        result = {}
+    return jsonify(result)
 
 if cfg.read("BaseConfig", "devmode") == "True":
-
     @app.route("/test")
     def DevTest():
         return render_template("test.html")
@@ -284,7 +289,7 @@ def get_ports(url: str):
         if not validators.url(url):
             pass
         else:
-            port = 12140
+            port = "url"
     logger.debug("parse ports: {}", port)
     return port
 

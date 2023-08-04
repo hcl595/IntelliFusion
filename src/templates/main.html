@@ -21,17 +21,11 @@
         <div class="dialogbox_container" id={{ Model.id }} style="display: none;"> 
             <div class="content" id="api-output-{{ Model.id }}"></div>
             <div class="prompt_container" id="livePromptPlaceholder">
-                <button class="prompt" >Prompt</button>
-                <button class="prompt" >Prompt</button>
-                <button class="prompt" >Prompt</button>
-                <button class="prompt" >Prompt</button>
-                <button class="prompt" >Prompt</button>
-                <button class="prompt" >Prompt</button>
             </div>
             <div class="input-area">
                 <div class="txtb">
                     <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
-                        <input class="userInputArea" placeholder="输入内容" id="api-user-input-{{ Model.id }}" />
+                        <textarea class="userInputArea" placeholder="输入内容" id="api-user-input-{{ Model.id }}" ></textarea>
                     </div>
                 </div>
                 <input id="api-model-input-{{ Model.id }}" type="hidden" value={{ Model.name }} />
@@ -46,17 +40,11 @@
             <div class="dialogbox_container" id={{ Model.id }} style="display: none;">
                 <div class="content" id="openai-output-{{ Model.id }}"></div>
                 <div class="prompt_container" id="livePromptPlaceholder"><!-- TODO:Complete prompts -->
-                    <button class="prompt" >Prompt</button>
-                    <button class="prompt" >Prompt</button>
-                    <button class="prompt" >Prompt</button>
-                    <button class="prompt" >Prompt</button>
-                    <button class="prompt" >Prompt</button>
-                    <button class="prompt" >Prompt</button>
                 </div>
                 <div class="input-area">
                     </br>
                     <div class="txtb">
-                        <input class="userInputArea" placeholder="输入内容" id="openai-user-input-{{ Model.id }}" />
+                        <textarea class="userInputArea" placeholder="输入内容" id="openai-user-input-{{ Model.id }}" ></textarea>
                     </div>
                     <input id="openai-model-input-{{ Model.id }}" type="hidden" value={{ Model.name}} />
                     <div class="button-area">
@@ -374,11 +362,6 @@
 </div>
 
 </body>
-<script id="TemplatesTemple" type="text/html">
-    {{each result}}
-    <button class="prompt" value={$value}>{$value}</button>
-    {{/each}}
-</script>
 <script type="text/javascript">
 
 $(".li").on("click",function(){
@@ -402,7 +385,10 @@ $(document).on('input',".userInputArea",
                     text: text,
                 },
                 success: function(prompts) {
-                    //TODO: Complete ajax
+                    $('#livePromptPlaceholder').empty()
+                    for (i in prompts){
+                        $('#livePromptPlaceholder').append('<button class="prompt" value='+ prompts[i][3] +'>'+ prompts[i][0] +'</button>')
+                    }
                 }
             })
         })

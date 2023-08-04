@@ -1,12 +1,15 @@
 flask
 flaskwebgui
-requests
-openai
-pyautogui
+jieba
 loguru
+openai
 peewee
+pyautogui
+python-Levenshtein
+requests
+thefuzz
 validators
 
 # dev
-black
 auto-py-to-exe
+black
