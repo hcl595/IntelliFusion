@@ -67,8 +67,11 @@ def root():
     for i in ModelList:
         if validators.url(i.url):
             host = urlparse(i.url).hostname
-            
-            ActiveModels.append(i)
+            try:
+                ipaddress.ip_address(host)
+                ActiveModels.append(i)
+            except:
+                pass
     model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
     if cfg.read("BaseConfig","ActiveExamine") == "True":
         for conn in psutil.net_connections():
@@ -96,7 +99,7 @@ def root():
     )
 
 
-@app.post("/llm")
+@app.post("/llm") # TODO: fusion openai
 def upload():  # GLM请求与回复1
     global result, LLM_response
     InputInfo = request.form["userinput"]
@@ -108,7 +111,7 @@ def upload():  # GLM请求与回复1
     return jsonify({"response": LLM_response})
 
 
-@app.route("/openai", methods=["POST"])
+@app.route("/openai", methods=["POST"]) # fusion llm
 def get_glm_response():  # openAI请求端口
     global GLM_response
     InputInfo = request.form["userinput"]

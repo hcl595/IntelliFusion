@@ -388,7 +388,7 @@ $(document).on('input',".userInputArea",
                 success: function(prompts) {
                     $('#Prompt-'+id).empty()
                     for (i in prompts){
-                        $('#Prompt-'+id).append('<button class="prompt" value='+ prompts[i][3] +'>'+ prompts[i][0] +'</button>')
+                        $('#Prompt-'+id).append('<button class="prompt" value='+ prompts[i][3] + ' id=' + source_id +' >'+ prompts[i][0] +'</button>')
                     }
                 }
             })

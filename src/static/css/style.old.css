@@ -362,6 +362,7 @@ textarea{
   width: 100%;
   height: 50px;
   display: flex;
+  overflow: scroll;
   flex-flow:nowrap;
   background-color: #32fcff3a;
   border-radius: 1rem;
