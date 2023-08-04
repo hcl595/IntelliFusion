@@ -15,70 +15,68 @@
             {% endfor %}
             <li id="li" draggable="true" class="li current" value="-1"><span><font size="3">小组件</font></span></li>
         </ul>
-
         {% for Model in ActiveModels %}<!-- TODO:Use Javascripts Templates instead of Flask Templates -->
         {% if Model.type == 'API' %}
         <div class="dialogbox_container" id={{ Model.id }} style="display: none;"> 
-            <div class="content" id="api-output-{{ Model.id }}"></div>
-            <div class="prompt_container" id="livePromptPlaceholder">
+            <div class="content" id="api-output-{{ Model.id }}">
+            </div>
+            <div class="prompt_container" id="Prompt-api-user-input-{{ Model.id }}">
             </div>
             <div class="input-area">
                 <div class="txtb">
                     <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
-                        <textarea class="userInputArea" placeholder="输入内容" id="api-user-input-{{ Model.id }}" ></textarea>
+                        <textarea class="userInputArea" placeholder="输入内容" id="api-user-input-{{ Model.id }}" source_id="{{ Model.id }}"></textarea>
                     </div>
                 </div>
                 <input id="api-model-input-{{ Model.id }}" type="hidden" value={{ Model.name }} />
                 <div class="button-area">
-                    <button type="button" id="Start"><i class="fa fa-microphone"></i></button><!-- TODO:Use Token instead of microphone -->
+                    <p id="Start">Token:</p>
                     <button type="submit" id="SendAPIinput" value="{{ Model.id }}">发 送</button>
                 </div>
             </div>
+        </div>
+        {% endif %}
+        {% if Model.type == 'OpenAI' %}
+        <div class="dialogbox_container" id={{ Model.id }} style="display: none;">
+            <div class="content" id="openai-output-{{ Model.id }}"></div>
+            <div class="prompt_container" id="Prompt-openai-user-input-{{ Model.id }}"><!-- TODO: Complete prompts -->
             </div>
-            {% endif %}
-            {% if Model.type == 'OpenAI' %}
-            <div class="dialogbox_container" id={{ Model.id }} style="display: none;">
-                <div class="content" id="openai-output-{{ Model.id }}"></div>
-                <div class="prompt_container" id="livePromptPlaceholder"><!-- TODO:Complete prompts -->
+            <div class="input-area">
+                </br>
+                <div class="txtb">
+                    <textarea class="userInputArea" placeholder="输入内容" id="openai-user-input-{{ Model.id }}" ></textarea>
                 </div>
-                <div class="input-area">
-                    </br>
-                    <div class="txtb">
-                        <textarea class="userInputArea" placeholder="输入内容" id="openai-user-input-{{ Model.id }}" ></textarea>
-                    </div>
-                    <input id="openai-model-input-{{ Model.id }}" type="hidden" value={{ Model.name}} />
-                    <div class="button-area">
-                        <button type="button" id="Start"><i class="fa fa-microphone"></i></button><!-- TODO:Use Token instead of microphone -->
-                        <button type="submit" id="SendOpenaiInput" value="{{ Model.id }}">发 送</button>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-            {% if Model.type == 'WebUI' %}
-            <div id={{ Model.id }} style="display: none;">
-            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;" src="{{ Model.url }}"></iframe>
-            </div>
-            {% endif %}
-            {% endfor %}
-            <div id="-1">
-                <div class="widgets">
-                    <div class="widgets_container">
-                        <div class="widgets_contentbox">
-                            <iframe id= "widgets_cpu_percent_-1" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
-                        </div>
-                        <div class="widgets_contentbox">
-                            <iframe id= "widgets_ram_percent_-1" src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
-                        </div>
-                    </div>
+                <input id="openai-model-input-{{ Model.id }}" type="hidden" value={{ Model.name}} />
+                <div class="button-area">
+                    <button type="button" id="Start"><i class="fa fa-microphone"></i></button><!-- TODO: Use Token instead of microphone -->
+                    <button type="submit" id="SendOpenaiInput" value="{{ Model.id }}">发 送</button>
                 </div>
             </div>
+        </div>
+        {% endif %}
+        {% if Model.type == 'WebUI' %}
+        <div id={{ Model.id }} style="display: none;">
+        <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;" src="{{ Model.url }}"></iframe>
+        </div>
+        {% endif %}
+        {% endfor %}
+        <div id="-1">
+            <div class="widgets">
+                <div class="widgets_container">
+                    <div class="widgets_contentbox">
+                        <iframe id= "widgets_cpu_percent_-1" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
+                    </div>
+                    <div class="widgets_contentbox">
+                        <iframe id= "widgets_ram_percent_-1" src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <div class="account" id="account-box" style="display: none;">
-    <div style="margin-left:20px"><!-- TODO:Use Javascripts Templates instead of Flask Templates -->
+    <div style="margin-left:20px">
         <table>
             <thead>
                 <tr>
@@ -119,7 +117,7 @@
                         <p>启动</p>
                     </td>
                 </tr>
-                {% for Model in ModelList %}
+                {% for Model in ModelList %}<!-- TODO:Use Javascripts Templates instead of Flask Templates -->
                 <input type="hidden" id="id{{ Model.id }}" value={{ Model.id }}>
                 <tr id="ModelTr{{Model.id}}">
                     <td>
@@ -146,8 +144,8 @@
                         <input type="text" class="url" id="LcUrl{{ Model.id }}" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model.launch_path }}>
                     </td>
                     <td>
-                        <button type="submit" class="run" id="run-{{ Model.id }}" value="{{ Model.id }}"><i class="fa fa-play"></i></button>
-                        <button type="submit" class="stop" id="stop-{{ Model.id }}" value="{{ Model.id }}"><i class="fa fa-stop"></i></button>
+                        <button type="submit" class="run" id="run-{{ Model.id }}" value="{{ Model.id }}"><i class="fa fa-play-circle-o"></i></button>
+                        <button type="submit" class="stop" id="stop-{{ Model.id }}" value="{{ Model.id }}"><i class="fa fa-stop-circle-o"></i></button>
                     </td>
                     <td>
                         <button type="submit" class="edit" id="edit-{{ Model.id }}" value="{{ Model.id }}"><i class="fa fa-edit"></i></button>
@@ -182,7 +180,7 @@
                         <input type="TEXT" class="url" id="LcUrl-1" placeholder=".\venv\launch.py">
                     </td>
                     <td>
-                        <button type="submit" class="add" id="add" value="-1"><i class="fa fa-plus"></i></button>
+                        <button type="submit" class="add" id="add" value="-1"><i class="fa fa-plus-circle"></i></button>
                     </td>
                     <td>
                         <button disabled class="edit"><i class="fa fa-ban"></i></button>
@@ -378,6 +376,9 @@ $(".li").on("click",function(){
 $(document).on('input',".userInputArea",
         function(){
             var text = $(this).val();
+            var id = $(this).attr("id");
+            var source_id = $(this).attr("source_id");
+            alert(source_id,"danger")
             $.ajax({
                 url: '/prompts',
                 type: 'POST',
@@ -385,9 +386,9 @@ $(document).on('input',".userInputArea",
                     text: text,
                 },
                 success: function(prompts) {
-                    $('#livePromptPlaceholder').empty()
+                    $('#Prompt-'+id).empty()
                     for (i in prompts){
-                        $('#livePromptPlaceholder').append('<button class="prompt" value='+ prompts[i][3] +'>'+ prompts[i][0] +'</button>')
+                        $('#Prompt-'+id).append('<button class="prompt" value='+ prompts[i][3] +'>'+ prompts[i][0] +'</button>')
                     }
                 }
             })
@@ -396,29 +397,35 @@ $(document).on('input',".userInputArea",
 $(document).on('click',"#SendOpenaiInput",
         function() {
         var id = $(this).val();
-        $("#loading").fadeIn(100);
-        $('#openai-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#openai-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-        $.ajax({
-            url: '/openai',
-            type: 'POST',
-            data: {
-                userinput: $('#openai-user-input-' + id).val(),
-                modelinput: $('#openai-model-input-' + id).val(),
-            },
-            success: function(response) {
-                var chatGptResponse = response.response;
-                $('#openai-output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-                $('#openai-user-input-' + id).val('');
-                $("#loading").fadeOut(100)
-                let height = document.querySelector('.content').scrollHeight;
-                document.querySelector(".content").scrollTop = height;
-            }
-        });
+        if ($('#openai-user-input-' + id).val() && $('#openai-user-input-' + id).val().toLoweCase){
+            $("#loading").fadeIn(100);
+            $('#openai-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#openai-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+            $.ajax({
+                url: '/openai',
+                type: 'POST',
+                data: {
+                    userinput: $('#openai-user-input-' + id).val(),
+                    modelinput: $('#openai-model-input-' + id).val(),
+                },
+                success: function(response) {
+                    var chatGptResponse = response.response;
+                    $('#openai-output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+                    $('#openai-user-input-' + id).val('');
+                    $("#loading").fadeOut(100)
+                    let height = document.querySelector('.content').scrollHeight;
+                    document.querySelector(".content").scrollTop = height;
+                }
+            });
+        }
+        else{
+            alert('内容不能为空',"warning");
+        }
     });
 
 $(document).on('click',"#SendAPIinput",
     function() {
         var id = $(this).val();
+        if ($('#api-user-input-' + id).val() && $('#api-user-input-' + id).val().toLowerCase){
         $("#loading").fadeIn(100);
         $('#api-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#api-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
         $.ajax({
@@ -437,6 +444,10 @@ $(document).on('click',"#SendAPIinput",
                 document.querySelector(".content").scrollTop = height;
             }
         });
+        }
+        else{
+            alert('内容不能为空',"warning");
+        }
     });
 
 $(".run").on('click',function() {
@@ -626,6 +637,9 @@ const alert = (message, type) => {
     '</div>'
   ].join('')
   alertPlaceholder.append(wrapper)
+  setTimeout(function(){
+    wrapper.remove()
+  },5000)
 }
 
 

@@ -7,6 +7,7 @@ import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+import ipaddress
 from urllib.parse import urlparse
 
 import openai
@@ -63,15 +64,18 @@ def root():
         ModelList = {}
     logger.debug("ModelList: {}",list(ModelList))
     ActiveModels = []
-    model_ports = {port: m for m in ModelList if (port := get_ports(m.url))}
+    for i in ModelList:
+        if validators.url(i.url):
+            host = urlparse(i.url).hostname
+            
+            ActiveModels.append(i)
+    model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
     if cfg.read("BaseConfig","ActiveExamine") == "True":
         for conn in psutil.net_connections():
             port = conn.laddr.port
             if port in model_ports:
                 ActiveModels.append(model_ports[port])
                 logger.debug("model_ports: {}", model_ports[port])
-        if "url" in model_ports:
-            ActiveModels.append(model_ports["url"])
         logger.debug("ActiveModels: {}", ActiveModels)
     else:
         ActiveModels = ModelList
@@ -282,7 +286,8 @@ def llm(ModelID: str, question: str):
     )
     return response.json()["history"][0][1]
 
-
+#www.bsd.cm / 127.0.0.1
+# url       / port
 def get_ports(url: str):
     port = urlparse(url).port
     if port == None:

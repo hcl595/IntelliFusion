@@ -9,7 +9,8 @@ html::before {
   background-size: cover;
   -webkit-background-size:cover;
   -moz-background-size: cover;
-  background: linear-gradient(62deg, #7e91fb 0%, #68bef7 100%);
+  /* background: linear-gradient(62deg, #7e91fb 0%, #68bef7 100%); */
+  background-color: #acb1b7;
 }
 
 body {
@@ -25,10 +26,8 @@ body {
   float: left;
   width: 100px;
   height: 100vh;
-  border-radius: 12px;
   backdrop-filter: blur(18px);
-  background: rgba(230, 235, 240, .7);
-  border: 2px solid rgba(230, 235, 240, .7);
+  background: rgb(38, 38, 38);
   box-shadow: 0 0 30px rgba(0, 0, 0, .05);
   transition: .6s cubic-bezier(.8, .5, .5, .8);
 }
@@ -50,7 +49,7 @@ nav .brand img {
 }
 
 nav .brand p {
-    color: #505257;
+    color: #e5ebfb;
     font-weight: 500;
     font-style: italic;
     text-align: left;
@@ -70,7 +69,7 @@ nav .line {
     height: 2px;
     margin: 32px 0;
     border-radius: 30%;
-    background: #87a3af;
+    background: #8ba4af;
 }
 
 nav .list {
@@ -87,7 +86,7 @@ nav .list li {
 }
 
 nav .list li:hover {
-    background: rgba(230, 235, 240, .4);
+    color: rgb(255,255,255);
 }
 
 nav .list li.active {
@@ -108,11 +107,11 @@ nav .list li.active i {
 nav .list i {
   font-size: 20px;
   background-clip: text;
-  color: #0099ff;
+  color: #ffffff;
   }
 
 nav .list span {
-    color: #505257;
+    color: #c0c6d5;
     font-size: 18px;
     font-weight: 500;
     margin: 0 0 0 12px;
@@ -179,9 +178,7 @@ nav:hover .list li:nth-child(8) span {
 /* Tab */
 .contentwrap {
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.212);
-  backdrop-filter: blur(18px);
-  border: 2px solid rgba(230, 235, 240, .5);
+  background-color: rgba(38, 38, 38, 0.212);
   border-radius: 2%;
   transition: .6s cubic-bezier(.8, .5, .5, .8);
 }
@@ -189,44 +186,34 @@ ul {
   list-style: none;
   margin: 0;
   padding-left: 20px;
-  border-radius: 1%;
 }
 ul.tab {
-  border-radius: 1%;
-  border-bottom: 1px solid #ccc;
+  background-color: rgba(38, 38, 38);
   padding-bottom:1px;
   height: 40px;
   line-height: 30px;
-  color: #696969;
+  color: rgb(38, 38, 38);
 }
 ul.tab li {
-  border-radius: 10%;
   float: left;
   cursor: pointer;
-  padding: 0px;
+  border: 0.1px solid rgb(61, 61, 61);
 }
 ul.tab li.li {
   padding: 0px 25px 0px;
-  border-radius: 14px;
   font-size: 13px;
   height: 40px;
-  line-height: 40px;
-  background:#f4f5f900;
-  border-top: 1px solid #007bff;
-  border-left: 1px solid #C5D0DC;
-  border-bottom: 1px solid #C5D0DC;
-  background-color: rgba(0, 0, 0, .05);
+  background:rgb(31, 31, 31);
+  color: #909090;
 }
 ul.tab li.current {
-  border-radius: 14px;
   border-bottom: 0px;
-  border-top: 2px solid #7599DE;
+  border-top: 2px solid #0073ff;
   font-size: 13px;
-  color: #343434;
-  background:#ffffff4f;
-  
+  color: #ffffff;
+  background:#484848;
 }
-ul.tab li.li:last-child{border-right: 1px solid #C5D0DC;}
+ul.tab li.li:last-child{border-right: 1px solid rgb(61, 61, 61);}
 
 
 /* 对话框 */
@@ -385,7 +372,7 @@ textarea{
   margin-left: 5px;
   margin-right: 5px;
   border-radius: 5px;
-  border: 0;
+  border: none;
   background-color: #ffffff;
   backdrop-filter: blur(20px);
 }
@@ -672,25 +659,35 @@ textarea{
 
 /* Others */
 .run {
-  background-color: rgba(117, 255, 89, 0.671);
+  background-color: rgba(117, 255, 89, 0);
+  border: none;
+  border-color: #007bff;
   border-radius:20px;
+  font-size: 30px;
 }
 .add {
   width: 70px;
-  background-color: rgba(117, 255, 89, 0.671);
+  background-color: rgba(117, 255, 89, 0);
+  border: none;
   border-radius:20px;
+  font-size: 30px;
 }
 .stop,.deny {
-  background-color: rgba(255, 89, 89, 0.671);
+  background-color: rgba(255, 89, 89, 0);
+  border: none;
   border-radius:20px;
+  font-size: 30px;
 }
 .close {
-  background-color: rgba(255, 225, 89, 0.671);
+  background-color: rgba(255, 225, 89, 0);
   border-radius:20px;
+  font-size: 30px;
 }
 .edit {
-  background-color: rgba(89, 147, 255, 0.671);
+  background-color: rgba(89, 147, 255, 0);
+  border: none;
   border-radius:20px;
+  font-size: 30px;
 }
 a {
   TEXT-DECORATION:none;
