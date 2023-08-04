@@ -41,9 +41,9 @@ def SetupDatabase():
     BaseModel = Models(
         order=1,
         type="OpenAI",
-        name="text-davinci-003",
+        name="gpt-3.5-turbo",
         url="https://ai.fakeopen.com/v1",
-        APIkey="None",
+        APIkey="sk-frdfhfdrghdsu5tt5sgyuyy",
         LaunchCompiler="NONE",
         LaunchUrl="NONE",
     )

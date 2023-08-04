@@ -23,7 +23,7 @@
             <div class="input-area">
                 <div class="txtb">
                     <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
-                        <input name="check_password" type="reg_check_password" id="api-user-input-{{ Model.id }}" />
+                        <input name="check_password" id="api-user-input-{{ Model.id }}" />
                         <span data-placeholder="输入内容"></span>
                     </div>
                 </div>
@@ -39,6 +39,10 @@
             <div class="dialogbox_container" id={{ Model.id }} style="display: none;">
                 <div class="content" id="openai-output-{{ Model.id }}"></div>
                 <div class="input-area">
+                    <div class="prompt_container" id="livePromptPlaceholder">
+                        <button value=",let's think step by step">逐步分析</button>
+                    </div>
+                    </br>
                     <div class="txtb">
                         <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
                             <input name="check_password" type="reg_check_password"
@@ -372,10 +376,12 @@ $(".li").on("click",function(){
 })
 
 //ajax交互
+//prompt
+var UserInput = 
+//send request
 $(document).on('click',"#SendOpenaiInput",
         function() {
         var id = $(this).val();
-        alert($(this).val(),"danger")
         $("#loading").fadeIn(100);
         $('#openai-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#openai-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
         $.ajax({
@@ -397,16 +403,14 @@ $(document).on('click',"#SendOpenaiInput",
 $(document).on('click',"#SendAPIinput",
     function() {
         var id = $(this).val();
-        var api_id = $(this).val();
-        alert($(this).val(), "danger");
         $("#loading").fadeIn(100);
         $('#api-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#api-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
         $.ajax({
             url: '/llm',
             type: 'POST',
             data: {
-                userinput: $('#api-user-input-' + api_id).val() ,
-                modelinput: $('#api-model-input-' + api_id).val()
+                userinput: $('#api-user-input-' + id).val() ,
+                modelinput: $('#api-model-input-' + id).val()
                 },
             success: function(response) {
                 var chatGptResponse = response.response;

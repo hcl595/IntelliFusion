@@ -631,12 +631,12 @@ textarea{
 @keyframes load{
   0%,100%{
       height: 40px;
-      background: lightgreen;
+      background: rgb(238, 144, 144);
   }
   50%{
       height: 70px;
       margin: -15px 0;
-      background: lightblue;
+      background: rgb(230, 207, 173);
   }
 }
 .loadingOne span:nth-child(2){

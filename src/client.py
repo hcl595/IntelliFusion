@@ -107,10 +107,7 @@ def get_glm_response():  # openAI请求端口
     InputInfo = request.form["userinput"]
     InputModel = request.form["modelinput"]
     logger.debug("request:{}.model:{}", InputInfo, InputModel)
-    try:
-        openai_response = ai(InputModel, InputInfo)
-    except:
-        openai_response = "check your url or api key."
+    openai_response = ai(InputModel, InputInfo)
     return jsonify({"response": openai_response})  # ajax返回
 
 
