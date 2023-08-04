@@ -336,6 +336,10 @@
     <span></span>
 </div>
 
+<div class="AlertPlaceholder" id="liveAlertPlaceholder">
+
+</div>
+
 </body>
 <script type="text/javascript">
 let height = document.querySelector('.content').scrollHeight;
@@ -371,7 +375,7 @@ $(".li").on("click",function(){
 $(document).on('click',"#SendOpenaiInput",
         function() {
         var id = $(this).val();
-        alert($(this).val())
+        alert($(this).val(),"danger")
         $("#loading").fadeIn(100);
         $('#openai-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#openai-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
         $.ajax({
@@ -394,24 +398,24 @@ $(document).on('click',"#SendAPIinput",
     function() {
         var id = $(this).val();
         var api_id = $(this).val();
-        alert($(this).val() ); //TODO: doesn't work
-    $("#loading").fadeIn(100);
-    $('#api-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#api-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-    $.ajax({
-        url: '/llm',
-        type: 'POST',
-        data: {
-            userinput: $('#api-user-input-' + api_id).val() ,
-            modelinput: $('#api-model-input-' + api_id).val()
-            },
-        success: function(response) {
-            var chatGptResponse = response.response;
-            $('#api-output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-            $('#api-user-input-' + id).val('');
-            $("#loading").fadeOut(100)
-        }
+        alert($(this).val(), "danger");
+        $("#loading").fadeIn(100);
+        $('#api-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#api-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+        $.ajax({
+            url: '/llm',
+            type: 'POST',
+            data: {
+                userinput: $('#api-user-input-' + api_id).val() ,
+                modelinput: $('#api-model-input-' + api_id).val()
+                },
+            success: function(response) {
+                var chatGptResponse = response.response;
+                $('#api-output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+                $('#api-user-input-' + id).val('');
+                $("#loading").fadeOut(100)
+            }
+        });
     });
-});
 
 $(".run").on('click',function() {
     $("#loading").fadeIn(100)
@@ -431,14 +435,16 @@ $(".run").on('click',function() {
             LcUrl: $('#LcUrl'+id).val() ,
         },
         success: function(response) {
-            var response = response.response;
-            if (response == 'TimeOut'){
-                alert('TimeOut')
+            if (response.response){
+                alert('运行成功',"success")
                 $("#loading").fadeOut(100)
-                $(this).removeAttr("disabled")
+                $("#run-" + id).removeAttr("disabled")
             }
-            $("#loading").fadeOut(100)
-            $("#run-" + id).removeAttr("disabled")
+            else{
+                alert('运行超时',"danger")
+                $("#loading").fadeOut(100)
+                $("#run-" + id).removeAttr("disabled")
+            }
         }
     });
 });
@@ -460,8 +466,16 @@ $(".stop").on('click',function() {
             LcUrl: $('#LcUrl'+id).val() ,
         },
         success: function(response) {
-            $("#loading").fadeOut(100)
-            $('#stop-'+ id).removeAttr("disabled")
+            if (response.response){
+                alert("停止成功","warning")
+                $("#loading").fadeOut(100)
+                $('#stop-'+ id).removeAttr("disabled")
+            }
+            else{
+                alert("停止失败","danger")
+                $("#loading").fadeOut(100)
+                $('#stop-'+ id).removeAttr("disabled")
+            }
         }
     });
 });
@@ -482,9 +496,17 @@ $(".edit").on('click',function() {
             LcCompiler: $('#LcCompiler'+id).val(),
             LcUrl: $('#LcUrl'+id).val() ,
         },
-        success: function() {
-            $("#loading").fadeOut(100)
-            $("#edit-"+ id).removeAttr("disabled")
+        success: function(response) {
+            if (response.response) {
+                alert("更改成功","success")
+                $("#loading").fadeOut(100)
+                $("#edit-"+ id).removeAttr("disabled")
+            }
+            else{
+                alert("更改失败","danger")
+                $("#loading").fadeOut(100)
+                $("#edit-"+ id).removeAttr("disabled")                
+            }
         }
     });
 });
@@ -506,10 +528,20 @@ $(".deny").on('click',function() {
             LcUrl: $('#LcUrl'+id).val() ,
         },
         success: function(response) {
-            $('#id'+id).remove()
-            $('#ModelTr'+id).remove()
-            $("#loading").fadeOut(100)
-            $("#del-"+ id).removeAttr("disabled")
+            if (response.response){
+                alert("删除成功","warning")
+                $('#id'+id).remove()
+                $('#ModelTr'+id).remove()
+                $("#loading").fadeOut(100)
+                $("#del-"+ id).removeAttr("disabled")
+            }
+            else{
+                alert("删除失败","danger")
+                $('#id'+id).remove()
+                $('#ModelTr'+id).remove()
+                $("#loading").fadeOut(100)
+                $("#del-"+ id).removeAttr("disabled")
+            }
         }
     });
 });
@@ -532,14 +564,24 @@ $("#add").on('click',
             LcUrl: $('#LcUrl-1').val() ,
         },
         success: function(response) {
-            $('#ModelTable').append('<input type="hidden" name="{{ ModelCount }}id" id="{{ ModelCount }}id" value={{ ModelCount }}>')
-            $('#ModelTable').append('<tr><td><select name="type" id="{{ ModelCount }}Type">            <option>' + $('#Type-1').val() + '</option>            <option>OpenAI</option>            <option>WebUI</option>            <option>API</option>        </select></td>    <td> <input type="text" name="comment" id="{{ ModelCount }}Comment" placeholder="ChatGLM" value=' + $('#Comment-1').val() + ' ></td>    <td><input type="text" class="url" id="{{ ModelCount }}Url" name="url" placeholder="127.0.0.1:8000" value=' + $('#Url-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value=' + $('#APIkey-1').val() + '></td>    <td><input type="TEXT" class="url" id="{{ ModelCount }}LcCompiler" name="LcCompiler" placeholder=".\\venv\\python.exe & OpenAI" value=' + $('#LcCompiler-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}LcUrl" name="LCurl" placeholder=".\\ChatGLM\\launch.py" value=' + $('#LcUrl-1').val() + '></td>    <td><button type="submit" class="run" id="{{ ModelCount }}run"><i class="fa fa-play"></i></button><button type="submit" class="deny" id="{{ ModelCount }}stop" style="display: none;"><i class="fa fa-stop"></i></button></td>    <td><button type="submit" class="edit" id="{{ ModelCount }}edit"><i class="fa fa-edit"></i></button></td>    <td><button type="submit" class="deny" id="{{ ModelCount }}del"><i class="fa fa-trash"></i></button></td></tr>')
-            $("#loading").fadeOut(100)
-            $('#id-1').remove()
-            $('#AddTr').remove()
-            $('#ModelTable').append('<input type="hidden" id="id-1" value="-1">')
-            $('#ModelTable').append('<tr id="AddTr"><td><select id="Type-1" name="type"><option selected>OpenAI</option><option>WebUI</option><option>API</option></select></td><td> <input type="text" id="Comment-1" placeholder="ChatGLM"></td><td><input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000"></td><td><input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none"></td><td><input type="TEXT" class="url" id="LcCompiler-1p" placeholder=".\\venv\\scripts\\python.exe"></td><td><input type="TEXT" class="url" id="LcUrl-1" placeholder=".\\venv\\launch.py"></td><td><button type="submit" class="add" name="launch" id="add"><i class="fa fa-plus"></i></button></td><td><button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button></td><td><button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button></td></tr>')
-            $('#add').removeAttr("disabled")
+            if (response.response){
+                alert("添加成功","success")
+                $('#ModelTable').append('<input type="hidden" name="{{ ModelCount }}id" id="{{ ModelCount }}id" value={{ ModelCount }}>')
+                $('#ModelTable').append('<tr><td><select name="type" id="{{ ModelCount }}Type">            <option>' + $('#Type-1').val() + '</option>            <option>OpenAI</option>            <option>WebUI</option>            <option>API</option>        </select></td>    <td> <input type="text" name="comment" id="{{ ModelCount }}Comment" placeholder="ChatGLM" value=' + $('#Comment-1').val() + ' ></td>    <td><input type="text" class="url" id="{{ ModelCount }}Url" name="url" placeholder="127.0.0.1:8000" value=' + $('#Url-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value=' + $('#APIkey-1').val() + '></td>    <td><input type="TEXT" class="url" id="{{ ModelCount }}LcCompiler" name="LcCompiler" placeholder=".\\venv\\python.exe & OpenAI" value=' + $('#LcCompiler-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}LcUrl" name="LCurl" placeholder=".\\ChatGLM\\launch.py" value=' + $('#LcUrl-1').val() + '></td>    <td><button disabled type="submit" class="run" id="{{ ModelCount }}run"><i class="fa fa-play"></i></button><button disabled type="submit" class="deny" id="{{ ModelCount }}stop"><i class="fa fa-stop"></i></button></td>    <td><button type="submit" disabled class="edit" id="{{ ModelCount }}edit"><i class="fa fa-edit"></i></button></td>    <td><button disabled type="submit" class="deny" id="{{ ModelCount }}del"><i disabled class="fa fa-trash"></i></button></td></tr>')
+                $('#ModelTable').append('<input type="hidden" id="id-1" value="-1">')
+                $('#ModelTable').append('<tr id="AddTr"><td><select id="Type-1" name="type"><option selected>OpenAI</option><option>WebUI</option><option>API</option></select></td><td> <input type="text" id="Comment-1" placeholder="ChatGLM"></td><td><input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000"></td><td><input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none"></td><td><input type="TEXT" class="url" id="LcCompiler-1p" placeholder=".\\venv\\scripts\\python.exe"></td><td><input type="TEXT" class="url" id="LcUrl-1" placeholder=".\\venv\\launch.py"></td><td><button type="submit" class="add" name="launch" id="add"><i class="fa fa-plus"></i></button></td><td><button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button></td><td><button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button></td></tr>')
+                $("#loading").fadeOut(100)
+                $('#id-1').remove()
+                $('#AddTr').remove()
+                $('#add').removeAttr("disabled")
+            }
+            else{
+                alert("添加失败","danger")
+                $("#loading").fadeOut(100)
+                $('#id-1').remove()
+                $('#AddTr').remove()
+                $('#add').removeAttr("disabled")
+            }
         }
     });
 });
@@ -548,6 +590,20 @@ $("#add").on('click',
 function loading(){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
+}
+
+//alert message
+const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+
+const alert = (message, type) => {
+  const wrapper = document.createElement('div')
+  wrapper.innerHTML = [
+    `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+    `   <div>${message}</div>`,
+    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+    '</div>'
+  ].join('')
+  alertPlaceholder.append(wrapper)
 }
 
 

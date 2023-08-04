@@ -1,4 +1,4 @@
-# main.py | Intellifusion Version 0.1.9(202308032000) Developer Alpha
+# main.py | Intellifusion Version 0.1.9(202308042000) Developer Alpha
 # headers
 import ctypes
 import json
@@ -54,7 +54,10 @@ historys = response["history"]
 @app.route("/")  # 根目录
 def root():
     logger.debug("login error: {}".format(login_error))
-    ModelList = Models.select()
+    try:
+        ModelList = Models.select()
+    except:
+        ModelList = {}
     logger.debug("ModelList: {}",list(ModelList))
     ActiveModels = []
     model_ports = {port: m for m in ModelList if (port := get_ports(m.url))}
@@ -91,8 +94,10 @@ def upload():  # GLM请求与回复1
     global result, LLM_response
     InputInfo = request.form["userinput"]
     InputModel = request.form["modelinput"]
-    print(InputInfo, InputModel)
-    LLM_response = llm(InputModel, InputInfo)
+    try:
+        LLM_response = llm(InputModel, InputInfo)
+    except:
+        LLM_response = "check your application is opened."
     return jsonify({"response": LLM_response})
 
 
@@ -102,7 +107,10 @@ def get_glm_response():  # openAI请求端口
     InputInfo = request.form["userinput"]
     InputModel = request.form["modelinput"]
     logger.debug("request:{}.model:{}", InputInfo, InputModel)
-    openai_response = ai(InputModel, InputInfo)
+    try:
+        openai_response = ai(InputModel, InputInfo)
+    except:
+        openai_response = "check your url or api key."
     return jsonify({"response": openai_response})  # ajax返回
 
 
@@ -135,21 +143,27 @@ def AddModel():
         port = 80
     logger.debug(LaunchCompiler)
     if InputState == "edit":
-        logger.info("User Inputs: {}, {}, {}", InputType, InputID,InputAPIkey)
-        u = Models.update({
-            Models.name: InputComment,
-            Models.url: InputUrl,
-            Models.api_key: InputAPIkey,
-            Models.launch_compiler: LaunchCompiler,
-            Models.launch_path: LaunchPath,
-            Models.type: InputType,
-        }).where(Models.id == InputID)
-        u.execute()
-        return jsonify({"response": "complete"})
+        try:
+            logger.info("User Inputs: {}, {}, {}", InputType, InputID,InputAPIkey)
+            u = Models.update({
+                Models.name: InputComment,
+                Models.url: InputUrl,
+                Models.api_key: InputAPIkey,
+                Models.launch_compiler: LaunchCompiler,
+                Models.launch_path: LaunchPath,
+                Models.type: InputType,
+            }).where(Models.id == InputID)
+            u.execute()
+            return jsonify({"response": True,})
+        except:
+            return jsonify({"response": False,})
     elif InputState == "del":
-        u = Models.get(id = InputID)
-        u.delete_instance()
-        return jsonify({"response": "complete"})
+        try:
+            u = Models.get(id = InputID)
+            u.delete_instance()
+            return jsonify({"response": True,})
+        except:
+            return jsonify({"response": False,})
     elif InputState == "run":
         launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LcUrl")
         pool.submit(subprocess.run, launchCMD)
@@ -157,7 +171,7 @@ def AddModel():
         while True:
             for conn in psutil.net_connections():
                 if conn.laddr.port == port:
-                    return jsonify({"response": "complete"})
+                    return jsonify({"response": True,})
             count += 1
             time.sleep(1)
             if count == cfg.read("BaseConfig", "TimeOut"):
@@ -168,25 +182,31 @@ def AddModel():
                     LaunchCompiler,
                     LaunchPath,
                 )
-                return jsonify({"response": "TimeOut"})
+                return jsonify({"response": False,})
     elif InputState == "stop":
-        for conn in psutil.net_connections():
-            if conn.laddr.port == port:
-                pid = conn.pid
-                p = psutil.Process(pid)
-                p.kill()
-                break
-        return jsonify({"response": "complete"})
+        try:
+            for conn in psutil.net_connections():
+                if conn.laddr.port == port:
+                    pid = conn.pid
+                    p = psutil.Process(pid)
+                    p.kill()
+                    break
+            return jsonify({"response": True,})
+        except:
+            return jsonify({"response": False,})
     elif InputState == "add":
-        Models.create(
-            type=InputType,
-            name=InputComment,
-            url=InputUrl,
-            api_key=InputAPIkey,
-            launch_compiler=LaunchCompiler,
-            launch_path=LaunchPath,
-        )
-        return jsonify({"response": "complete"})
+        try:
+            Models.create(
+                type=InputType,
+                name=InputComment,
+                url=InputUrl,
+                api_key=InputAPIkey,
+                launch_compiler=LaunchCompiler,
+                launch_path=LaunchPath,
+            )
+            return jsonify({"response": True,})
+        except:
+            return jsonify({"response": False,})
 
 
 @app.get("/close")  # 关闭
@@ -264,12 +284,6 @@ def llm(ModelID: str, question: str):
 def get_ports(url: str):
     port = urlparse(url).port
     if port == None:
-        # try:
-        #     context = ssl._create_default_https_context()
-        #     url_request.urlopen(url[0:-4], context=context)
-        #     port = 12140
-        # except url_error.URLError:
-        #     port = None
         if not validators.url(url):
             pass
         else:
