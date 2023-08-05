@@ -392,7 +392,6 @@ $(document).on('input',".userInputArea",
             var text = $(this).val();
             var id = $(this).attr("id");
             var source_id = $(this).attr("source_id");
-            alert(source_id,"danger")
             $.ajax({
                 url: '/prompts',
                 type: 'POST',
@@ -402,7 +401,7 @@ $(document).on('input',".userInputArea",
                 success: function(prompts) {
                     $('#Prompt-'+source_id).empty()
                     for (i in prompts){
-                        $('#Prompt-'+source_id).append('<button class="prompt" value='+ prompts[i][1] + ' source_id=' + source_id +' >'+ prompts[i][0] +'</button>')
+                        $('#Prompt-'+source_id).append("<button class='prompt' value='"+ prompts[i] + "' source_id= " + source_id +' >'+ i +'</button>')
                     }
                 }
             })
@@ -410,15 +409,17 @@ $(document).on('input',".userInputArea",
 $(document).on('click','.prompt',
         function(){
             var source_id = $(this).attr("source_id");
+            $('#Prompt-'+source_id).empty()
             $('#user-input-'+source_id).val(""+$(this).val())
         })
 //send request
 $(document).on('click',"#SendInput",
-        function() {
+        function SendInput() {
         var id = $(this).val();
         if ($('#user-input-' + id).val() != ""){
             $("#loading").fadeIn(100);
             $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+            $('#user-input-' + id).val('');
             $.ajax({
                 url: '/requestmodels',
                 type: 'POST',
@@ -429,40 +430,11 @@ $(document).on('click',"#SendInput",
                 success: function(response) {
                     var chatGptResponse = response.response;
                     $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-                    $('#user-input-' + id).val('');
                     $("#loading").fadeOut(100)
                     let height = document.querySelector('.content').scrollHeight;
                     document.querySelector(".content").scrollTop = height;
                 }
             });
-        }
-        else{
-            alert('内容不能为空',"warning");
-        }
-    });
-
-$(document).on('click',"#SendAPIinput",
-    function() {
-        var id = $(this).val();
-        if ($('#api-user-input-' + id).val() && $('#api-user-input-' + id).val().toLowerCase){
-        $("#loading").fadeIn(100);
-        $('#api-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#api-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-        $.ajax({
-            url: '/llm',
-            type: 'POST',
-            data: {
-                userinput: $('#api-user-input-' + id).val() ,
-                modelinput: $('#api-model-input-' + id).val()
-                },
-            success: function(response) {
-                var chatGptResponse = response.response;
-                $('#api-output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-                $('#api-user-input-' + id).val('');
-                $("#loading").fadeOut(100)
-                let height = document.querySelector('.content').scrollHeight;
-                document.querySelector(".content").scrollTop = height;
-            }
-        });
         }
         else{
             alert('内容不能为空',"warning");

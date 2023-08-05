@@ -225,25 +225,12 @@ def Prompts():
         keywords = jieba.lcut_for_search(userinput)
         keywords = " ".join(keywords)
         result = process.extract(
-            keywords, prompt.keys(), limit=20, scorer=fuzz.partial_token_sort_ratio
+            keywords, prompt.keys(), limit=5, scorer=fuzz.partial_token_sort_ratio
         )
-        # acts = [a[0] for a in result]
-        # for act in acts:
-        #     prompts_o = {i["act"]: i["prompt"] for i in prompts if i['act'] == act}
-        #     prompts_o = []
-        #     prompts_a = []
-        #     for i in prompts:
-        #         logger.debug("{}",i)
-        #         if i["act"] == act:
-        #             prompts_o.append(i["act"])
-        #             prompts_o.append(i["prompt"])
-        #             logger.info("{}",prompts_o.copy)
-        #             p = pycopy.deepcopy(prompts_o)
-        #             prompts_a.append(prompts_o.copy.deepcopy())
-
+        result = {t:prompt[t] for (t,_) in result}
     else:
         result = {}
-    # logger.info("{}",prompts_a)
+    logger.info("{}",result)
     return jsonify(result)
 
 if cfg.read("BaseConfig", "devmode") == "True":
