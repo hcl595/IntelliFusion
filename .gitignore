@@ -187,4 +187,4 @@ release/
 exe.json
 setup.iss
 output/
-src/test.py/
+src/test.py

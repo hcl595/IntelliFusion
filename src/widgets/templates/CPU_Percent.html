@@ -11,9 +11,6 @@
   <script type="text/javascript" src="../static/js/echarts.min.js"></script>
 
   <script type="text/javascript">
-
-
-
     function getData(){
       $.ajax({
         url: '/widgets/Get_CPU_Percent',
@@ -30,9 +27,10 @@
           var option;
       
           option = {
-        tooltip: {
-          formatter: '{a} <br/>{b} : {c}%'
-        },
+            animation: false,
+        //      tooltip: {
+        //    formatter: '{a} <br/>{b} : {c}%'
+        // },
         series: [
           {
             name: 'Occupancy Rate',
@@ -61,6 +59,9 @@
         }
     });
     }
+    var int = setInterval(function(){
+      getData()
+    },10000)
   </script>
 </body>
 </html>
