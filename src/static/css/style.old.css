@@ -27,7 +27,7 @@ body {
   width: 100px;
   height: 100vh;
   backdrop-filter: blur(18px);
-  background: rgb(38, 38, 38);
+  background: rgb(32, 32, 32);
   box-shadow: 0 0 30px rgba(0, 0, 0, .05);
   transition: .6s cubic-bezier(.8, .5, .5, .8);
 }
@@ -188,11 +188,11 @@ ul {
   padding-left: 20px;
 }
 ul.tab {
-  background-color: rgba(38, 38, 38);
+  background-color: rgba(32, 32, 32);
   padding-bottom:1px;
   height: 40px;
   line-height: 30px;
-  color: rgb(38, 38, 38);
+  color: rgb(32, 32, 32);
 }
 ul.tab li {
   float: left;

@@ -16,40 +16,20 @@
             <li id="li" draggable="true" class="li current" value="-1"><span><font size="3">小组件</font></span></li>
         </ul>
         {% for Model in ActiveModels %}<!-- TODO:Use Javascripts Templates instead of Flask Templates -->
-        {% if Model.type == 'API' %}
-        <div class="dialogbox_container" id={{ Model.id }} style="display: none;"> 
-            <div class="content" id="api-output-{{ Model.id }}">
-            </div>
-            <div class="prompt_container" id="Prompt-api-user-input-{{ Model.id }}">
-            </div>
-            <div class="input-area">
-                <div class="txtb">
-                    <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
-                        <textarea class="userInputArea" placeholder="输入内容" id="api-user-input-{{ Model.id }}" source_id="{{ Model.id }}"></textarea>
-                    </div>
-                </div>
-                <input id="api-model-input-{{ Model.id }}" type="hidden" value={{ Model.name }} />
-                <div class="button-area">
-                    <p id="Start">Token:</p>
-                    <button type="submit" id="SendAPIinput" value="{{ Model.id }}">发 送</button>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-        {% if Model.type == 'OpenAI' %}
+        {% if Model.type == 'OpenAI' or Model.type == 'API' %}
         <div class="dialogbox_container" id={{ Model.id }} style="display: none;">
-            <div class="content" id="openai-output-{{ Model.id }}"></div>
-            <div class="prompt_container" id="Prompt-openai-user-input-{{ Model.id }}"><!-- TODO: Complete prompts -->
+            <div class="content" id="output-{{ Model.id }}"></div>
+            <div class="prompt_container" id="Prompt-{{ Model.id }}">
             </div>
             <div class="input-area">
                 </br>
                 <div class="txtb">
-                    <textarea class="userInputArea" placeholder="输入内容" id="openai-user-input-{{ Model.id }}" ></textarea>
+                    <textarea class="userInputArea" placeholder="输入内容" id="user-input-{{ Model.id }}" source_id="{{ Model.id }}"></textarea>
                 </div>
-                <input id="openai-model-input-{{ Model.id }}" type="hidden" value={{ Model.name}} />
+                <input id="model-input-{{ Model.id }}" type="hidden" value={{ Model.name}} />
                 <div class="button-area">
                     <button type="button" id="Start"><i class="fa fa-microphone"></i></button><!-- TODO: Use Token instead of microphone -->
-                    <button type="submit" id="SendOpenaiInput" value="{{ Model.id }}">发 送</button>
+                    <button type="submit" id="SendInput" value="{{ Model.id }}">发 送</button>
                 </div>
             </div>
         </div>
@@ -386,31 +366,36 @@ $(document).on('input',".userInputArea",
                     text: text,
                 },
                 success: function(prompts) {
-                    $('#Prompt-'+id).empty()
+                    $('#Prompt-'+source_id).empty()
                     for (i in prompts){
-                        $('#Prompt-'+id).append('<button class="prompt" value='+ prompts[i][3] + ' id=' + source_id +' >'+ prompts[i][0] +'</button>')
+                        $('#Prompt-'+source_id).append('<button class="prompt" value='+ prompts[i][1] + ' source_id=' + source_id +' >'+ prompts[i][0] +'</button>')
                     }
                 }
             })
         })
+$(document).on('click','.prompt',
+        function(){
+            var source_id = $(this).attr("source_id");
+            $('#user-input-'+source_id).val(""+$(this).val())
+        })
 //send request
-$(document).on('click',"#SendOpenaiInput",
+$(document).on('click',"#SendInput",
         function() {
         var id = $(this).val();
-        if ($('#openai-user-input-' + id).val() && $('#openai-user-input-' + id).val().toLoweCase){
+        if ($('#user-input-' + id).val() != ""){
             $("#loading").fadeIn(100);
-            $('#openai-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#openai-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+            $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
             $.ajax({
-                url: '/openai',
+                url: '/requestmodels',
                 type: 'POST',
                 data: {
-                    userinput: $('#openai-user-input-' + id).val(),
-                    modelinput: $('#openai-model-input-' + id).val(),
+                    userinput: $('#user-input-' + id).val(),
+                    modelinput: $('#model-input-' + id).val(),
                 },
                 success: function(response) {
                     var chatGptResponse = response.response;
-                    $('#openai-output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-                    $('#openai-user-input-' + id).val('');
+                    $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+                    $('#user-input-' + id).val('');
                     $("#loading").fadeOut(100)
                     let height = document.querySelector('.content').scrollHeight;
                     document.querySelector(".content").scrollTop = height;
@@ -578,9 +563,7 @@ $(".deny").on('click',function() {
         }
     });
 });
-
-$("#add").on('click',
-    function() {
+$("#add").on('click',function() {
     $("#loading").fadeIn(100)
     $('#add').attr("disabled",true)
     $.ajax({

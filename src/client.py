@@ -5,6 +5,8 @@ import ctypes
 import json
 import subprocess
 import time
+import copy as pycopy
+from copy import deepcopy
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import ipaddress
@@ -64,16 +66,16 @@ def root():
         ModelList = {}
     logger.debug("ModelList: {}",list(ModelList))
     ActiveModels = []
-    for i in ModelList:
-        if validators.url(i.url):
-            host = urlparse(i.url).hostname
-            try:
-                ipaddress.ip_address(host)
-                ActiveModels.append(i)
-            except:
-                pass
-    model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
     if cfg.read("BaseConfig","ActiveExamine") == "True":
+        for i in ModelList:
+            if validators.url(i.url):
+                host = urlparse(i.url).hostname
+                logger.info("{}",host)
+                try:
+                    ipaddress.ip_address(host)
+                except:
+                    ActiveModels.append(i)
+        model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
         for conn in psutil.net_connections():
             port = conn.laddr.port
             if port in model_ports:
@@ -99,26 +101,21 @@ def root():
     )
 
 
-@app.post("/llm") # TODO: fusion openai
-def upload():  # GLM请求与回复1
-    global result, LLM_response
+@app.post("/requestmodels")
+def Request_Models():
     InputInfo = request.form["userinput"]
     InputModel = request.form["modelinput"]
-    try:
-        LLM_response = llm(InputModel, InputInfo)
-    except:
-        LLM_response = "check your application is opened."
-    return jsonify({"response": LLM_response})
-
-
-@app.route("/openai", methods=["POST"]) # fusion llm
-def get_glm_response():  # openAI请求端口
-    global GLM_response
-    InputInfo = request.form["userinput"]
-    InputModel = request.form["modelinput"]
-    logger.debug("request:{}.model:{}", InputInfo, InputModel)
-    openai_response = ai(InputModel, InputInfo)
-    return jsonify({"response": openai_response})  # ajax返回
+    if Models.get(Models.name == InputModel).type == "OpenAI":
+        try:
+            ai(InputModel, InputInfo)
+        except:
+            Model_response = "Check Your API and APIkey"
+    elif Models.get(Models.name == InputModel).type == "API":
+        try:
+            Model_response = llm(InputModel, InputInfo)
+        except:
+            Model_response = "check your application is opened."
+    return jsonify({"response": Model_response})
 
 
 @app.post("/EditSetting")  # 编辑设置
@@ -226,15 +223,30 @@ def logout():
 def Prompts():
     userinput = request.form.get("text")
     if userinput:
-        prompt = pmt.read_config()
-        prompt = {i["act"]: i["prompt"] for i in prompt}
+        prompts = pmt.read_config()
+        prompt = {i["act"]:i["prompt"] for i in prompts}
         keywords = jieba.lcut_for_search(userinput)
         keywords = " ".join(keywords)
         result = process.extract(
             keywords, prompt.keys(), limit=20, scorer=fuzz.partial_token_sort_ratio
         )
+        # acts = [a[0] for a in result]
+        # for act in acts:
+        #     prompts_o = {i["act"]: i["prompt"] for i in prompts if i['act'] == act}
+        #     prompts_o = []
+        #     prompts_a = []
+        #     for i in prompts:
+        #         logger.debug("{}",i)
+        #         if i["act"] == act:
+        #             prompts_o.append(i["act"])
+        #             prompts_o.append(i["prompt"])
+        #             logger.info("{}",prompts_o.copy)
+        #             p = pycopy.deepcopy(prompts_o)
+        #             prompts_a.append(prompts_o.copy.deepcopy())
+
     else:
         result = {}
+    # logger.info("{}",prompts_a)
     return jsonify(result)
 
 if cfg.read("BaseConfig", "devmode") == "True":
@@ -253,7 +265,7 @@ app.register_blueprint(widgets_blue)
 
 
 # functions
-def ai(ModelID: str, question: str):  # TODO:把response转化为json
+def ai(ModelID: str, question: str):
     response = ""
     logger.debug("{}", Models.get(Models.name == ModelID).url)
     openai.api_base = (Models.get(Models.name == ModelID).url)
@@ -289,8 +301,7 @@ def llm(ModelID: str, question: str):
     )
     return response.json()["history"][0][1]
 
-#www.bsd.cm / 127.0.0.1
-# url       / port
+
 def get_ports(url: str):
     port = urlparse(url).port
     if port == None:
