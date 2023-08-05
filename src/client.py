@@ -1,4 +1,4 @@
-# main.py | Intellifusion Version 0.1.9(202308042000) Developer Alpha
+# main.py | Intellifusion Version 0.1.9(202308052000) Developer Alpha
 # headers
 from thefuzz import process, fuzz
 import ctypes
