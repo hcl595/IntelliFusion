@@ -5,8 +5,6 @@ import ctypes
 import json
 import subprocess
 import time
-import copy as pycopy
-from copy import deepcopy
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import ipaddress
@@ -94,8 +92,7 @@ def root():
         historys=LLM_response,
         host=cfg.read("RemoteConfig", "host"),
         port=cfg.read("RemoteConfig", "port"),
-        Mode=cfg.read("BaseConfig", "devmode"),
-        BugM=cfg.read("BaseConfig", "debug"),
+        devMode=cfg.read("BaseConfig", "devmode"),
         TimeOut=cfg.read("BaseConfig", "TimeOut"),
         username=session.get("username"),
     )
