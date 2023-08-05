@@ -418,7 +418,9 @@ $(document).on('click',"#SendInput",
         var id = $(this).val();
         if ($('#user-input-' + id).val() != ""){
             $("#loading").fadeIn(100);
-            $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+            $('#output-' + id).append('\
+            <div class="item item-right"><div class="bubble bubble-right">\
+                ' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
             $('#user-input-' + id).val('');
             $.ajax({
                 url: '/requestmodels',
@@ -591,7 +593,15 @@ $("#add").on('click',function() {
                 $('#ModelTable').append('<input type="hidden" name="{{ ModelCount }}id" id="{{ ModelCount }}id" value={{ ModelCount }}>')
                 $('#ModelTable').append('<tr><td><select name="type" id="{{ ModelCount }}Type">            <option>' + $('#Type-1').val() + '</option>            <option>OpenAI</option>            <option>WebUI</option>            <option>API</option>        </select></td>    <td> <input type="text" name="comment" id="{{ ModelCount }}Comment" placeholder="ChatGLM" value=' + $('#Comment-1').val() + ' ></td>    <td><input type="text" class="url" id="{{ ModelCount }}Url" name="url" placeholder="127.0.0.1:8000" value=' + $('#Url-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value=' + $('#APIkey-1').val() + '></td>    <td><input type="TEXT" class="url" id="{{ ModelCount }}LcCompiler" name="LcCompiler" placeholder=".\\venv\\python.exe & OpenAI" value=' + $('#LcCompiler-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}LcUrl" name="LCurl" placeholder=".\\ChatGLM\\launch.py" value=' + $('#LcUrl-1').val() + '></td>    <td><button disabled type="submit" class="run" id="{{ ModelCount }}run"><i class="fa fa-play"></i></button><button disabled type="submit" class="deny" id="{{ ModelCount }}stop"><i class="fa fa-stop"></i></button></td>    <td><button type="submit" disabled class="edit" id="{{ ModelCount }}edit"><i class="fa fa-edit"></i></button></td>    <td><button disabled type="submit" class="deny" id="{{ ModelCount }}del"><i disabled class="fa fa-trash"></i></button></td></tr>')
                 $('#ModelTable').append('<input type="hidden" id="id-1" value="-1">')
-                $('#ModelTable').append('<tr id="AddTr"><td><select id="Type-1" name="type"><option selected>OpenAI</option><option>WebUI</option><option>API</option></select></td><td> <input type="text" id="Comment-1" placeholder="ChatGLM"></td><td><input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000"></td><td><input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none"></td><td><input type="TEXT" class="url" id="LcCompiler-1p" placeholder=".\\venv\\scripts\\python.exe"></td><td><input type="TEXT" class="url" id="LcUrl-1" placeholder=".\\venv\\launch.py"></td><td><button type="submit" class="add" name="launch" id="add"><i class="fa fa-plus"></i></button></td><td><button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button></td><td><button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button></td></tr>')
+                $('#ModelTable').append('\
+                <tr id="AddTr"><td><select id="Type-1" name="type">\
+                    <option selected>OpenAI</option>\
+                    <option>WebUI</option>\
+                    <option>API</option>\
+                    </select>\
+                    </td>\
+                    <td>\
+                        <input type="text" id="Comment-1" placeholder="ChatGLM"></td><td><input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000"></td><td><input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none"></td><td><input type="TEXT" class="url" id="LcCompiler-1p" placeholder=".\\venv\\scripts\\python.exe"></td><td><input type="TEXT" class="url" id="LcUrl-1" placeholder=".\\venv\\launch.py"></td><td><button type="submit" class="add" name="launch" id="add"><i class="fa fa-plus"></i></button></td><td><button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button></td><td><button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button></td></tr>')
                 $("#loading").fadeOut(100)
                 $('#id-1').remove()
                 $('#AddTr').remove()
