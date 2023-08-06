@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import ipaddress
 from urllib.parse import urlparse
+from playhouse.shortcuts import model_to_dict
 
 import openai
 import jieba
@@ -155,14 +156,17 @@ def AddModel():
                 Models.type: InputType,
             }).where(Models.id == InputID)
             u.execute()
-            return jsonify({"response": True,})
+            return jsonify({"response": True,
+                            "message":"编辑成功",})
         except:
-            return jsonify({"response": False,})
+            return jsonify({"response": False,
+                            "message":"编辑失败",})
     elif InputState == "del":
         try:
             u = Models.get(id = InputID)
             u.delete_instance()
-            return jsonify({"response": True,})
+            return jsonify({"response": True,
+                            "message":"删除成功",})
         except:
             return jsonify({"response": False,})
     elif InputState == "run":
@@ -172,7 +176,8 @@ def AddModel():
         while True:
             for conn in psutil.net_connections():
                 if conn.laddr.port == port:
-                    return jsonify({"response": True,})
+                    return jsonify({"response": True,
+                                    "message":"运行成功",})
             count += 1
             time.sleep(1)
             if count == cfg.read("BaseConfig", "TimeOut"):
@@ -183,7 +188,8 @@ def AddModel():
                     LaunchCompiler,
                     LaunchPath,
                 )
-                return jsonify({"response": False,})
+                return jsonify({"response": False,
+                                "message":"运行失败,原因:超时",})
     elif InputState == "stop":
         try:
             for conn in psutil.net_connections():
@@ -192,9 +198,11 @@ def AddModel():
                     p = psutil.Process(pid)
                     p.kill()
                     break
-            return jsonify({"response": True,})
+            return jsonify({"response": True,
+                            "message":"停止成功",})
         except:
-            return jsonify({"response": False,})
+            return jsonify({"response": False,
+                            "message":"停止失败成功",})
     elif InputState == "add":
         try:
             Models.create(
@@ -241,26 +249,10 @@ def GetModelList():
     except:
         ModelList = {}
     logger.debug("ModelList: {}",list(ModelList))
-    ActiveModels = []
-    if cfg.read("BaseConfig","ActiveExamine") == "True":
-        for i in ModelList:
-            if validators.url(i.url):
-                host = urlparse(i.url).hostname
-                logger.info("{}",host)
-                try:
-                    ipaddress.ip_address(host)
-                except:
-                    ActiveModels.append(i)
-        model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
-        for conn in psutil.net_connections():
-            port = conn.laddr.port
-            if port in model_ports:
-                ActiveModels.append(model_ports[port])
-                logger.debug("model_ports: {}", model_ports[port])
-        logger.debug("ActiveModels: {}", ActiveModels)
-    else:
-        ActiveModels = ModelList
-    return jsonify({'data': str(ActiveModels)})
+    ActiveModelList = ModelList
+    ActiveModelList_json = [model_to_dict(Model) for Model in ActiveModelList]
+    logger.info("{}", ActiveModelList_json)
+    return jsonify(ActiveModelList_json)
 
 if cfg.read("BaseConfig", "devmode") == "True":
     @app.route("/test")

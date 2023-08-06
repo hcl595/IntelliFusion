@@ -5,7 +5,7 @@
 <title>Realizer v0.1.9 Beta</title>
 {% endblock %}
 {% block body %}
-<body class="light">
+<body class="light" onload="">
 <iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
@@ -61,12 +61,9 @@
             <thead>
                 <tr>
                     <td>
-                        <h3>模型</h3>
-                        <button onclick="Refresh()"><i class="fa fa-exchange"></i></button>                            
+                        <h3>模型</h3>                           
                     </td>
                 </tr>
-            </thead>
-            <tbody id="ModelTable">
                 <tr>
                     <td>
                         <p>模型类型</p>
@@ -96,44 +93,10 @@
                         <p>启动</p>
                     </td>
                 </tr>
-                {% for Model in ModelList %}<!-- TODO:Use Javascripts Templates instead of Flask Templates -->
-                <input type="hidden" id="id{{ Model.id }}" value={{ Model.id }}>
-                <tr id="ModelTr{{Model.id}}">
-                    <td>
-                        <select name="type" id="Type{{ Model.id }}">
-                            <option>{{ Model.type }}</option>
-                            <option>OpenAI</option>
-                            <option>WebUI</option>
-                            <option>API</option>
-                        </select>
-                    </td>
-                    <td> 
-                        <input type="text" name="comment" id="Comment{{ Model.id }}" placeholder="ChatGLM" value={{ Model.name }}>
-                    </td>
-                    <td>
-                        <input type="text" class="url" id="Url{{ Model.id }}" name="url" placeholder="127.0.0.1:8000" value={{ Model.url }}>
-                    </td>
-                    <td>
-                        <input type="text" class="url" id="APIkey{{ Model.id }}" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value={{ Model.api_key }}>
-                    </td>
-                    <td>
-                        <input type="text" class="url" id="LcCompiler{{ Model.id }}" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model.launch_compiler }}>
-                    </td>
-                    <td>
-                        <input type="text" class="url" id="LcUrl{{ Model.id }}" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model.launch_path }}>
-                    </td>
-                    <td>
-                        <button type="submit" class="run" id="run-{{ Model.id }}" value="{{ Model.id }}"><i class="fa fa-play"></i></button>
-                        <button type="submit" class="stop" id="stop-{{ Model.id }}" value="{{ Model.id }}"><i class="fa fa-stop"></i></button>
-                    </td>
-                    <td>
-                        <button type="submit" class="edit" id="edit-{{ Model.id }}" value="{{ Model.id }}"><i class="fa fa-edit"></i></button>
-                    </td>
-                    <td>
-                        <button type="submit" class="deny" id="del-{{ Model.id }}" value="{{ Model.id }}"><i class="fa fa-trash"></i></button>
-                    </td>
-                </tr>
-                {% endfor %}
+            </thead>
+            <tbody id="ModelTable">
+            </tbody>
+            <tfoot>
                 <input type="hidden" id="id-1" value="-1">
                 <tr id="AddTr">
                     <td>
@@ -168,7 +131,7 @@
                         <button disabled class="deny"><i class="fa fa-ban"></i></button>
                     </td>
                 </tr>
-            </tbody>
+            </tfoot>
         </table>
     </div>
 </div>
@@ -414,164 +377,6 @@ $(document).on('click','.prompt',
             $('#user-input-'+source_id).val(""+$(this).val())
         })
 //send request
-$(document).on('click',"#SendInput",
-        function SendInput() {
-        var id = $(this).val();
-        if ($('#user-input-' + id).val() != ""){
-            $("#loading").fadeIn(100);
-            $('#output-' + id).append('\
-            <div class="item item-right"><div class="bubble bubble-right">\
-                ' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-            $('#user-input-' + id).val('');
-            $.ajax({
-                url: '/requestmodels',
-                type: 'POST',
-                data: {
-                    userinput: $('#user-input-' + id).val(),
-                    modelinput: $('#model-input-' + id).val(),
-                },
-                success: function(response) {
-                    var chatGptResponse = response.response;
-                    $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-                    $("#loading").fadeOut(100)
-                    let height = document.querySelector('.content').scrollHeight;
-                    document.querySelector(".content").scrollTop = height;
-                }
-            });
-        }
-        else{
-            alert('内容不能为空',"warning");
-        }
-    });
-
-$(".run").on('click',function() {
-    $("#loading").fadeIn(100)
-    $(this).attr("disabled",true)
-    var id = $(this).val()
-    $.ajax({
-        url: '/exchange',
-        type: 'POST',
-        data: {
-            state: 'run' ,
-            number: $('#id'+id).val() ,
-            comment: $('#Comment'+id).val() ,
-            type: $('#Type'+id).val() ,
-            url: $('#Url'+id).val() ,
-            APIkey: $('#APIkey'+id).val() ,
-            LcCompiler: $('#LcCompiler'+id).val() ,
-            LcUrl: $('#LcUrl'+id).val() ,
-        },
-        success: function(response) {
-            if (response.response){
-                alert('运行成功',"success")
-                $("#loading").fadeOut(100)
-                $("#run-" + id).removeAttr("disabled")
-            }
-            else{
-                alert('运行超时',"danger")
-                $("#loading").fadeOut(100)
-                $("#run-" + id).removeAttr("disabled")
-            }
-        }
-    });
-});
-$(".stop").on('click',function() {
-    $("#loading").fadeIn(100)
-    $('#stop').attr("disabled",true)
-    var id = $(this).val()
-    $.ajax({
-        url: '/exchange',
-        type: 'POST',
-        data: {
-            state: 'stop' ,
-            number: $('#id'+id).val() ,
-            comment: $('#Comment'+id).val() ,
-            type: $('#Type'+id).val() ,
-            url: $('#Url'+id).val() ,
-            APIkey: $('#APIkey'+id).val() ,
-            LcCompiler: $('#LcCompiler'+id).val() ,
-            LcUrl: $('#LcUrl'+id).val() ,
-        },
-        success: function(response) {
-            if (response.response){
-                alert("停止成功","warning")
-                $("#loading").fadeOut(100)
-                $('#stop-'+ id).removeAttr("disabled")
-            }
-            else{
-                alert("停止失败","danger")
-                $("#loading").fadeOut(100)
-                $('#stop-'+ id).removeAttr("disabled")
-            }
-        }
-    });
-});
-$(".edit").on('click',function() {
-    $("#loading").fadeIn(100)
-    $(this).attr("disabled",true)
-    var id = $(this).val()
-    $.ajax({
-        url: '/exchange',
-        type: 'POST',
-        data: {
-            state: 'edit' ,
-            number: $('#id'+id).val() ,
-            comment: $('#Comment'+id).val() ,
-            type: $('#Type'+id).val() ,
-            url: $('#Url'+id).val() ,
-            APIkey: $('#APIkey'+id).val() ,
-            LcCompiler: $('#LcCompiler'+id).val(),
-            LcUrl: $('#LcUrl'+id).val() ,
-        },
-        success: function(response) {
-            if (response.response) {
-                alert("更改成功","success")
-                $("#loading").fadeOut(100)
-                $("#edit-"+ id).removeAttr("disabled")
-            }
-            else{
-                alert("更改失败","danger")
-                $("#loading").fadeOut(100)
-                $("#edit-"+ id).removeAttr("disabled")                
-            }
-        }
-    });
-});
-$(".deny").on('click',function() {
-    $("#loading").fadeIn(100)
-    $(this).attr("disabled",true)
-    var id = $(this).val()
-    $.ajax({
-        url: '/exchange',
-        type: 'POST',
-        data: {
-            state: 'del' ,
-            number: $('#id'+id).val() ,
-            comment: $('#Comment'+id).val() ,
-            type: $('#Type'+id).val() ,
-            url: $('#Url'+id).val() ,
-            APIkey: $('#APIkey'+id).val() ,
-            LcCompiler: $('#LcCompiler'+id).val() ,
-            LcUrl: $('#LcUrl'+id).val() ,
-        },
-        success: function(response) {
-            if (response.response){
-                alert("删除成功","warning")
-                $('#id'+id).remove()
-                $('#ModelTr'+id).remove()
-                $("#loading").fadeOut(100)
-                $("#del-"+ id).removeAttr("disabled")
-            }
-            else{
-                alert("删除失败","danger")
-                $('#id'+id).remove()
-                $('#ModelTr'+id).remove()
-                $("#loading").fadeOut(100)
-                $("#del-"+ id).removeAttr("disabled")
-            }
-        }
-    });
-});
 $("#add").on('click',function() {
     $("#loading").fadeIn(100)
     $('#add').attr("disabled",true)
@@ -618,50 +423,80 @@ $("#add").on('click',function() {
         }
     });
 });
+
+function commit_model(id,operate){
+    $("#loading").fadeIn(100)
+    $('#'+operate+id).attr("disabled",true)
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: operate ,
+            number: $('#id'+id).val() ,
+            comment: $('#Comment'+id).val() ,
+            type: $('#Type'+id).val() ,
+            url: $('#Url'+id).val() ,
+            APIkey: $('#APIkey'+id).val() ,
+            LcCompiler: $('#LcCompiler'+id).val() ,
+            LcUrl: $('#LcUrl'+id).val() ,
+        },
+        success: function(response) {
+            if (response.response){
+                alert(response.message,"warning")
+                $("#loading").fadeOut(100)
+                $('#'+operate+id).removeAttr("disabled")
+            }
+            else{
+                alert(response.message,"danger")
+                $("#loading").fadeOut(100)
+                $('#'+operate+id).removeAttr("disabled")
+            }
+        }
+    });
+}
+
 // Refresh Data
-function Refresh(){
+function Refresh_ModelList(){
     $.ajax({
         url: '/GetModelList',
         method: "POST",
         success: function(data){
-            $('ModelTable').empty
-            for (i in data.data){
-                alert(i,"danger")
-                $('ModelTable').append('\
-                <input type="hidden" id="id'+ i[0] +'" value='+ i[0] +'>\
+            $('#ModelTable').empty()
+            for (i in data){
+                $('#ModelTable').append('<input type="hidden" id="id'+ data[i].id +'" value='+ data[i].id +'>')
+                $('#ModelTable').append('\
                 <tr id="ModelTr">\
                     <td>\
-                    <select name="type" id="Type'+ i[0] +'">\
-                        <option></option>\
+                    <select name="type" id="Type'+ data[i].id +'">\
+                        <option>'+ data[i].type +'</option>\
                         <option>OpenAI</option>\
                         <option>WebUI</option>\
                         <option>API</option>\
                     </select>\
                     </td>\
                     <td> \
-                        <input type="text" name="comment" id="Comment'+ i[0] +'" placeholder="ChatGLM" value=>\
+                        <input type="text" name="comment" id="Comment'+ data[i].id +'" placeholder="ChatGLM" value='+ data[i].name +'>\
                     </td>\
                     <td>\
-                        <input type="text" class="url" id="Url'+ i[0] +'" name="url" placeholder="127.0.0.1:8000" value=>\
+                        <input type="text" class="url" id="Url'+ data[i].id +'" name="url" placeholder="127.0.0.1:8000" value='+ data[i].url +'>\
                     </td>\
                     <td>\
-                        <input type="text" class="url" id="APIkey'+ i[0] +'" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value=>\
+                        <input type="text" class="url" id="APIkey'+ data[i].id +'" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value='+ data[i].api_key +'>\
                     </td>\
                     <td>\
-                        <input type="text" class="url" id="LcCompiler'+ i[0] +'" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value=>\
+                        <input type="text" class="url" id="LcCompiler'+ data[i].id +'" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value='+ data[i].launch_compiler +'>\
                     </td>\
                     <td>\
-                        <input type="text" class="url" id="LcUrl'+ i[0] +'" name="LCurl" placeholder=".\ChatGLM\launch.py" value=>\
+                        <input type="text" class="url" id="LcUrl'+ data[i].id +'" name="LCurl" placeholder=".\ChatGLM\launch.py" value='+ data[i].launch_path +'>\
                     </td>\
                     <td>\
-                        <button type="submit" class="run" id="run-'+ i[0] +'" value="'+ i[0] +'"><i class="fa fa-play"></i></button>\
-                        <button type="submit" class="stop" id="stop-'+ i[0] +'" value="'+ i[0] +'"><i class="fa fa-stop"></i></button>\
+                        <button class="run" id="run-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`run`)"><i class="fa fa-play"></i></button>\
+                        <button class="stop" id="stop-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`stop`)"><i class="fa fa-stop"></i></button>\
                     </td>\
                     <td>\
-                        <button type="submit" class="edit" id="edit-'+ i[0] +'" value="'+ i[0] +'"><i class="fa fa-edit"></i></button>\
+                        <button class="edit" id="edit-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`edit`)"><i class="fa fa-edit"></i></button>\
                     </td>\
-                    <td>\
-                        <button type="submit" class="deny" id="del-'+ i[0] +'" value="'+ i[0] +'"><i class="fa fa-trash"></i></button>\
+                    <td><button class="deny" id="del-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`del`)"><i class="fa fa-trash"></i></button>\
                     </td>\
                 </tr>')
             }
@@ -694,7 +529,9 @@ const alert = (message, type) => {
 }
 
 
-
+var int = setInterval(function(){
+    Refresh_ModelList()
+  },10000)
 
 </script>
 {% endblock %}
