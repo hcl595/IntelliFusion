@@ -89,7 +89,6 @@ def root():
         NeedLogin=NeedLogin,
         ActiveModels=ActiveModels,
         ModelList=list(ModelList),
-        ModelCount=len(ModelList) + 1,
         historys=LLM_response,
         host=cfg.read("RemoteConfig", "host"),
         port=cfg.read("RemoteConfig", "port"),
@@ -249,10 +248,10 @@ def GetModelList():
     except:
         ModelList = {}
     logger.debug("ModelList: {}",list(ModelList))
-    ActiveModelList = ModelList
-    ActiveModelList_json = [model_to_dict(Model) for Model in ActiveModelList]
-    logger.info("{}", ActiveModelList_json)
-    return jsonify(ActiveModelList_json)
+    ModelList_json = [model_to_dict(Model) for Model in ModelList]
+    logger.info("{}", ModelList_json)
+    return jsonify(ModelList_json)
+
 
 if cfg.read("BaseConfig", "devmode") == "True":
     @app.route("/test")
@@ -260,10 +259,43 @@ if cfg.read("BaseConfig", "devmode") == "True":
         return render_template("test.html")
 
 
+@app.post("/GetActiveModels")
+def GetActiveModels():
+    try:
+        ModelList = Models.select()
+    except:
+        ModelList = {}
+    logger.debug("ModelList: {}",list(ModelList))
+    ActiveModels = []
+    if cfg.read("BaseConfig","ActiveExamine") == "True":
+        for i in ModelList:
+            if validators.url(i.url):
+                host = urlparse(i.url).hostname
+                logger.info("{}",host)
+                try:
+                    ipaddress.ip_address(host)
+                except:
+                    ActiveModels.append(i)
+        model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
+        for conn in psutil.net_connections():
+            port = conn.laddr.port
+            if port in model_ports:
+                ActiveModels.append(model_ports[port])
+                logger.debug("model_ports: {}", model_ports[port])
+        logger.debug("ActiveModels: {}", ActiveModels)
+    else:
+        ActiveModels = ModelList
+    ActiveModelList_json = [model_to_dict(Model) for Model in ActiveModels]
+    logger.info("{}", ActiveModelList_json)
+    return jsonify(ActiveModelList_json)
+
+
 @app.errorhandler(404)
 def error404(error):
     return render_template("404.html"), 404
 
+
+#Blue Prints
 from widgets import widgets_blue
 
 app.register_blueprint(widgets_blue)

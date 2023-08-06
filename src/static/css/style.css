@@ -336,7 +336,7 @@ textarea{
   font-size: 14px;
   border: none;
   cursor: pointer;
-  overflow: scroll;
+  overflow: auto;
   outline:none;
   resize:none;
   border-radius: 1rem;
@@ -376,7 +376,7 @@ textarea{
   width: 100%;
   height: 50px;
   display: flex;
-  overflow: scroll;
+  overflow: auto;
   flex-flow:nowrap;
   background-color: #32fcff3a;
   border-radius: 1rem;

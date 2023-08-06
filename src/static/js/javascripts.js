@@ -204,22 +204,225 @@ if (edit_judge_msg == 1)
     let height = document.querySelector('.content').scrollHeight;
     document.querySelector(".content").scrollTop = height;
 }
-function checkbox(check_id,check_judge){
-if (check_judge == 1)
-    document.getElementById(check_id).checked = True
-if (check_judge == 0)
-    document.getElementById(check_id).checked = False
-}
 
 //版本号
-
-
 $(document).ready(function(){
     $("button").click(function(){
       $("#rights-box").fadeOut(100);
       $("#rts").removeClass("active")
     });
 });
-//单个组件
 
 
+//Single
+function change_tab(id){
+    var now = $(".current").val()
+    $(".current").removeClass("current")
+    $("#Tab"+id).addClass("current")
+    $('#'+now).fadeOut(100)
+    $('#'+id).fadeIn(110)
+}
+
+//ajax Interface
+//prompt
+function GetPrompts(id){
+    var text = $("#user-input-"+id).val();
+    var source_id = $("#user-input-"+id).attr("source_id");
+    $.ajax({
+        url: '/prompts',
+        type: 'POST',
+        data: {
+            text: text,
+        },
+        success: function(prompts) {
+            $('#Prompt-'+source_id).empty()
+            for (i in prompts){
+                $('#Prompt-'+source_id).append("\
+                <button id='prompt"+ source_id +"' class='prompt' value='"+ prompts[i] + "' source_id= " + source_id +' onclick="prompts('+ source_id +')" >'+ i +'</button>')
+            }
+        }
+    })
+}
+function prompts(id){
+    var value = $("#prompt"+id).val()
+    var source_id = $("#prompt"+id).attr("source_id");
+    $('#Prompt-'+source_id).empty()
+    $('#user-input-'+id).val(""+value)
+}
+
+function commit_model(id,operate){
+    $("#loading").fadeIn(100)
+    $('#'+operate+id).attr("disabled",true)
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: operate ,
+            number: $('#id'+id).val() ,
+            comment: $('#Comment'+id).val() ,
+            type: $('#Type'+id).val() ,
+            url: $('#Url'+id).val() ,
+            APIkey: $('#APIkey'+id).val() ,
+            LcCompiler: $('#LcCompiler'+id).val() ,
+            LcUrl: $('#LcUrl'+id).val() ,
+        },
+        success: function(response) {
+            if (response.response){
+                alert(response.message,"warning")
+                $("#loading").fadeOut(100)
+                $('#'+operate+id).removeAttr("disabled")
+            }
+            else{
+                alert(response.message,"danger")
+                $("#loading").fadeOut(100)
+                $('#'+operate+id).removeAttr("disabled")
+            }
+            Refresh_ModelList()
+        }
+    });
+}
+
+function SendInput(id) {
+    if ($('#user-input-' + id).val() != ""){
+        $("#loading").fadeIn(100);
+        $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+        $('#user-input-' + id).val('');
+        $.ajax({
+            url: '/requestmodels',
+            type: 'POST',
+            data: {
+                userinput: $('#user-input-' + id).val(),
+                modelinput: $('#model-input-' + id).val(),
+            },
+            success: function(response) {
+                var chatGptResponse = response.response;
+                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+                $("#loading").fadeOut(100)
+                let height = document.querySelector('.content').scrollHeight;
+                document.querySelector(".content").scrollTop = height;
+            }
+        });
+    }
+    else{
+        alert('内容不能为空',"warning");
+    }
+}
+
+// Refresh Data
+function refresh_website(){
+    Refresh_ModelList();
+    Refresh_Tabs();
+}
+
+function Refresh_ModelList(){
+    $.ajax({
+        url: '/GetModelList',
+        method: "POST",
+        success: function(data){
+            $('#ModelTable').empty()
+            for (i in data){
+                $('#ModelTable').append('<input type="hidden" id="id'+ data[i].id +'" value='+ data[i].id +'>')
+                $('#ModelTable').append('\
+                <tr id="ModelTr">\
+                    <td>\
+                    <select name="type" id="Type'+ data[i].id +'">\
+                        <option>'+ data[i].type +'</option>\
+                        <option>OpenAI</option>\
+                        <option>WebUI</option>\
+                        <option>API</option>\
+                    </select>\
+                    </td>\
+                    <td> \
+                        <input type="text" name="comment" id="Comment'+ data[i].id +'" placeholder="ChatGLM" value='+ data[i].name +'>\
+                    </td>\
+                    <td>\
+                        <input type="text" class="url" id="Url'+ data[i].id +'" name="url" placeholder="127.0.0.1:8000" value='+ data[i].url +'>\
+                    </td>\
+                    <td>\
+                        <input type="text" class="url" id="APIkey'+ data[i].id +'" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value='+ data[i].api_key +'>\
+                    </td>\
+                    <td>\
+                        <input type="text" class="url" id="LcCompiler'+ data[i].id +'" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value='+ data[i].launch_compiler +'>\
+                    </td>\
+                    <td>\
+                        <input type="text" class="url" id="LcUrl'+ data[i].id +'" name="LCurl" placeholder=".\ChatGLM\launch.py" value='+ data[i].launch_path +'>\
+                    </td>\
+                    <td>\
+                        <button class="run" id="run-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`run`)"><i class="fa fa-play"></i></button>\
+                        <button class="stop" id="stop-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`stop`)"><i class="fa fa-stop"></i></button>\
+                    </td>\
+                    <td>\
+                        <button class="edit" id="edit-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`edit`)"><i class="fa fa-edit"></i></button>\
+                    </td>\
+                    <td><button class="deny" id="del-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`del`)"><i class="fa fa-trash"></i></button>\
+                    </td>\
+                </tr>')
+            }
+        }
+    })
+}
+
+
+function Refresh_Tabs(){
+    $.ajax({
+        url: "/GetActiveModels",
+        method: "POST",
+        success(data){
+            $("#tabs").empty()
+            $("#Contents").empty()
+            for (i in data){
+                $("#tabs").append('\
+                <li draggable="true" class="li" id="Tab'+ data[i].id +'"" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>\
+                ')
+                if (data[i].type == "OpenAI" || data[i].type == "API"){
+                    $("#Contents").append('\
+                    <div class="dialogbox_container" id='+ data[i].id +' style="display: none;">\
+                        <div class="content" id="output-'+ data[i].id +'"></div>\
+                        <div class="prompt_container" id="Prompt-'+ data[i].id +'">\
+                        </div>\
+                        <div class="input-area">\
+                            </br>\
+                            <div class="txtb">\
+                                <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +')"></textarea>\
+                            </div>\
+                            <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
+                            <div class="button-area">\
+                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">发 送</button>\
+                            </div>\
+                        </div>\
+                    </div>')
+                }
+                if (data[i].type == "WebUI"){
+                    $("#Contents").append('\
+                    <div id='+ data[i].id +' style="display: none;">\
+                        <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;" src="'+ data[i].url +'"></iframe>\
+                    </div>')
+                }
+            }
+            $("#tabs").append('\
+                <li draggable="true" class="li current" value="-1" id="Tab-1" onclick="change_tab(`-1`)"><span>小组件</span></li>\
+                ')
+            $("#Contents").append('\
+                <div id="-1">\
+                    <div class="widgets">\
+                        <div class="widgets_container">\
+                            <div class="widgets_contentbox">\
+                                <iframe id= "widgets_cpu_percent_-1" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>\
+                            </div>\
+                            <div class="widgets_contentbox">\
+                                <iframe id= "widgets_ram_percent_-1" src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>\
+                ')
+        }
+    })
+}
+
+
+//CommitModel
+function loading(){
+    $("#loading").fadeIn(100)
+    setTimeout(function(){ $("#loading").fadeOut(100) },1000)
+}
