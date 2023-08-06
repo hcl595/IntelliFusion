@@ -233,6 +233,35 @@ def Prompts():
     logger.info("{}",result)
     return jsonify(result)
 
+
+@app.post("/GetModelList")
+def GetModelList():
+    try:
+        ModelList = Models.select()
+    except:
+        ModelList = {}
+    logger.debug("ModelList: {}",list(ModelList))
+    ActiveModels = []
+    if cfg.read("BaseConfig","ActiveExamine") == "True":
+        for i in ModelList:
+            if validators.url(i.url):
+                host = urlparse(i.url).hostname
+                logger.info("{}",host)
+                try:
+                    ipaddress.ip_address(host)
+                except:
+                    ActiveModels.append(i)
+        model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
+        for conn in psutil.net_connections():
+            port = conn.laddr.port
+            if port in model_ports:
+                ActiveModels.append(model_ports[port])
+                logger.debug("model_ports: {}", model_ports[port])
+        logger.debug("ActiveModels: {}", ActiveModels)
+    else:
+        ActiveModels = ModelList
+    return jsonify({'data': str(ActiveModels)})
+
 if cfg.read("BaseConfig", "devmode") == "True":
     @app.route("/test")
     def DevTest():
@@ -323,5 +352,5 @@ if __name__ == "__main__":
             server="flask",
             port=cfg.read("RemoteConfig", "port"),
             width=1800,
-            height=100,
+            height=1000,
         ).run()

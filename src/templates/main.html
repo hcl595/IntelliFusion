@@ -60,9 +60,10 @@
         <table>
             <thead>
                 <tr>
-                    <th>
-                        <h3>模型</h3>                            
-                    </th>
+                    <td>
+                        <h3>模型</h3>
+                        <button onclick="Refresh()"><i class="fa fa-exchange"></i></button>                            
+                    </td>
                 </tr>
             </thead>
             <tbody id="ModelTable">
@@ -617,6 +618,57 @@ $("#add").on('click',function() {
         }
     });
 });
+// Refresh Data
+function Refresh(){
+    $.ajax({
+        url: '/GetModelList',
+        method: "POST",
+        success: function(data){
+            $('ModelTable').empty
+            for (i in data.data){
+                alert(i,"danger")
+                $('ModelTable').append('\
+                <input type="hidden" id="id'+ i[0] +'" value='+ i[0] +'>\
+                <tr id="ModelTr">\
+                    <td>\
+                    <select name="type" id="Type'+ i[0] +'">\
+                        <option></option>\
+                        <option>OpenAI</option>\
+                        <option>WebUI</option>\
+                        <option>API</option>\
+                    </select>\
+                    </td>\
+                    <td> \
+                        <input type="text" name="comment" id="Comment'+ i[0] +'" placeholder="ChatGLM" value=>\
+                    </td>\
+                    <td>\
+                        <input type="text" class="url" id="Url'+ i[0] +'" name="url" placeholder="127.0.0.1:8000" value=>\
+                    </td>\
+                    <td>\
+                        <input type="text" class="url" id="APIkey'+ i[0] +'" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value=>\
+                    </td>\
+                    <td>\
+                        <input type="text" class="url" id="LcCompiler'+ i[0] +'" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value=>\
+                    </td>\
+                    <td>\
+                        <input type="text" class="url" id="LcUrl'+ i[0] +'" name="LCurl" placeholder=".\ChatGLM\launch.py" value=>\
+                    </td>\
+                    <td>\
+                        <button type="submit" class="run" id="run-'+ i[0] +'" value="'+ i[0] +'"><i class="fa fa-play"></i></button>\
+                        <button type="submit" class="stop" id="stop-'+ i[0] +'" value="'+ i[0] +'"><i class="fa fa-stop"></i></button>\
+                    </td>\
+                    <td>\
+                        <button type="submit" class="edit" id="edit-'+ i[0] +'" value="'+ i[0] +'"><i class="fa fa-edit"></i></button>\
+                    </td>\
+                    <td>\
+                        <button type="submit" class="deny" id="del-'+ i[0] +'" value="'+ i[0] +'"><i class="fa fa-trash"></i></button>\
+                    </td>\
+                </tr>')
+            }
+        }
+    })
+}
+
 
 //CommitModel
 function loading(){
