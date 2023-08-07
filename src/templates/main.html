@@ -2,83 +2,52 @@
 <head>
 {% block include %}
 {{ super() }}
-<title>Realizer v0.1.9 Alpha</title>
+<title>Realizer v0.1.9 Beta</title>
 {% endblock %}
 {% block body %}
-<body>
+<body class="light">
 <iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
     <div id="contentwrap"  class="contentwrap">
         <ul class="tab">
-            {% for Model in ActiveModels %}
+            {% for Model in ActiveModels %}<!-- TODO:Use Javascripts Templates instead of Flask Templates -->
             <li id="li" draggable="true" class="li" value={{ Model.id }}><span>{{ Model.name }}</span></li>
             {% endfor %}
             <li id="li" draggable="true" class="li current" value="-1"><span><font size="3">小组件</font></span></li>
         </ul>
-
-        {% for Model in ActiveModels %}
-        {% if Model.type == 'API' %}
-        <div class="dialogbox_container" id='{{ Model.id }}' style="display: none;"> 
-            <div class="content" id="api-output-{{ Model.id }}">
-
+        {% for Model in ActiveModels %}<!-- TODO:Use Javascripts Templates instead of Flask Templates -->
+        {% if Model.type == 'OpenAI' or Model.type == 'API' %}
+        <div class="dialogbox_container" id={{ Model.id }} style="display: none;">
+            <div class="content" id="output-{{ Model.id }}"></div>
+            <div class="prompt_container" id="Prompt-{{ Model.id }}">
             </div>
             <div class="input-area">
+                </br>
                 <div class="txtb">
-                    <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
-                        <input name="check_password" type="reg_check_password" id="api-user-input-{{ Model.id }}" />
-                        <span data-placeholder="输入内容" ></span>
-                    </div>
+                    <textarea class="userInputArea" placeholder="输入内容" id="user-input-{{ Model.id }}" source_id="{{ Model.id }}"></textarea>
                 </div>
-                <div class="input-area">
-                    <div class="txtb">
-                        <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
-                            <input name="check_password" type="reg_check_password" id="api-user-input-{{ Model.id }}" />
-                            <span data-placeholder="输入内容"></span>
-                        </div>
-                    </div>
-                    <input id="api-model-input-{{ Model.id }}" type="hidden" value='{{ Model.name }}' />
-                    <div class="button-area">
-                        <button type="button" id="Start"><i class="fa fa-microphone"></i></button>
-                        <button type="submit" id="SendAPIInput" vlaue="{{ Model.id }}">发 送</button>
-                    </div>
+                <input id="model-input-{{ Model.id }}" type="hidden" value={{ Model.name}} />
+                <div class="button-area">
+                    <button type="button" id="Start"><i class="fa fa-microphone"></i></button><!-- TODO: Use Token instead of microphone -->
+                    <button type="submit" id="SendInput" value="{{ Model.id }}">发 送</button>
                 </div>
             </div>
-            {% endif %}
-            {% if Model.type == 'OpenAI' %}
-            <div class="dialogbox_container" id={{ Model.id }} style="display: none;">
-                <div class="content" id="openai-output-{{ Model.id }}"></div>
-                <div class="input-area">
-                    <div class="txtb">
-                        <div style="width: 50vw; margin-left: 5px; margin-right: 5px;">
-                            <input name="check_password" type="reg_check_password"
-                                id="openai-user-input-{{ Model.id }}" />
-                            <span data-placeholder="输入内容"></span>
-                        </div>
+        </div>
+        {% endif %}
+        {% if Model.type == 'WebUI' %}
+        <div id={{ Model.id }} style="display: none;">
+        <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;" src="{{ Model.url }}"></iframe>
+        </div>
+        {% endif %}
+        {% endfor %}
+        <div id="-1">
+            <div class="widgets">
+                <div class="widgets_container">
+                    <div class="widgets_contentbox">
+                        <iframe id= "widgets_cpu_percent_-1" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
                     </div>
-                    <input name="openai-model-input" id="openai-model-input-{{ Model.id }}" type="hidden" value={{
-                        Model.name}} />
-                    <div class="button-area">
-                        <button type="button" id="Start"><i class="fa fa-microphone"></i></button>
-                        <button type="submit" id="SendOpenaiInput" value="{{ Model.id }}">发 送</button>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-            {% if Model.type == 'WebUI' %}
-            <div id={{ Model.id }} style="display: none;">
-            <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;" src="{{ Model.url }}"></iframe>
-            </div>
-            {% endif %}
-            {% endfor %}
-            <div id="-1">
-                <div class="widgets">
-                    <div class="widgets_container">
-                        <div class="widgets_contentbox">
-                            <iframe id= "widgets_cpu_percent_-1" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
-                        </div>
-                        <div class="widgets_contentbox">
-                            <iframe id= "widgets_ram_percent_-1" src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
-                        </div>
+                    <div class="widgets_contentbox">
+                        <iframe id= "widgets_ram_percent_-1" src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
                     </div>
                 </div>
             </div>
@@ -92,9 +61,7 @@
             <thead>
                 <tr>
                     <th>
-                        <center>
-                        <h3>模型管理</h3>                            
-                        </center>
+                        <h3>模型</h3>                            
                     </th>
                 </tr>
             </thead>
@@ -128,7 +95,7 @@
                         <p>启动</p>
                     </td>
                 </tr>
-                {% for Model in ModelList %}
+                {% for Model in ModelList %}<!-- TODO:Use Javascripts Templates instead of Flask Templates -->
                 <input type="hidden" id="id{{ Model.id }}" value={{ Model.id }}>
                 <tr id="ModelTr{{Model.id}}">
                     <td>
@@ -206,7 +173,7 @@
 </div>
 
 <div class="widgets_box" id="widgets-box" style="display: none;">
-    <div class="widgets_container">
+    <div class="widgets_container"><!-- TODO:List Widgets -->
         <div class="widgets_contentbox">
             <iframe id= "widgets_cpu_percent" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
         </div>
@@ -242,20 +209,72 @@
 </div>
 
 <div class="settings" id="setting-box" style="display: none;">
-    <form action="/EditSetting" target="commit" method="post">
+    <form action="/EditSetting" target="commit" method="post"><!-- TODO:Use Javascripts Templates&Ajax instead of form -->
         <div style="margin-left:20px" class="content">
+            <hr class="line">
             <table>
                 <thead>
                     <tr>
                         <th>
-                            <h3>启动设置  </h3>
+                            <h3>外观设置  </h3>
                         </th>
                         <th>
-                            <h3>Launch Settings</h3>
+                            <h3>UI Settings</h3>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td>
+                            <p>深色模式</p>
+                        </td>
+                        <td>
+                            <p><i class="fa fa-adjust" id="change-adjust"></i></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr class="line">
+            <table>
+                <tr>
+                    <th>
+                        <h3>基础设置  </h3>
+                    </th>
+                    <th>
+                        <h3>Base Settings</h3>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p>语言设置</p>
+                        </td>
+                        <td>
+                            <select id="Language">
+                                <option>Chinese</option>
+                                <option>中文</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>活跃检测</p>
+                        </td>
+                        <td>
+                            <!-- <label class="switch_on" id="ActiveExamin">
+                                <input type="checkbox" checked="checked">
+                                <span class="input checked"></span>
+                            </label> -->
+
+                            <!-- TODO:更改按钮 -->
+
+                            <select id="ActiveExamin">
+                                <option>True</option>
+                                <option>False</option>
+                            </select>
+                        </td>
+                    </tr>
                     <tr>
                         <td>
                             <p>启动超时限制</p>
@@ -265,6 +284,7 @@
                         </td>
                     </tr>
                 </tbody>
+            </table>
             <hr class="line">
             <table>
                 <thead>
@@ -314,7 +334,7 @@
                             <p>DeBug模式</p>
                         </td>
                         <td>
-                            <input type="text" name="BugM" placeholder="False" value={{ BugM }} />
+                            <input type="text" name="BugM" placeholder="False" value={{ devMode }} /><!-- TODO:更改按钮 -->
                         </td>
                     </tr>
                 </thead>
@@ -327,7 +347,7 @@
 </div>
 
 <div class="copyright" id="rights-box" style="display: none;" type="checkbox">
-    <button class="btn">X</button>
+    <button class="btn"><i class="fa fa-close"></i></button>
     <div id="box">
         <img style="margin: 50px;width: 100px;height: 100px;" src="/static/res/icon-o.ico" alt="iF">
         <h3 style="margin: 50px;">inteliFusi0n Version 0.1.9(202308032000) Developer Alpha</h3>
@@ -345,27 +365,12 @@
     <span></span>
 </div>
 
+<div class="AlertPlaceholder" id="liveAlertPlaceholder">
+
+</div>
+
 </body>
 <script type="text/javascript">
-let height = document.querySelector('.content').scrollHeight;
-document.querySelector(".content").scrollTop = height;
-
-function SignUp(){
-    $("#login-box").addClass('right-panel-active')
-}
-
-function SignIn(){
-    $("#login-box").removeClass('right-panel-active')
-}
-
-$(".txtb input").on("focus",function(){
-    $(this).addClass("focus")
-})
-
-$(".txtb input").on("blur",function(){
-    if($(this).val() == '')
-    $(this).removeClass("focus")
-})
 
 $(".li").on("click",function(){
     var now = $("li.current").val()
@@ -376,50 +381,74 @@ $(".li").on("click",function(){
     $('#'+target).fadeIn(110)
 })
 
+$("#change-adjust").on("click",function(){
+    var now = $("body").attr("class")
+    if (now == "light"){
+        $("body").removeClass("light")
+        $("body").addClass("dark")
+    }
+    if (now == "dark"){
+        $("body").removeClass("dark")
+        $("body").addClass("light")
+    }
+})
 //ajax交互
-$(document).on('click',"#SendOpenaiInput",
-        function() {
+//prompt
+$(document).on('input',".userInputArea",
+        function(){
+            var text = $(this).val();
+            var id = $(this).attr("id");
+            var source_id = $(this).attr("source_id");
+            $.ajax({
+                url: '/prompts',
+                type: 'POST',
+                data: {
+                    text: text,
+                },
+                success: function(prompts) {
+                    $('#Prompt-'+source_id).empty()
+                    for (i in prompts){
+                        $('#Prompt-'+source_id).append("<button class='prompt' value='"+ prompts[i] + "' source_id= " + source_id +' >'+ i +'</button>')
+                    }
+                }
+            })
+        })
+$(document).on('click','.prompt',
+        function(){
+            var source_id = $(this).attr("source_id");
+            $('#Prompt-'+source_id).empty()
+            $('#user-input-'+source_id).val(""+$(this).val())
+        })
+//send request
+$(document).on('click',"#SendInput",
+        function SendInput() {
         var id = $(this).val();
-        alert($(this).val())
-        $("#loading").fadeIn(100);
-        $('#openai-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#openai-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-        $.ajax({
-            url: '/openai',
-            type: 'POST',
-            data: {
-                userinput: $('#openai-user-input-' + id).val(),
-                modelinput: $('#openai-model-input-' + id).val(),
-            },
-            success: function(response) {
-                var chatGptResponse = response.response;
-                $('#openai-output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-                $('#openai-user-input-' + id).val('');
-                $("#loading").fadeOut(100)
-            }
-        });
-    });
-
-$(document).on('click',"#SendAPIInput",
-    function() {
-    var id = $(this).val();
-    alert(id); //TODO: doesn't work
-    $("#loading").fadeIn(100);
-    $('#api-output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#api-user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-    $.ajax({
-        url: '/llm',
-        type: 'POST',
-        data: {
-            userinput: $('#api-user-input-' + id).val() ,
-            modelinput: $('#api-model-input-' + id).val()
-            },
-        success: function(response) {
-            var chatGptResponse = response.response;
-            $('#api-output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-            $('#api-user-input-' + id).val('');
-            $("#loading").fadeOut(100)
+        if ($('#user-input-' + id).val() != ""){
+            $("#loading").fadeIn(100);
+            $('#output-' + id).append('\
+            <div class="item item-right"><div class="bubble bubble-right">\
+                ' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+            $('#user-input-' + id).val('');
+            $.ajax({
+                url: '/requestmodels',
+                type: 'POST',
+                data: {
+                    userinput: $('#user-input-' + id).val(),
+                    modelinput: $('#model-input-' + id).val(),
+                },
+                success: function(response) {
+                    var chatGptResponse = response.response;
+                    $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+                    $("#loading").fadeOut(100)
+                    let height = document.querySelector('.content').scrollHeight;
+                    document.querySelector(".content").scrollTop = height;
+                }
+            });
+        }
+        else{
+            alert('内容不能为空',"warning");
         }
     });
-});
 
 $(".run").on('click',function() {
     $("#loading").fadeIn(100)
@@ -439,14 +468,16 @@ $(".run").on('click',function() {
             LcUrl: $('#LcUrl'+id).val() ,
         },
         success: function(response) {
-            var response = response.response;
-            if (response == 'TimeOut'){
-                alert('TimeOut')
+            if (response.response){
+                alert('运行成功',"success")
                 $("#loading").fadeOut(100)
-                $(this).removeAttr("disabled")
+                $("#run-" + id).removeAttr("disabled")
             }
-            $("#loading").fadeOut(100)
-            $("#run-" + id).removeAttr("disabled")
+            else{
+                alert('运行超时',"danger")
+                $("#loading").fadeOut(100)
+                $("#run-" + id).removeAttr("disabled")
+            }
         }
     });
 });
@@ -468,8 +499,16 @@ $(".stop").on('click',function() {
             LcUrl: $('#LcUrl'+id).val() ,
         },
         success: function(response) {
-            $("#loading").fadeOut(100)
-            $('#stop-'+ id).removeAttr("disabled")
+            if (response.response){
+                alert("停止成功","warning")
+                $("#loading").fadeOut(100)
+                $('#stop-'+ id).removeAttr("disabled")
+            }
+            else{
+                alert("停止失败","danger")
+                $("#loading").fadeOut(100)
+                $('#stop-'+ id).removeAttr("disabled")
+            }
         }
     });
 });
@@ -490,9 +529,17 @@ $(".edit").on('click',function() {
             LcCompiler: $('#LcCompiler'+id).val(),
             LcUrl: $('#LcUrl'+id).val() ,
         },
-        success: function() {
-            $("#loading").fadeOut(100)
-            $("#edit-"+ id).removeAttr("disabled")
+        success: function(response) {
+            if (response.response) {
+                alert("更改成功","success")
+                $("#loading").fadeOut(100)
+                $("#edit-"+ id).removeAttr("disabled")
+            }
+            else{
+                alert("更改失败","danger")
+                $("#loading").fadeOut(100)
+                $("#edit-"+ id).removeAttr("disabled")                
+            }
         }
     });
 });
@@ -514,16 +561,24 @@ $(".deny").on('click',function() {
             LcUrl: $('#LcUrl'+id).val() ,
         },
         success: function(response) {
-            $('#id'+id).remove()
-            $('#ModelTr'+id).remove()
-            $("#loading").fadeOut(100)
-            $("#del-"+ id).removeAttr("disabled")
+            if (response.response){
+                alert("删除成功","warning")
+                $('#id'+id).remove()
+                $('#ModelTr'+id).remove()
+                $("#loading").fadeOut(100)
+                $("#del-"+ id).removeAttr("disabled")
+            }
+            else{
+                alert("删除失败","danger")
+                $('#id'+id).remove()
+                $('#ModelTr'+id).remove()
+                $("#loading").fadeOut(100)
+                $("#del-"+ id).removeAttr("disabled")
+            }
         }
     });
 });
-
-$("#add").on('click',
-    function() {
+$("#add").on('click',function() {
     $("#loading").fadeIn(100)
     $('#add').attr("disabled",true)
     $.ajax({
@@ -540,14 +595,32 @@ $("#add").on('click',
             LcUrl: $('#LcUrl-1').val() ,
         },
         success: function(response) {
-            $('#ModelTable').append('<input type="hidden" name="{{ ModelCount }}id" id="{{ ModelCount }}id" value={{ ModelCount }}>')
-            $('#ModelTable').append('<tr><td><select name="type" id="{{ ModelCount }}Type">            <option>' + $('#Type-1').val() + '</option>            <option>OpenAI</option>            <option>WebUI</option>            <option>API</option>        </select></td>    <td> <input type="text" name="comment" id="{{ ModelCount }}Comment" placeholder="ChatGLM" value=' + $('#Comment-1').val() + ' ></td>    <td><input type="text" class="url" id="{{ ModelCount }}Url" name="url" placeholder="127.0.0.1:8000" value=' + $('#Url-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value=' + $('#APIkey-1').val() + '></td>    <td><input type="TEXT" class="url" id="{{ ModelCount }}LcCompiler" name="LcCompiler" placeholder=".\\venv\\python.exe & OpenAI" value=' + $('#LcCompiler-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}LcUrl" name="LCurl" placeholder=".\\ChatGLM\\launch.py" value=' + $('#LcUrl-1').val() + '></td>    <td><button type="submit" class="run" id="{{ ModelCount }}run"><i class="fa fa-play"></i></button><button type="submit" class="deny" id="{{ ModelCount }}stop" style="display: none;"><i class="fa fa-stop"></i></button></td>    <td><button type="submit" class="edit" id="{{ ModelCount }}edit"><i class="fa fa-edit"></i></button></td>    <td><button type="submit" class="deny" id="{{ ModelCount }}del"><i class="fa fa-trash"></i></button></td></tr>')
-            $("#loading").fadeOut(100)
-            $('#id-1').remove()
-            $('#AddTr').remove()
-            $('#ModelTable').append('<input type="hidden" id="id-1" value="-1">')
-            $('#ModelTable').append('<tr id="AddTr"><td><select id="Type-1" name="type"><option selected>OpenAI</option><option>WebUI</option><option>API</option></select></td><td> <input type="text" id="Comment-1" placeholder="ChatGLM"></td><td><input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000"></td><td><input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none"></td><td><input type="TEXT" class="url" id="LcCompiler-1p" placeholder=".\\venv\\scripts\\python.exe"></td><td><input type="TEXT" class="url" id="LcUrl-1" placeholder=".\\venv\\launch.py"></td><td><button type="submit" class="add" name="launch" id="add"><i class="fa fa-plus"></i></button></td><td><button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button></td><td><button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button></td></tr>')
-            $('#add').removeAttr("disabled")
+            if (response.response){
+                alert("添加成功","success")
+                $('#ModelTable').append('<input type="hidden" name="{{ ModelCount }}id" id="{{ ModelCount }}id" value={{ ModelCount }}>')
+                $('#ModelTable').append('<tr><td><select name="type" id="{{ ModelCount }}Type">            <option>' + $('#Type-1').val() + '</option>            <option>OpenAI</option>            <option>WebUI</option>            <option>API</option>        </select></td>    <td> <input type="text" name="comment" id="{{ ModelCount }}Comment" placeholder="ChatGLM" value=' + $('#Comment-1').val() + ' ></td>    <td><input type="text" class="url" id="{{ ModelCount }}Url" name="url" placeholder="127.0.0.1:8000" value=' + $('#Url-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value=' + $('#APIkey-1').val() + '></td>    <td><input type="TEXT" class="url" id="{{ ModelCount }}LcCompiler" name="LcCompiler" placeholder=".\\venv\\python.exe & OpenAI" value=' + $('#LcCompiler-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}LcUrl" name="LCurl" placeholder=".\\ChatGLM\\launch.py" value=' + $('#LcUrl-1').val() + '></td>    <td><button disabled type="submit" class="run" id="{{ ModelCount }}run"><i class="fa fa-play"></i></button><button disabled type="submit" class="deny" id="{{ ModelCount }}stop"><i class="fa fa-stop"></i></button></td>    <td><button type="submit" disabled class="edit" id="{{ ModelCount }}edit"><i class="fa fa-edit"></i></button></td>    <td><button disabled type="submit" class="deny" id="{{ ModelCount }}del"><i disabled class="fa fa-trash"></i></button></td></tr>')
+                $('#ModelTable').append('<input type="hidden" id="id-1" value="-1">')
+                $('#ModelTable').append('\
+                <tr id="AddTr"><td><select id="Type-1" name="type">\
+                    <option selected>OpenAI</option>\
+                    <option>WebUI</option>\
+                    <option>API</option>\
+                    </select>\
+                    </td>\
+                    <td>\
+                        <input type="text" id="Comment-1" placeholder="ChatGLM"></td><td><input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000"></td><td><input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none"></td><td><input type="TEXT" class="url" id="LcCompiler-1p" placeholder=".\\venv\\scripts\\python.exe"></td><td><input type="TEXT" class="url" id="LcUrl-1" placeholder=".\\venv\\launch.py"></td><td><button type="submit" class="add" name="launch" id="add"><i class="fa fa-plus"></i></button></td><td><button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button></td><td><button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button></td></tr>')
+                $("#loading").fadeOut(100)
+                $('#id-1').remove()
+                $('#AddTr').remove()
+                $('#add').removeAttr("disabled")
+            }
+            else{
+                alert("添加失败","danger")
+                $("#loading").fadeOut(100)
+                $('#id-1').remove()
+                $('#AddTr').remove()
+                $('#add').removeAttr("disabled")
+            }
         }
     });
 });
@@ -556,6 +629,23 @@ $("#add").on('click',
 function loading(){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
+}
+
+//alert message
+const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+
+const alert = (message, type) => {
+  const wrapper = document.createElement('div')
+  wrapper.innerHTML = [
+    `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+    `   <div>${message}</div>`,
+    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+    '</div>'
+  ].join('')
+  alertPlaceholder.append(wrapper)
+  setTimeout(function(){
+    wrapper.remove()
+  },5000)
 }
 
 
