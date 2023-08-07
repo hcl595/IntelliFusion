@@ -59,36 +59,9 @@ historys = response["history"]
 @app.route("/")  # 根目录
 def root():
     logger.debug("login error: {}".format(login_error))
-    try:
-        ModelList = Models.select()
-    except:
-        ModelList = {}
-    logger.debug("ModelList: {}",list(ModelList))
-    ActiveModels = []
-    if cfg.read("BaseConfig","ActiveExamine") == "True":
-        for i in ModelList:
-            if validators.url(i.url):
-                host = urlparse(i.url).hostname
-                logger.info("{}",host)
-                try:
-                    ipaddress.ip_address(host)
-                except:
-                    ActiveModels.append(i)
-        model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
-        for conn in psutil.net_connections():
-            port = conn.laddr.port
-            if port in model_ports:
-                ActiveModels.append(model_ports[port])
-                logger.debug("model_ports: {}", model_ports[port])
-        logger.debug("ActiveModels: {}", ActiveModels)
-    else:
-        ActiveModels = ModelList
     return render_template(
         "main.html",
-        result=result,
         NeedLogin=NeedLogin,
-        ActiveModels=ActiveModels,
-        ModelList=list(ModelList),
         historys=LLM_response,
         host=cfg.read("RemoteConfig", "host"),
         port=cfg.read("RemoteConfig", "port"),
