@@ -298,6 +298,16 @@ def ai(ModelID: str, question: str):
         question,
         response,
     )
+    response = str.replace(response,"\n","<br/>")
+    last_code_block_index: int = -1
+    is_code_block_start = True
+    while (last_code_block_index := response.find("```")) != -1:
+        if is_code_block_start:
+            response=response.replace("```", "<pre>", 1)
+        else:
+            response=response.replace("```", "</pre>", 1)
+        last_code_block_index=-1
+        is_code_block_start=not is_code_block_start
     return response
 
 
@@ -307,6 +317,16 @@ def llm(ModelID: str, question: str):
         data=json.dumps({"prompt": question, "history": []}),
         headers={"Content-Type": "application/json"},
     )
+    response = str.replace(response,"\n","<br/>")
+    last_code_block_index: int = -1
+    is_code_block_start = True
+    while (last_code_block_index := response.find("```")) != -1:
+        if is_code_block_start:
+            response=response.replace("```", "<pre>", 1)
+        else:
+            response=response.replace("```", "</pre>", 1)
+        last_code_block_index=-1
+        is_code_block_start=not is_code_block_start
     return response.json()["history"][0][1]
 
 

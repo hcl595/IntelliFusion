@@ -234,7 +234,7 @@ nav:hover .list li:nth-child(8) span {
 /* 对话框 */
 
 .dialogbox_container{
-  min-height: 100vh;
+  max-height: 100vh;
   min-width: 100%;
   display: flex;
   overflow: hidden;
@@ -244,14 +244,14 @@ nav:hover .list li:nth-child(8) span {
 }
 .content{
   max-width: 100%;
-  min-height: 80vh;
+  height: 80vh;
   overflow-y: auto;
 }
 .content:hover::-webkit-scrollbar-thumb{
   background:rgba(0,0,0,0.1);
 }
 .bubble{
-  white-space: normal;
+  white-space: initial;
   max-width: 400px;
   padding: 10px;
   border-radius: 5px;
