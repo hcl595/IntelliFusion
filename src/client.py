@@ -1,6 +1,5 @@
 # main.py | Intellifusion Version 0.1.9(2023080512000) Developer Alpha
 # headers
-from thefuzz import process, fuzz
 import ctypes
 import json
 import subprocess
@@ -16,13 +15,14 @@ import jieba
 import psutil
 import requests
 import validators
-from flask import (Flask, json, jsonify, redirect, render_template, request,
-                   session)
+from flask import (Flask, json, jsonify, render_template, request,)
 from flaskwebgui import FlaskUI, close_application
+from thefuzz import process, fuzz
 from loguru import logger
+from peewee import InternalError
 
 from config import Settings, Prompt
-from data import Models
+from data import Models, History, Widgets
 from setup import setup
 
 pool = ThreadPoolExecutor()
@@ -30,7 +30,6 @@ pool = ThreadPoolExecutor()
 # configs
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config["SECRET_KEY"] = "UMAVERSIONZPONEPEHT"
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
 LOG_FILE = DATA_DIR / "models.log"
@@ -41,18 +40,8 @@ logger.add(LOG_FILE)
 cfg = Settings()
 pmt = Prompt()
 login_error = ""
-response = {
-    "response": "",
-    "history": [["", ""]],
-    "status": 200,
-    "time": "1234-05-06 07:08:09",
-}
-GPT_response = []
-LLM_response = []
-GLM_response = []
 result = None
 NeedLogin = True
-historys = response["history"]
 
 
 # main
@@ -62,12 +51,11 @@ def root():
     return render_template(
         "main.html",
         NeedLogin=NeedLogin,
-        historys=LLM_response,
+        # historys=histroys,
         host=cfg.read("RemoteConfig", "host"),
         port=cfg.read("RemoteConfig", "port"),
         devMode=cfg.read("BaseConfig", "devmode"),
         TimeOut=cfg.read("BaseConfig", "TimeOut"),
-        username=session.get("username"),
     )
 
 
@@ -77,15 +65,32 @@ def Request_Models():
     InputModel = request.form["modelinput"]
     if Models.get(Models.name == InputModel).type == "OpenAI":
         try:
-            ai(InputModel, InputInfo)
-        except:
-            Model_response = "Check Your API and APIkey"
+            Model_response = ai(InputModel, InputInfo)
+            History.create(
+                Model=InputModel,
+                UserInput = InputInfo,
+                response=Model_response,
+            )
+        except openai.error.AuthenticationError:
+            Model_response = "Check Your API Key"
+        except UnboundLocalError:
+            Model_response = "DataBase Error,get support from Developer!"
+        # except IntegrityError:
     elif Models.get(Models.name == InputModel).type == "API":
-        try:
             Model_response = llm(InputModel, InputInfo)
-        except:
-            Model_response = "check your application is opened."
+            History.create(
+                model=InputModel,
+                UserInput = InputInfo,
+                response=Model_response,
+            )
     return jsonify({"response": Model_response})
+
+
+@app.post("/GetHistory")
+def GetHistorys():
+    Historys = History.select()
+    HistorysDict = [model_to_dict(history) for history in Historys]
+    return jsonify(HistorysDict)
 
 
 @app.post("/EditSetting")  # 编辑设置
@@ -98,7 +103,7 @@ def EditSetting():
     cfg.write("BaseConfig", "debug", InputDebugMode)
     cfg.write("RemoteConfig", "host", InputiPv4)
     cfg.write("RemoteConfig", "port", InputPort)
-    return redirect("/")
+    return jsonify({"response": True,})
 
 
 @app.post("/exchange")
@@ -226,12 +231,6 @@ def GetModelList():
     return jsonify(ModelList_json)
 
 
-if cfg.read("BaseConfig", "devmode") == "True":
-    @app.route("/test")
-    def DevTest():
-        return render_template("test.html")
-
-
 @app.post("/GetActiveModels")
 def GetActiveModels():
     try:
@@ -270,7 +269,6 @@ def error404(error):
 
 #Blue Prints
 from widgets import widgets_blue
-
 app.register_blueprint(widgets_blue)
 
 
@@ -321,6 +319,24 @@ def get_ports(url: str):
             port = "url"
     logger.debug("parse ports: {}", port)
     return port
+
+
+def get_historys(model:str, userinput:str):
+    ModelList = History.get(History.Model == model)
+    logger.debug("ModelList: {}",list(ModelList))
+    ModelListDict = [model_to_dict(Model) for Model in ModelList]
+    keywords = jieba.lcut_for_search(userinput)
+    keywords = " ".join(keywords)
+    result = process.extract(
+        keywords, ModelListDict.keys(), limit=5, scorer=fuzz.partial_token_sort_ratio
+    )
+    result = {t:ModelListDict[t] for (t,_) in result}
+
+
+if cfg.read("BaseConfig", "devmode") == "True":
+    @app.route("/test")
+    def DevTest():
+        return render_template("test.html")
 
 # launch
 if __name__ == "__main__":

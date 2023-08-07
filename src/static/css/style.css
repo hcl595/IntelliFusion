@@ -244,14 +244,14 @@ nav:hover .list li:nth-child(8) span {
 }
 .content{
   max-width: 100%;
-  min-height: 77vh;
+  min-height: 80vh;
   overflow-y: auto;
 }
 .content:hover::-webkit-scrollbar-thumb{
   background:rgba(0,0,0,0.1);
 }
 .bubble{
-  white-space: initial;
+  white-space: normal;
   max-width: 400px;
   padding: 10px;
   border-radius: 5px;
@@ -261,6 +261,7 @@ nav:hover .list li:nth-child(8) span {
   word-break:normal; 
 }
 .item-left .bubble{
+  white-space: pre-line;
   margin-left: 15px;
   background-color: #6d7086;
   color: #fff;
@@ -391,10 +392,6 @@ textarea{
   background-color: #ffffff;
   backdrop-filter: blur(20px);
 }
-
-
-
-
 
 /* Loading */
 .loadingOne{

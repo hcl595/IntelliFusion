@@ -286,16 +286,18 @@ function SendInput(id) {
     if ($('#user-input-' + id).val() != ""){
         $("#loading").fadeIn(100);
         $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+        var input = $('#user-input-' + id).val()
         $('#user-input-' + id).val('');
         $.ajax({
             url: '/requestmodels',
             type: 'POST',
             data: {
-                userinput: $('#user-input-' + id).val(),
+                userinput: input,
                 modelinput: $('#model-input-' + id).val(),
             },
             success: function(response) {
                 var chatGptResponse = response.response;
+                alert(chatGptResponse.message,"sucess")
                 $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
                 $("#loading").fadeOut(100)
                 let height = document.querySelector('.content').scrollHeight;
@@ -419,7 +421,6 @@ function Refresh_Tabs(){
         }
     })
 }
-
 
 //CommitModel
 function loading(){
