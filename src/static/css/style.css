@@ -452,18 +452,6 @@ nav:hover .list li:nth-child(8) span {
   float: right;
 }
 .widgets_contentbox{
-  margin: 10px;
-  position: relative;
-  display: inline-block;
-  background-color: rgba(255, 255, 255, 0.486);
-  box-shadow: 5px 5px 10px 0px lightgray;
-  border-radius: 10px;
-  transition: 0.3s;
-  word-break:break-word;
-  white-space: nowrap; 
-  overflow: auto;
-}
-.widgets_contentbox .small {
   width: 320px;
   height: 320px;
   margin: 10px;
@@ -477,34 +465,7 @@ nav:hover .list li:nth-child(8) span {
   white-space: nowrap; 
   overflow: auto;
 }
-.widgets_contentbox .middel {
-  width: 640px;
-  height: 320px;
-  margin: 10px;
-  position: relative;
-  display: inline-block;
-  background-color: rgba(255, 255, 255, 0.486);
-  box-shadow: 5px 5px 10px 0px lightgray;
-  border-radius: 10px;
-  transition: 0.3s;
-  word-break:break-word;
-  white-space: nowrap; 
-  overflow: auto;
-}
-.widgets_contentbox .big {
-  width: 640px;
-  height: 640px;
-  margin: 10px;
-  position: relative;
-  display: inline-block;
-  background-color: rgba(255, 255, 255, 0.486);
-  box-shadow: 5px 5px 10px 0px lightgray;
-  border-radius: 10px;
-  transition: 0.3s;
-  word-break:break-word;
-  white-space: nowrap; 
-  overflow: auto;
-}
+
 .widgets_contentbox h2 {
   margin-left: 20px;
   color: black;

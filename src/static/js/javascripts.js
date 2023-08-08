@@ -429,7 +429,7 @@ function load_active_widgets(){
             $("#widgets_container_live").empty()
             for (i in data){
                 $("#widgets_container_live").append('\
-                <div class="widgets_contentbox big">\
+                <div class="widgets_contentbox">\
                     <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
                 </div>\
                 ')
@@ -447,7 +447,7 @@ function load_widgets(){
             for (i in data){
                 $("#widgets_container").append('\
                 <div class="widgets_contentbox">\
-                    <iframe src='+ data[i].widgets_url +' style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>\
+                    <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
                 </div>\
                 ')
             }
