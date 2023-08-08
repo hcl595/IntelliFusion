@@ -743,6 +743,56 @@ a {
 }
 
 
+/* 滑块 */
+
+.ActiveExamin{
+	width: 45px;
+	height: 25px;
+	position: relative;
+	top: 1px;
+}
+.hidden-checkbox,
+.switch-area,
+.switch-toggle{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.hidden-checkbox{
+	width: 45px;
+    height: 25px;
+	opacity: 0;
+	z-index: 10;
+	cursor: pointer;
+}
+.switch-area{
+	width: 100%;
+	height: 100%;
+	border-radius: 25px;
+	background-color: #B3B3B3;
+}
+.switch-toggle{
+	width: 25px;
+	    height: 25px;
+	border: 1px solid #B3B3B3;
+	border-radius: 50%;
+	background-color: #fff;
+}
+.hidden-checkbox:checked ~ .switch-area{
+	background-color: #4084F1;
+}
+.hidden-checkbox:checked ~ .switch-toggle{
+	border: 1px solid #4084F1;
+	left: 20px;
+}
+.switch-area,
+.switch-toggle{
+	-webkit-transition: All 0.3s ease; 
+	   -moz-transition: All 0.3s ease; 
+	     -o-transition: All 0.3s ease;
+	        transition: All 0.3s ease; 
+}
+
 
 /* Dark */
 body .dark{
