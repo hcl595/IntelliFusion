@@ -244,7 +244,7 @@ nav:hover .list li:nth-child(8) span {
 }
 .content{
   max-width: 100%;
-  height: 80vh;
+  min-height: 83vh;
   overflow-y: auto;
 }
 .content:hover::-webkit-scrollbar-thumb{
@@ -331,7 +331,7 @@ nav:hover .list li:nth-child(8) span {
   background-color: #fff;
   border-radius: 1rem;
 }
-textarea{
+.input-area textarea{
   flex: 5;
   padding: 5px;
   font-size: 14px;
@@ -451,9 +451,49 @@ textarea{
   overflow: auto;
   float: right;
 }
-.widgets_contentbox {
+.widgets_contentbox{
+  margin: 10px;
+  position: relative;
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.486);
+  box-shadow: 5px 5px 10px 0px lightgray;
+  border-radius: 10px;
+  transition: 0.3s;
+  word-break:break-word;
+  white-space: nowrap; 
+  overflow: auto;
+}
+.widgets_contentbox .small {
   width: 320px;
   height: 320px;
+  margin: 10px;
+  position: relative;
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.486);
+  box-shadow: 5px 5px 10px 0px lightgray;
+  border-radius: 10px;
+  transition: 0.3s;
+  word-break:break-word;
+  white-space: nowrap; 
+  overflow: auto;
+}
+.widgets_contentbox .middel {
+  width: 640px;
+  height: 320px;
+  margin: 10px;
+  position: relative;
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.486);
+  box-shadow: 5px 5px 10px 0px lightgray;
+  border-radius: 10px;
+  transition: 0.3s;
+  word-break:break-word;
+  white-space: nowrap; 
+  overflow: auto;
+}
+.widgets_contentbox .big {
+  width: 640px;
+  height: 640px;
   margin: 10px;
   position: relative;
   display: inline-block;
@@ -473,7 +513,7 @@ textarea{
   margin-left: 20px;
   color: black;
 }
-.widgets_contentbox:hover {
+.widgets_contentbox .big:hover {
   scale: 0.97;
   box-shadow: none;
 } 
@@ -745,7 +785,7 @@ a {
 
 /* 滑块 */
 
-.ActiveExamin{
+.switch-container{
 	width: 45px;
 	height: 25px;
 	position: relative;

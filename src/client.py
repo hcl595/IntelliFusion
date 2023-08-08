@@ -54,7 +54,7 @@ def root():
         # historys=histroys,
         host=cfg.read("RemoteConfig", "host"),
         port=cfg.read("RemoteConfig", "port"),
-        devMode=cfg.read("BaseConfig", "devmode"),
+        DebugMode=cfg.read("BaseConfig", "devmode"),
         TimeOut=cfg.read("BaseConfig", "TimeOut"),
     )
 
@@ -93,14 +93,27 @@ def GetHistorys():
     return jsonify(HistorysDict)
 
 
+@app.post("/GetActiveWidgets")
+def GetActiveWidgets():
+    ActiveWidgets = Widgets.select().where(Widgets.avaliable == True)
+    ActiveWidgets_json = [model_to_dict(Model) for Model in ActiveWidgets]
+    return jsonify(ActiveWidgets_json)
+
+
+@app.post("/GetWidgets")
+def GetWidgets():
+    ActiveWidgets = Widgets.select()
+    ActiveWidgets_json = [model_to_dict(Model) for Model in ActiveWidgets]
+    return jsonify(ActiveWidgets_json)
+
+
 @app.post("/EditSetting")  # 编辑设置
 def EditSetting():
     InputiPv4 = request.form.get("iPv4")
     InputPort = request.form.get("Port")
-    InputWebMode = request.form.get("Mode")
-    InputDebugMode = request.form.get("BugM")
-    cfg.write("BaseConfig", "devmode", InputWebMode)
-    cfg.write("BaseConfig", "debug", InputDebugMode)
+    InputDebugMode = request.form.get("DebugMode")
+    logger.info("{}",InputDebugMode)
+    cfg.write("BaseConfig", "devmode", InputDebugMode)
     cfg.write("RemoteConfig", "host", InputiPv4)
     cfg.write("RemoteConfig", "port", InputPort)
     return jsonify({"response": True,})

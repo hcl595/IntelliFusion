@@ -310,10 +310,14 @@ function SendInput(id) {
     }
 }
 
+// function edit_settings()
+
 // Refresh Data
 function refresh_website(){
     Refresh_ModelList();
     Refresh_Tabs();
+    load_active_widgets();
+    load_widgets();
 }
 
 function Refresh_ModelList(){
@@ -412,16 +416,54 @@ function Refresh_Tabs(){
                     </div>\
                 </div>\
                 ')
+            load_active_widgets()
         }
     })
 }
 
 function load_active_widgets(){
     $.ajax({
-        url: "/GetWidgets",
+        url: "/GetActiveWidgets",
+        method: "POST",
+        success: function(data){
+            $("#widgets_container_live").empty()
+            for (i in data){
+                $("#widgets_container_live").append('\
+                <div class="widgets_contentbox big">\
+                    <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
+                </div>\
+                ')
+            }
+        }
     })
 }
 
+function load_widgets(){
+    $.ajax({
+        url: "/GetWidgets",
+        method: "POST",
+        success: function(data){
+            $("#widgets_container").empty()
+            for (i in data){
+                $("#widgets_container").append('\
+                <div class="widgets_contentbox">\
+                    <iframe src='+ data[i].widgets_url +' style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>\
+                </div>\
+                ')
+            }
+        }
+    })
+}
+
+function switch_load(id){
+    var now_value = $("#"+id).val()
+    if (now_value == "True"){
+        $("#"+id).val("False")
+    }
+    if (now_value == "False"){
+        $("#"+id).val("True")
+    }
+}
 
 //CommitModel
 function loading(){

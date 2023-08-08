@@ -33,7 +33,7 @@ class Models(BaseModel):
 
 class Widgets(BaseModel):
     order = IntegerField(column_name="order",)
-    avaliable =  BooleanField(column_name="avliable")
+    avaliable =  BooleanField(column_name="avaliable")
     widgets_url = CharField(column_name="URL",)
 
 class History(BaseModel):
@@ -53,5 +53,17 @@ def SetupDatabase():
         LaunchUrl="/",
     )
     BaseModel.save()
+    BaseWidgets = Widgets(
+        order=1,
+        avaliable = True,
+        widgets_url = "/widgets/Core_Percent",
+    )
+    BaseWidgets.save()
+    BaseWidgets = Widgets(
+        order=2,
+        avaliable = True,
+        widgets_url = "/widgets/Ram_Percent",
+    )
+    BaseWidgets.save()
 
 
