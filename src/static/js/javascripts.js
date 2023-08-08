@@ -427,3 +427,19 @@ function loading(){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
 }
+
+//单个组件
+
+// document.getElementById("ActiveExamin").onclick = function () {
+
+//     if (this.children[0].checked == true) {
+
+//         this.children[1].className = "input checked"
+
+//     } else {
+
+//         this.children[1].className = "input"
+
+//     }
+
+// }

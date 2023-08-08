@@ -1,0 +1,658 @@
+{% extends 'base.html' %}
+<head>
+{% block include %}
+{{ super() }}
+<title>Realizer v0.1.9 Beta</title>
+{% endblock %}
+{% block body %}
+<body class="light">
+<iframe src="/" name="commit" style="display: none;"></iframe>
+<div class="main" id="main-box">
+    <div id="contentwrap"  class="contentwrap">
+        <ul class="tab">
+            {% for Model in ActiveModels %}<!-- TODO:Use Javascripts Templates instead of Flask Templates -->
+            <li id="li" draggable="true" class="li" value={{ Model.id }}><span>{{ Model.name }}</span></li>
+            {% endfor %}
+            <li id="li" draggable="true" class="li current" value="-1"><span><font size="3">小组件</font></span></li>
+        </ul>
+        {% for Model in ActiveModels %}<!-- TODO:Use Javascripts Templates instead of Flask Templates -->
+        {% if Model.type == 'OpenAI' or Model.type == 'API' %}
+        <div class="dialogbox_container" id={{ Model.id }} style="display: none;">
+            <div class="content" id="output-{{ Model.id }}"></div>
+            <div class="prompt_container" id="Prompt-{{ Model.id }}">
+            </div>
+            <div class="input-area">
+                </br>
+                <div class="txtb">
+                    <textarea class="userInputArea" placeholder="输入内容" id="user-input-{{ Model.id }}" source_id="{{ Model.id }}"></textarea>
+                </div>
+                <input id="model-input-{{ Model.id }}" type="hidden" value={{ Model.name}} />
+                <div class="button-area">
+                    <button type="button" id="Start"><i class="fa fa-microphone"></i></button><!-- TODO: Use Token instead of microphone -->
+                    <button type="submit" id="SendInput" value="{{ Model.id }}">发 送</button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if Model.type == 'WebUI' %}
+        <div id={{ Model.id }} style="display: none;">
+        <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;" src="{{ Model.url }}"></iframe>
+        </div>
+        {% endif %}
+        {% endfor %}
+        <div id="-1">
+            <div class="widgets">
+                <div class="widgets_container">
+                    <div class="widgets_contentbox">
+                        <iframe id= "widgets_cpu_percent_-1" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
+                    </div>
+                    <div class="widgets_contentbox">
+                        <iframe id= "widgets_ram_percent_-1" src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="account" id="account-box" style="display: none;">
+    <div style="margin-left:20px">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <h3>模型</h3>                            
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="ModelTable">
+                <tr>
+                    <td>
+                        <p>模型类型</p>
+                    </td>
+                    <td>
+                        <p>模型名称</p>
+                    </td>
+                    <td>
+                        <p>调用地址</p>
+                    </td>
+                    <td>
+                        <p>访问密钥</p>
+                    </td>
+                    <td>
+                        <p>编译地址</p>
+                    </td>
+                    <td>
+                        <p>启动地址</p>
+                    </td>
+                    <td>
+                        <p>运行/暂停</p>
+                    </td>
+                    <td>
+                        <p>删除</p>
+                    </td>
+                    <td>
+                        <p>启动</p>
+                    </td>
+                </tr>
+                {% for Model in ModelList %}<!-- TODO:Use Javascripts Templates instead of Flask Templates -->
+                <input type="hidden" id="id{{ Model.id }}" value={{ Model.id }}>
+                <tr id="ModelTr{{Model.id}}">
+                    <td>
+                        <select name="type" id="Type{{ Model.id }}">
+                            <option>{{ Model.type }}</option>
+                            <option>OpenAI</option>
+                            <option>WebUI</option>
+                            <option>API</option>
+                        </select>
+                    </td>
+                    <td> 
+                        <input type="text" name="comment" id="Comment{{ Model.id }}" placeholder="ChatGLM" value={{ Model.name }}>
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="Url{{ Model.id }}" name="url" placeholder="127.0.0.1:8000" value={{ Model.url }}>
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="APIkey{{ Model.id }}" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value={{ Model.api_key }}>
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="LcCompiler{{ Model.id }}" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value={{ Model.launch_compiler }}>
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="LcUrl{{ Model.id }}" name="LCurl" placeholder=".\ChatGLM\launch.py" value={{ Model.launch_path }}>
+                    </td>
+                    <td>
+                        <button type="submit" class="run" id="run-{{ Model.id }}" value="{{ Model.id }}"><i class="fa fa-play"></i></button>
+                        <button type="submit" class="stop" id="stop-{{ Model.id }}" value="{{ Model.id }}"><i class="fa fa-stop"></i></button>
+                    </td>
+                    <td>
+                        <button type="submit" class="edit" id="edit-{{ Model.id }}" value="{{ Model.id }}"><i class="fa fa-edit"></i></button>
+                    </td>
+                    <td>
+                        <button type="submit" class="deny" id="del-{{ Model.id }}" value="{{ Model.id }}"><i class="fa fa-trash"></i></button>
+                    </td>
+                </tr>
+                {% endfor %}
+                <input type="hidden" id="id-1" value="-1">
+                <tr id="AddTr">
+                    <td>
+                        <select id="Type-1" name="type">
+                            <option selected>OpenAI</option>
+                            <option>WebUI</option>
+                            <option>API</option>
+                        </select>
+                    </td>
+                    <td> 
+                        <input type="text" id="Comment-1" placeholder="ChatGLM">
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000">
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none">
+                    </td>
+                    <td>
+                        <input type="TEXT" class="url" id="LcCompiler-1" placeholder=".\venv\scripts\python.exe">
+                    </td>
+                    <td>
+                        <input type="TEXT" class="url" id="LcUrl-1" placeholder=".\venv\launch.py">
+                    </td>
+                    <td>
+                        <button type="submit" class="add" id="add" value="-1"><i class="fa fa-plus"></i></button>
+                    </td>
+                    <td>
+                        <button disabled class="edit"><i class="fa fa-ban"></i></button>
+                    </td>
+                    <td>
+                        <button disabled class="deny"><i class="fa fa-ban"></i></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="widgets_box" id="widgets-box" style="display: none;">
+    <div class="widgets_container"><!-- TODO:List Widgets -->
+        <div class="widgets_contentbox">
+            <iframe id= "widgets_cpu_percent" src="/widgets/Core_Percent" style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>
+        </div>
+        <div class="widgets_contentbox">
+            <iframe id= "widgets_ram_percent" src="/widgets/Ram_Percent" style="width: 100%; height: 95%; margin-right: auto;" frameborder=0></iframe>
+        </div>
+    </div>
+</div>
+
+<div class="models" id="models-box" style="display: none;">
+    <div class="card_container">
+        <a href="https://github.com/THUDM/ChatGLM-6B">
+            <div class="card_contentbox">
+                    <h2>ChatGLM-6B</h2>
+                    <p>ChatGLM-6B 是一个开源的、支持中英双语的对话语言模型。更多信息请点击本链接</p>
+            </div>
+        </a>
+
+        <a href="https://www.openai.com/">
+            <div class="card_contentbox">
+                <h2>ChatGPT</h2>
+                <p>ChatGPT是由OpenAI开发的大型语言模型,用于进行自然语言交互。更多信息请点击本链接</p>
+            </div>
+        </a>
+
+        <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui">
+            <div class="card_contentbox">
+                <h2>StableDiffusion</h2>
+                <p>Stable Diffusion是一种潜在扩散模型,能够从文本描述中生成详细的图像。更多信息请点击本链接</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="settings" id="setting-box" style="display: none;">
+    <form action="/EditSetting" target="commit" method="post"><!-- TODO:Use Javascripts Templates&Ajax instead of form -->
+        <div style="margin-left:20px" class="content">
+            <hr class="line">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <h3>外观设置  </h3>
+                        </th>
+                        <th>
+                            <h3>UI Settings</h3>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p>深色模式</p>
+                        </td>
+                        <td>
+                            <p><i class="fa fa-adjust" id="change-adjust"></i></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr class="line">
+            <table>
+                <tr>
+                    <th>
+                        <h3>基础设置  </h3>
+                    </th>
+                    <th>
+                        <h3>Base Settings</h3>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p>语言设置</p>
+                        </td>
+                        <td>
+                            <select id="Language">
+                                <option>Chinese</option>
+                                <option>中文</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>活跃检测</p>
+                        </td>
+                        <td>
+                            <!-- <label class="switch_on" id="ActiveExamin">
+                                <input type="checkbox" checked="checked">
+                                <span class="input checked"></span>
+                            </label> -->
+
+                            <!-- TODO:更改按钮 -->
+
+                            <select id="ActiveExamin">
+                                <option>True</option>
+                                <option>False</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>启动超时限制</p>
+                        </td>
+                        <td>
+                            <input type="number" name="setTimeout" placeholder="60" value='{{ TimeOut }}' />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr class="line">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <h3>远程设置</h3>
+                        </th>
+                        <th>
+                            <h3>Remote Setting</h3>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p>iPv4地址</p>
+                        </td>
+                        <td>
+                            <input type="text" name="iPv4" placeholder="127.0.0.1" value={{ host }} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>端口</p>
+                        </td>
+                        <td>
+                            <input type="number" name="Port" placeholder="5000" value={{ port }} />
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+            <hr class="line">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <h3>开发者设置  </h3>
+                        </th>
+                        <th>
+                            <h3>Developer Settings</h3>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p>DeBug模式</p>
+                        </td>
+                        <td>
+                            <input type="text" name="BugM" placeholder="False" value={{ devMode }} /><!-- TODO:更改按钮 -->
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+            <hr class="line">
+        </div>
+        <button type="submit" class="deny" style="float: left;margin-left: 10px;margin-right: 10px;" onclick="loading()">重置</button>
+        <button type="submit" class="add" style="float: right;margin-left: 10px;margin-right: 10px;" onclick="loading()">更改</button>
+    </form>    
+</div>
+
+<div class="copyright" id="rights-box" style="display: none;" type="checkbox">
+    <button class="btn"><i class="fa fa-close"></i></button>
+    <div id="box">
+        <img style="margin: 50px;width: 100px;height: 100px;" src="/static/res/icon-o.ico" alt="iF">
+        <h3 style="margin: 50px;">inteliFusi0n Version 0.1.9(202308032000) Developer Alpha</h3>
+        <a href="https://www.github.com/hcl595/intellifusion/">
+            <button class="Hyperlink">learn more...</button>
+        </a>
+    </div>
+</div>
+
+<div class="loadingOne" id="loading" style="display: none;">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<div class="AlertPlaceholder" id="liveAlertPlaceholder">
+
+</div>
+
+</body>
+<script type="text/javascript">
+
+$(".li").on("click",function(){
+    var now = $("li.current").val()
+    var target = $(this).val()
+    $(".current").removeClass("current")
+    $(this).addClass("current")
+    $('#'+now).fadeOut(100)
+    $('#'+target).fadeIn(110)
+})
+
+$("#change-adjust").on("click",function(){
+    var now = $("body").attr("class")
+    if (now == "light"){
+        $("body").removeClass("light")
+        $("body").addClass("dark")
+    }
+    if (now == "dark"){
+        $("body").removeClass("dark")
+        $("body").addClass("light")
+    }
+})
+//ajax交互
+//prompt
+$(document).on('input',".userInputArea",
+        function(){
+            var text = $(this).val();
+            var id = $(this).attr("id");
+            var source_id = $(this).attr("source_id");
+            $.ajax({
+                url: '/prompts',
+                type: 'POST',
+                data: {
+                    text: text,
+                },
+                success: function(prompts) {
+                    $('#Prompt-'+source_id).empty()
+                    for (i in prompts){
+                        $('#Prompt-'+source_id).append("<button class='prompt' value='"+ prompts[i] + "' source_id= " + source_id +' >'+ i +'</button>')
+                    }
+                }
+            })
+        })
+$(document).on('click','.prompt',
+        function(){
+            var source_id = $(this).attr("source_id");
+            $('#Prompt-'+source_id).empty()
+            $('#user-input-'+source_id).val(""+$(this).val())
+        })
+//send request
+$(document).on('click',"#SendInput",
+        function SendInput() {
+        var id = $(this).val();
+        if ($('#user-input-' + id).val() != ""){
+            $("#loading").fadeIn(100);
+            $('#output-' + id).append('\
+            <div class="item item-right"><div class="bubble bubble-right">\
+                ' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+            $('#user-input-' + id).val('');
+            $.ajax({
+                url: '/requestmodels',
+                type: 'POST',
+                data: {
+                    userinput: $('#user-input-' + id).val(),
+                    modelinput: $('#model-input-' + id).val(),
+                },
+                success: function(response) {
+                    var chatGptResponse = response.response;
+                    $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+                    $("#loading").fadeOut(100)
+                    let height = document.querySelector('.content').scrollHeight;
+                    document.querySelector(".content").scrollTop = height;
+                }
+            });
+        }
+        else{
+            alert('内容不能为空',"warning");
+        }
+    });
+
+$(".run").on('click',function() {
+    $("#loading").fadeIn(100)
+    $(this).attr("disabled",true)
+    var id = $(this).val()
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: 'run' ,
+            number: $('#id'+id).val() ,
+            comment: $('#Comment'+id).val() ,
+            type: $('#Type'+id).val() ,
+            url: $('#Url'+id).val() ,
+            APIkey: $('#APIkey'+id).val() ,
+            LcCompiler: $('#LcCompiler'+id).val() ,
+            LcUrl: $('#LcUrl'+id).val() ,
+        },
+        success: function(response) {
+            if (response.response){
+                alert('运行成功',"success")
+                $("#loading").fadeOut(100)
+                $("#run-" + id).removeAttr("disabled")
+            }
+            else{
+                alert('运行超时',"danger")
+                $("#loading").fadeOut(100)
+                $("#run-" + id).removeAttr("disabled")
+            }
+        }
+    });
+});
+$(".stop").on('click',function() {
+    $("#loading").fadeIn(100)
+    $('#stop').attr("disabled",true)
+    var id = $(this).val()
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: 'stop' ,
+            number: $('#id'+id).val() ,
+            comment: $('#Comment'+id).val() ,
+            type: $('#Type'+id).val() ,
+            url: $('#Url'+id).val() ,
+            APIkey: $('#APIkey'+id).val() ,
+            LcCompiler: $('#LcCompiler'+id).val() ,
+            LcUrl: $('#LcUrl'+id).val() ,
+        },
+        success: function(response) {
+            if (response.response){
+                alert("停止成功","warning")
+                $("#loading").fadeOut(100)
+                $('#stop-'+ id).removeAttr("disabled")
+            }
+            else{
+                alert("停止失败","danger")
+                $("#loading").fadeOut(100)
+                $('#stop-'+ id).removeAttr("disabled")
+            }
+        }
+    });
+});
+$(".edit").on('click',function() {
+    $("#loading").fadeIn(100)
+    $(this).attr("disabled",true)
+    var id = $(this).val()
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: 'edit' ,
+            number: $('#id'+id).val() ,
+            comment: $('#Comment'+id).val() ,
+            type: $('#Type'+id).val() ,
+            url: $('#Url'+id).val() ,
+            APIkey: $('#APIkey'+id).val() ,
+            LcCompiler: $('#LcCompiler'+id).val(),
+            LcUrl: $('#LcUrl'+id).val() ,
+        },
+        success: function(response) {
+            if (response.response) {
+                alert("更改成功","success")
+                $("#loading").fadeOut(100)
+                $("#edit-"+ id).removeAttr("disabled")
+            }
+            else{
+                alert("更改失败","danger")
+                $("#loading").fadeOut(100)
+                $("#edit-"+ id).removeAttr("disabled")                
+            }
+        }
+    });
+});
+$(".deny").on('click',function() {
+    $("#loading").fadeIn(100)
+    $(this).attr("disabled",true)
+    var id = $(this).val()
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: 'del' ,
+            number: $('#id'+id).val() ,
+            comment: $('#Comment'+id).val() ,
+            type: $('#Type'+id).val() ,
+            url: $('#Url'+id).val() ,
+            APIkey: $('#APIkey'+id).val() ,
+            LcCompiler: $('#LcCompiler'+id).val() ,
+            LcUrl: $('#LcUrl'+id).val() ,
+        },
+        success: function(response) {
+            if (response.response){
+                alert("删除成功","warning")
+                $('#id'+id).remove()
+                $('#ModelTr'+id).remove()
+                $("#loading").fadeOut(100)
+                $("#del-"+ id).removeAttr("disabled")
+            }
+            else{
+                alert("删除失败","danger")
+                $('#id'+id).remove()
+                $('#ModelTr'+id).remove()
+                $("#loading").fadeOut(100)
+                $("#del-"+ id).removeAttr("disabled")
+            }
+        }
+    });
+});
+$("#add").on('click',function() {
+    $("#loading").fadeIn(100)
+    $('#add').attr("disabled",true)
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: 'add' ,
+            number: $('#id').val() ,
+            type: $('#Type-1').val() ,
+            comment: $('#Comment-1').val() ,
+            url: $('#Url-1').val() ,
+            APIkey: $('#APIkey-1').val() ,
+            LcCompiler: $('#LcCompiler-1').val() ,
+            LcUrl: $('#LcUrl-1').val() ,
+        },
+        success: function(response) {
+            if (response.response){
+                alert("添加成功","success")
+                $('#ModelTable').append('<input type="hidden" name="{{ ModelCount }}id" id="{{ ModelCount }}id" value={{ ModelCount }}>')
+                $('#ModelTable').append('<tr><td><select name="type" id="{{ ModelCount }}Type">            <option>' + $('#Type-1').val() + '</option>            <option>OpenAI</option>            <option>WebUI</option>            <option>API</option>        </select></td>    <td> <input type="text" name="comment" id="{{ ModelCount }}Comment" placeholder="ChatGLM" value=' + $('#Comment-1').val() + ' ></td>    <td><input type="text" class="url" id="{{ ModelCount }}Url" name="url" placeholder="127.0.0.1:8000" value=' + $('#Url-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}APIkey" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value=' + $('#APIkey-1').val() + '></td>    <td><input type="TEXT" class="url" id="{{ ModelCount }}LcCompiler" name="LcCompiler" placeholder=".\\venv\\python.exe & OpenAI" value=' + $('#LcCompiler-1').val() + '></td>    <td><input type="text" class="url" id="{{ ModelCount }}LcUrl" name="LCurl" placeholder=".\\ChatGLM\\launch.py" value=' + $('#LcUrl-1').val() + '></td>    <td><button disabled type="submit" class="run" id="{{ ModelCount }}run"><i class="fa fa-play"></i></button><button disabled type="submit" class="deny" id="{{ ModelCount }}stop"><i class="fa fa-stop"></i></button></td>    <td><button type="submit" disabled class="edit" id="{{ ModelCount }}edit"><i class="fa fa-edit"></i></button></td>    <td><button disabled type="submit" class="deny" id="{{ ModelCount }}del"><i disabled class="fa fa-trash"></i></button></td></tr>')
+                $('#ModelTable').append('<input type="hidden" id="id-1" value="-1">')
+                $('#ModelTable').append('\
+                <tr id="AddTr"><td><select id="Type-1" name="type">\
+                    <option selected>OpenAI</option>\
+                    <option>WebUI</option>\
+                    <option>API</option>\
+                    </select>\
+                    </td>\
+                    <td>\
+                        <input type="text" id="Comment-1" placeholder="ChatGLM"></td><td><input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000"></td><td><input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none"></td><td><input type="TEXT" class="url" id="LcCompiler-1p" placeholder=".\\venv\\scripts\\python.exe"></td><td><input type="TEXT" class="url" id="LcUrl-1" placeholder=".\\venv\\launch.py"></td><td><button type="submit" class="add" name="launch" id="add"><i class="fa fa-plus"></i></button></td><td><button disabled type="submit" class="edit" name="edit" id="edit"><i class="fa fa-ban"></i></button></td><td><button disabled type="submit" class="deny" name="del" id="del"><i class="fa fa-ban"></i></button></td></tr>')
+                $("#loading").fadeOut(100)
+                $('#id-1').remove()
+                $('#AddTr').remove()
+                $('#add').removeAttr("disabled")
+            }
+            else{
+                alert("添加失败","danger")
+                $("#loading").fadeOut(100)
+                $('#id-1').remove()
+                $('#AddTr').remove()
+                $('#add').removeAttr("disabled")
+            }
+        }
+    });
+});
+
+//CommitModel
+function loading(){
+    $("#loading").fadeIn(100)
+    setTimeout(function(){ $("#loading").fadeOut(100) },1000)
+}
+
+//alert message
+const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+
+const alert = (message, type) => {
+  const wrapper = document.createElement('div')
+  wrapper.innerHTML = [
+    `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+    `   <div>${message}</div>`,
+    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+    '</div>'
+  ].join('')
+  alertPlaceholder.append(wrapper)
+  setTimeout(function(){
+    wrapper.remove()
+  },5000)
+}
+
+
+
+
+</script>
+{% endblock %}
+{% block footer %}
+{% endblock %}
+</html>

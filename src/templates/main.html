@@ -187,10 +187,18 @@
                             <p>活跃检测</p>
                         </td>
                         <td>
-                            <select id="ActiveExamin"><!-- TODO:更改按钮 -->
+                            <div class="ActiveExamin">
+                                <input type="checkbox" class="hidden-checkbox" name="" value="">
+                                <span class="switch-area"></span>
+                                <span class="switch-toggle"></span>
+                            </div>
+
+                            <!-- TODO:更改按钮 -->
+
+                            <!-- <select id="ActiveExamin">
                                 <option>True</option>
                                 <option>False</option>
-                            </select>
+                            </select> -->
                         </td>
                     </tr>
                     <tr>
@@ -252,7 +260,13 @@
                             <p>DeBug模式</p>
                         </td>
                         <td>
-                            <input type="text" name="BugM" placeholder="False" value={{ devMode }} /><!-- TODO:更改按钮 -->
+                            <div class="ActiveExamin">
+                                <input type="checkbox" class="hidden-checkbox" name="" value="">
+                                <span class="switch-area"></span>
+                                <span class="switch-toggle"></span>
+                            </div>
+                            <!-- TODO:更改按钮 -->
+                            <!-- <input type="text" name="BugM" placeholder="False" value={{ devMode }}/>  -->
                         </td>
                     </tr>
                 </thead>
