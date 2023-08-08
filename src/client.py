@@ -119,9 +119,8 @@ def Request_Models():
 def EditSetting():
     InputiPv4 = request.form.get("iPv4")
     InputPort = request.form.get("Port")
-    InputWebMode = request.form.get("Mode")
     InputDebugMode = request.form.get("BugM")
-    cfg.write("BaseConfig", "devmode", InputWebMode)
+    logger.debug("{}",InputDebugMode)
     cfg.write("BaseConfig", "debug", InputDebugMode)
     cfg.write("RemoteConfig", "host", InputiPv4)
     cfg.write("RemoteConfig", "port", InputPort)
