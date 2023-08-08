@@ -36,21 +36,16 @@ class Widgets(BaseModel):
     avaliable =  BooleanField(column_name="avliable")
     widgets_url = CharField(column_name="URL",)
 
-class History(BaseModel):
-    Model = CharField()
-    UserInput = CharField()
-    response = CharField()
-
 def SetupDatabase():
-    db.create_tables([Models,Widgets,History])
+    db.create_tables([Models])
     BaseModel = Models(
         order=1,
         type="OpenAI",
         name="gpt-3.5-turbo",
         url="https://ai.fakeopen.com/v1",
         APIkey="sk-frdfhfdrghdsu5tt5sgyuyy",
-        LaunchCompiler="/",
-        LaunchUrl="/",
+        LaunchCompiler="NONE",
+        LaunchUrl="NONE",
     )
     BaseModel.save()
 

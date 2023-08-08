@@ -1,5 +1,6 @@
 # main.py | Intellifusion Version 0.1.9(2023080512000) Developer Alpha
 # headers
+from thefuzz import process, fuzz
 import ctypes
 import json
 import subprocess
@@ -8,21 +9,19 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import ipaddress
 from urllib.parse import urlparse
-from playhouse.shortcuts import model_to_dict
 
 import openai
 import jieba
 import psutil
 import requests
 import validators
-from flask import (Flask, json, jsonify, render_template, request,)
+from flask import (Flask, json, jsonify, redirect, render_template, request,
+                   session)
 from flaskwebgui import FlaskUI, close_application
-from thefuzz import process, fuzz
 from loguru import logger
-from peewee import InternalError
 
 from config import Settings, Prompt
-from data import Models, History, Widgets
+from data import Models
 from setup import setup
 
 pool = ThreadPoolExecutor()
@@ -30,6 +29,7 @@ pool = ThreadPoolExecutor()
 # configs
 app = Flask(__name__)
 app.config.from_object(__name__)
+app.config["SECRET_KEY"] = "UMAVERSIONZPONEPEHT"
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
 LOG_FILE = DATA_DIR / "models.log"
@@ -40,22 +40,61 @@ logger.add(LOG_FILE)
 cfg = Settings()
 pmt = Prompt()
 login_error = ""
+response = {
+    "response": "",
+    "history": [["", ""]],
+    "status": 200,
+    "time": "1234-05-06 07:08:09",
+}
+GPT_response = []
+LLM_response = []
+GLM_response = []
 result = None
 NeedLogin = True
+historys = response["history"]
 
 
 # main
 @app.route("/")  # 根目录
 def root():
     logger.debug("login error: {}".format(login_error))
+    try:
+        ModelList = Models.select()
+    except:
+        ModelList = {}
+    logger.debug("ModelList: {}",list(ModelList))
+    ActiveModels = []
+    if cfg.read("BaseConfig","ActiveExamine") == "True":
+        for i in ModelList:
+            if validators.url(i.url):
+                host = urlparse(i.url).hostname
+                logger.info("{}",host)
+                try:
+                    ipaddress.ip_address(host)
+                except:
+                    ActiveModels.append(i)
+        model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
+        for conn in psutil.net_connections():
+            port = conn.laddr.port
+            if port in model_ports:
+                ActiveModels.append(model_ports[port])
+                logger.debug("model_ports: {}", model_ports[port])
+        logger.debug("ActiveModels: {}", ActiveModels)
+    else:
+        ActiveModels = ModelList
     return render_template(
         "main.html",
+        result=result,
         NeedLogin=NeedLogin,
-        # historys=histroys,
+        ActiveModels=ActiveModels,
+        ModelList=list(ModelList),
+        ModelCount=len(ModelList) + 1,
+        historys=LLM_response,
         host=cfg.read("RemoteConfig", "host"),
         port=cfg.read("RemoteConfig", "port"),
         devMode=cfg.read("BaseConfig", "devmode"),
         TimeOut=cfg.read("BaseConfig", "TimeOut"),
+        username=session.get("username"),
     )
 
 
@@ -65,32 +104,15 @@ def Request_Models():
     InputModel = request.form["modelinput"]
     if Models.get(Models.name == InputModel).type == "OpenAI":
         try:
-            Model_response = ai(InputModel, InputInfo)
-            History.create(
-                Model=InputModel,
-                UserInput = InputInfo,
-                response=Model_response,
-            )
-        except openai.error.AuthenticationError:
-            Model_response = "Check Your API Key"
-        except UnboundLocalError:
-            Model_response = "DataBase Error,get support from Developer!"
-        # except IntegrityError:
+            ai(InputModel, InputInfo)
+        except:
+            Model_response = "Check Your API and APIkey"
     elif Models.get(Models.name == InputModel).type == "API":
+        try:
             Model_response = llm(InputModel, InputInfo)
-            History.create(
-                model=InputModel,
-                UserInput = InputInfo,
-                response=Model_response,
-            )
+        except:
+            Model_response = "check your application is opened."
     return jsonify({"response": Model_response})
-
-
-@app.post("/GetHistory")
-def GetHistorys():
-    Historys = History.select()
-    HistorysDict = [model_to_dict(history) for history in Historys]
-    return jsonify(HistorysDict)
 
 
 @app.post("/EditSetting")  # 编辑设置
@@ -103,7 +125,7 @@ def EditSetting():
     cfg.write("BaseConfig", "debug", InputDebugMode)
     cfg.write("RemoteConfig", "host", InputiPv4)
     cfg.write("RemoteConfig", "port", InputPort)
-    return jsonify({"response": True,})
+    return redirect("/")
 
 
 @app.post("/exchange")
@@ -133,17 +155,14 @@ def AddModel():
                 Models.type: InputType,
             }).where(Models.id == InputID)
             u.execute()
-            return jsonify({"response": True,
-                            "message":"编辑成功",})
+            return jsonify({"response": True,})
         except:
-            return jsonify({"response": False,
-                            "message":"编辑失败",})
+            return jsonify({"response": False,})
     elif InputState == "del":
         try:
             u = Models.get(id = InputID)
             u.delete_instance()
-            return jsonify({"response": True,
-                            "message":"删除成功",})
+            return jsonify({"response": True,})
         except:
             return jsonify({"response": False,})
     elif InputState == "run":
@@ -153,8 +172,7 @@ def AddModel():
         while True:
             for conn in psutil.net_connections():
                 if conn.laddr.port == port:
-                    return jsonify({"response": True,
-                                    "message":"运行成功",})
+                    return jsonify({"response": True,})
             count += 1
             time.sleep(1)
             if count == cfg.read("BaseConfig", "TimeOut"):
@@ -165,8 +183,7 @@ def AddModel():
                     LaunchCompiler,
                     LaunchPath,
                 )
-                return jsonify({"response": False,
-                                "message":"运行失败,原因:超时",})
+                return jsonify({"response": False,})
     elif InputState == "stop":
         try:
             for conn in psutil.net_connections():
@@ -175,11 +192,9 @@ def AddModel():
                     p = psutil.Process(pid)
                     p.kill()
                     break
-            return jsonify({"response": True,
-                            "message":"停止成功",})
+            return jsonify({"response": True,})
         except:
-            return jsonify({"response": False,
-                            "message":"停止失败成功",})
+            return jsonify({"response": False,})
     elif InputState == "add":
         try:
             Models.create(
@@ -218,57 +233,18 @@ def Prompts():
     logger.info("{}",result)
     return jsonify(result)
 
-
-@app.post("/GetModelList")
-def GetModelList():
-    try:
-        ModelList = Models.select()
-    except:
-        ModelList = {}
-    logger.debug("ModelList: {}",list(ModelList))
-    ModelList_json = [model_to_dict(Model) for Model in ModelList]
-    logger.info("{}", ModelList_json)
-    return jsonify(ModelList_json)
-
-
-@app.post("/GetActiveModels")
-def GetActiveModels():
-    try:
-        ModelList = Models.select()
-    except:
-        ModelList = {}
-    logger.debug("ModelList: {}",list(ModelList))
-    ActiveModels = []
-    if cfg.read("BaseConfig","ActiveExamine") == "True":
-        for i in ModelList:
-            if validators.url(i.url):
-                host = urlparse(i.url).hostname
-                logger.info("{}",host)
-                try:
-                    ipaddress.ip_address(host)
-                except:
-                    ActiveModels.append(i)
-        model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
-        for conn in psutil.net_connections():
-            port = conn.laddr.port
-            if port in model_ports:
-                ActiveModels.append(model_ports[port])
-                logger.debug("model_ports: {}", model_ports[port])
-        logger.debug("ActiveModels: {}", ActiveModels)
-    else:
-        ActiveModels = ModelList
-    ActiveModelList_json = [model_to_dict(Model) for Model in ActiveModels]
-    logger.info("{}", ActiveModelList_json)
-    return jsonify(ActiveModelList_json)
+if cfg.read("BaseConfig", "devmode") == "True":
+    @app.route("/test")
+    def DevTest():
+        return render_template("test.html")
 
 
 @app.errorhandler(404)
 def error404(error):
     return render_template("404.html"), 404
 
-
-#Blue Prints
 from widgets import widgets_blue
+
 app.register_blueprint(widgets_blue)
 
 
@@ -298,16 +274,6 @@ def ai(ModelID: str, question: str):
         question,
         response,
     )
-    response = str.replace(response,"\n","<br/>")
-    last_code_block_index: int = -1
-    is_code_block_start = True
-    while (last_code_block_index := response.find("```")) != -1:
-        if is_code_block_start:
-            response=response.replace("```", "<pre>", 1)
-        else:
-            response=response.replace("```", "</pre>", 1)
-        last_code_block_index=-1
-        is_code_block_start=not is_code_block_start
     return response
 
 
@@ -317,16 +283,6 @@ def llm(ModelID: str, question: str):
         data=json.dumps({"prompt": question, "history": []}),
         headers={"Content-Type": "application/json"},
     )
-    response = str.replace(response,"\n","<br/>")
-    last_code_block_index: int = -1
-    is_code_block_start = True
-    while (last_code_block_index := response.find("```")) != -1:
-        if is_code_block_start:
-            response=response.replace("```", "<pre>", 1)
-        else:
-            response=response.replace("```", "</pre>", 1)
-        last_code_block_index=-1
-        is_code_block_start=not is_code_block_start
     return response.json()["history"][0][1]
 
 
@@ -339,24 +295,6 @@ def get_ports(url: str):
             port = "url"
     logger.debug("parse ports: {}", port)
     return port
-
-
-def get_historys(model:str, userinput:str):
-    ModelList = History.get(History.Model == model)
-    logger.debug("ModelList: {}",list(ModelList))
-    ModelListDict = [model_to_dict(Model) for Model in ModelList]
-    keywords = jieba.lcut_for_search(userinput)
-    keywords = " ".join(keywords)
-    result = process.extract(
-        keywords, ModelListDict.keys(), limit=5, scorer=fuzz.partial_token_sort_ratio
-    )
-    result = {t:ModelListDict[t] for (t,_) in result}
-
-
-if cfg.read("BaseConfig", "devmode") == "True":
-    @app.route("/test")
-    def DevTest():
-        return render_template("test.html")
 
 # launch
 if __name__ == "__main__":
@@ -385,5 +323,5 @@ if __name__ == "__main__":
             server="flask",
             port=cfg.read("RemoteConfig", "port"),
             width=1800,
-            height=1000,
+            height=100,
         ).run()
