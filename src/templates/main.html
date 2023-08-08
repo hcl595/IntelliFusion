@@ -132,41 +132,19 @@
 </div>
 
 <div class="settings" id="setting-box" style="display: none;">
-    <form action="/EditSetting" target="commit" method="post"><!-- TODO:Use Javascripts Templates&Ajax instead of form -->
-        <div style="margin-left:20px" class="content">
-            <hr class="line">
-            <table>
-                <thead>
-                    <tr>
-                        <th>
-                            <h3>外观设置  </h3>
-                        </th>
-                        <th>
-                            <h3>UI Settings</h3>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <p>深色模式</p>
-                        </td>
-                        <td>
-                            <p><i class="fa fa-adjust" id="change-adjust"></i></p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <hr class="line">
-            <table>
+    <div style="margin-left:20px" class="content">
+        <hr class="line">
+        <table>
+            <thead>
                 <tr>
                     <th>
-                        <h3>基础设置  </h3>
+                        <h3>外观设置  </h3>
                     </th>
                     <th>
-                        <h3>Base Settings</h3>
+                        <h3>UI Settings</h3>
                     </th>
                 </tr>
+<<<<<<< Updated upstream
                 </thead>
                 <tbody>
                     <tr>
@@ -272,6 +250,127 @@
         <button type="submit" class="deny" style="float: left;margin-left: 10px;margin-right: 10px;" onclick="loading()">重置</button>
         <button type="submit" class="add" style="float: right;margin-left: 10px;margin-right: 10px;" onclick="loading()">更改</button>
     </form>    
+=======
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>深色模式</p>
+                    </td>
+                    <td>
+                        <p><i class="fa fa-adjust" id="change-adjust"></i></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="line">
+        <table>
+            <tr>
+                <th>
+                    <h3>基础设置  </h3>
+                </th>
+                <th>
+                    <h3>Base Settings</h3>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>语言设置</p>
+                    </td>
+                    <td>
+                        <select id="Language">
+                            <option>Chinese</option>
+                            <option>中文</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>活跃检测</p>
+                    </td>
+                    <td>
+                        <div class="ActiveExamin">
+                            <input type="checkbox" class="hidden-checkbox" name="" value="">
+                            <span class="switch-area"></span>
+                            <span class="switch-toggle"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>启动超时限制</p>
+                    </td>
+                    <td>
+                        <input type="number" name="setTimeout" placeholder="60" value='{{ TimeOut }}' />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="line">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <h3>远程设置</h3>
+                    </th>
+                    <th>
+                        <h3>Remote Setting</h3>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>iPv4地址</p>
+                    </td>
+                    <td>
+                        <input type="text" name="iPv4" placeholder="127.0.0.1" value={{ host }} />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>端口</p>
+                    </td>
+                    <td>
+                        <input type="number" name="Port" placeholder="5000" value={{ port }} />
+                    </td>
+                </tr>
+            </thead>
+        </table>
+        <hr class="line">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <h3>开发者设置  </h3>
+                    </th>
+                    <th>
+                        <h3>Developer Settings</h3>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>DeBug模式</p>
+                    </td>
+                    <td>
+                        <div class="ActiveExamin">
+                            <input name="BugM"  type="checkbox" class="hidden-checkbox" name="" value="">
+                            <span class="switch-area"></span>
+                            <span class="switch-toggle"></span>
+                        </div>
+                    </td>
+                </tr>
+            </thead>
+        </table>
+        <hr class="line">
+    </div>
+    <button type="submit" class="deny" style="float: left;margin-left: 10px;margin-right: 10px;" onclick="loading()">重置</button>
+    <button type="submit" class="add" style="float: right;margin-left: 10px;margin-right: 10px;" onclick="loading()">更改</button>
+>>>>>>> Stashed changes
 </div>
 
 <div class="copyright" id="rights-box" style="display: none;" type="checkbox">
