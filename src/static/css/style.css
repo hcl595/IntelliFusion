@@ -234,7 +234,7 @@ nav:hover .list li:nth-child(8) span {
 /* 对话框 */
 
 .dialogbox_container{
-  min-height: 100vh;
+  max-height: 100vh;
   min-width: 100%;
   display: flex;
   overflow: hidden;
@@ -244,7 +244,7 @@ nav:hover .list li:nth-child(8) span {
 }
 .content{
   max-width: 100%;
-  min-height: 77vh;
+  min-height: 83vh;
   overflow-y: auto;
 }
 .content:hover::-webkit-scrollbar-thumb{
@@ -261,6 +261,7 @@ nav:hover .list li:nth-child(8) span {
   word-break:normal; 
 }
 .item-left .bubble{
+  white-space: pre-line;
   margin-left: 15px;
   background-color: #6d7086;
   color: #fff;
@@ -330,13 +331,13 @@ nav:hover .list li:nth-child(8) span {
   background-color: #fff;
   border-radius: 1rem;
 }
-textarea{
+.input-area textarea{
   flex: 5;
   padding: 5px;
   font-size: 14px;
   border: none;
   cursor: pointer;
-  overflow: scroll;
+  overflow: auto;
   outline:none;
   resize:none;
   border-radius: 1rem;
@@ -376,7 +377,7 @@ textarea{
   width: 100%;
   height: 50px;
   display: flex;
-  overflow: scroll;
+  overflow: auto;
   flex-flow:nowrap;
   background-color: #32fcff3a;
   border-radius: 1rem;
@@ -391,10 +392,6 @@ textarea{
   background-color: #ffffff;
   backdrop-filter: blur(20px);
 }
-
-
-
-
 
 /* Loading */
 .loadingOne{
@@ -454,9 +451,49 @@ textarea{
   overflow: auto;
   float: right;
 }
-.widgets_contentbox {
+.widgets_contentbox{
+  margin: 10px;
+  position: relative;
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.486);
+  box-shadow: 5px 5px 10px 0px lightgray;
+  border-radius: 10px;
+  transition: 0.3s;
+  word-break:break-word;
+  white-space: nowrap; 
+  overflow: auto;
+}
+.widgets_contentbox .small {
   width: 320px;
   height: 320px;
+  margin: 10px;
+  position: relative;
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.486);
+  box-shadow: 5px 5px 10px 0px lightgray;
+  border-radius: 10px;
+  transition: 0.3s;
+  word-break:break-word;
+  white-space: nowrap; 
+  overflow: auto;
+}
+.widgets_contentbox .middel {
+  width: 640px;
+  height: 320px;
+  margin: 10px;
+  position: relative;
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.486);
+  box-shadow: 5px 5px 10px 0px lightgray;
+  border-radius: 10px;
+  transition: 0.3s;
+  word-break:break-word;
+  white-space: nowrap; 
+  overflow: auto;
+}
+.widgets_contentbox .big {
+  width: 640px;
+  height: 640px;
   margin: 10px;
   position: relative;
   display: inline-block;
@@ -476,7 +513,7 @@ textarea{
   margin-left: 20px;
   color: black;
 }
-.widgets_contentbox:hover {
+.widgets_contentbox .big:hover {
   scale: 0.97;
   box-shadow: none;
 } 
@@ -710,7 +747,7 @@ a {
 }
 
 
-/* copyright_close */
+/*copyright_close*/
 
 .btn {
   background-color: none;
@@ -745,9 +782,10 @@ a {
   border: none; 
 }
 
+
 /* 滑块 */
 
-.ActiveExamin{
+.switch-container{
 	width: 45px;
 	height: 25px;
 	position: relative;
@@ -794,6 +832,7 @@ a {
 	     -o-transition: All 0.3s ease;
 	        transition: All 0.3s ease; 
 }
+
 
 /* Dark */
 body .dark{

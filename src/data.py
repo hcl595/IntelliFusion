@@ -33,20 +33,37 @@ class Models(BaseModel):
 
 class Widgets(BaseModel):
     order = IntegerField(column_name="order",)
-    avaliable =  BooleanField(column_name="avliable")
+    avaliable =  BooleanField(column_name="avaliable")
     widgets_url = CharField(column_name="URL",)
 
+class History(BaseModel):
+    Model = CharField()
+    UserInput = CharField()
+    response = CharField()
+
 def SetupDatabase():
-    db.create_tables([Models])
+    db.create_tables([Models,Widgets,History])
     BaseModel = Models(
         order=1,
         type="OpenAI",
         name="gpt-3.5-turbo",
         url="https://ai.fakeopen.com/v1",
         APIkey="sk-frdfhfdrghdsu5tt5sgyuyy",
-        LaunchCompiler="NONE",
-        LaunchUrl="NONE",
+        LaunchCompiler="/",
+        LaunchUrl="/",
     )
     BaseModel.save()
+    BaseWidgets = Widgets(
+        order=1,
+        avaliable = True,
+        widgets_url = "/widgets/Core_Percent",
+    )
+    BaseWidgets.save()
+    BaseWidgets = Widgets(
+        order=2,
+        avaliable = True,
+        widgets_url = "/widgets/Ram_Percent",
+    )
+    BaseWidgets.save()
 
 
