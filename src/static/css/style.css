@@ -981,3 +981,20 @@ body .dark{
   border-radius:20px;
   border: 3px solid #000;
 }
+
+/* 拖拽 */
+.wigets_box ul {
+  list-style-type: disc;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
+}
+.wigets_box li {
+  height: 50px;
+  line-height: 50px;
+  border: 1px solid #aaaaaa;
+  width: 200px;
+  padding: 0 10px;
+}

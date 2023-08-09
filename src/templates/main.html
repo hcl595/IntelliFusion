@@ -99,12 +99,22 @@
         </table>
     </div>
 </div>
-
-<div class="widgets_box" id="widgets-box" style="display: none;"><!-- TODO:添加·添加小组件·组件 -->
+<!-- TODO 小组件 -->
+<div class="widgets_box" id="widgets-box" style="display: none;">
         <button style="float: right;width: 100px;"><i class="fa fa-plus"></i></button>
         <div id="widgets_container" class="widgets_container">
-    </div>
+            <ul id="drag" class="drag">
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+                <li>Item 4</li>
+                <li>Item 5</li>
+              </ul>
+        </div>
 </div>
+
+
+
 
 <div class="models" id="models-box" style="display: none;">
     <div class="card_container">
@@ -132,7 +142,8 @@
 </div>
 
 <div class="settings" id="setting-box" style="display: none;">
-    <form action="/EditSetting" target="commit" method="post"><!-- TODO:Use Javascripts Templates&Ajax instead of form -->
+    <form action="/EditSetting" target="commit" method="post">
+        <!-- TODO:Use Javascripts Templates&Ajax instead of form -->
         <div style="margin-left:20px" class="content">
             <hr class="line">
             <table>
@@ -370,6 +381,33 @@ const alert = (message, type) => {
 var int = setInterval(function(){
     refresh_website()
   },1000000)
+
+  const lis = document.querySelectorAll(".drag li");
+ let draggingElementOrder;
+ let draggingElement;
+ for (let i = 0; i < lis.length; i++) {
+   lis[i].setAttribute("draggable", true);
+   lis[i].addEventListener("dragstart", (event) => {
+     draggingElement = event.target;
+   });
+   lis[i].addEventListener("dragenter", (event) => {
+     draggingElementOrder = Array.from(draggingElement.parentElement.children).indexOf(draggingElement);
+     const node = event.target;
+     draggingElementPosition = draggingElement.getBoundingClientRect();
+     const order = Array.from(node.parentElement.children).indexOf(node);
+     if (draggingElementOrder > order) {
+       node.parentElement.insertBefore(draggingElement, node);
+     }
+     else {
+       if (node.nextElementSibling) {
+         node.parentElement.insertBefore(draggingElement, node.nextElementSibling);
+       }
+       else {
+         node.parentElement.appendChild(draggingElement);
+       }
+     }
+   });
+ }
 
 </script>
 {% endblock %}

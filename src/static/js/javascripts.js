@@ -438,22 +438,24 @@ function load_active_widgets(){
     })
 }
 
-function load_widgets(){
-    $.ajax({
-        url: "/GetWidgets",
-        method: "POST",
-        success: function(data){
-            $("#widgets_container").empty()
-            for (i in data){
-                $("#widgets_container").append('\
-                <div class="widgets_contentbox">\
-                    <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
-                </div>\
-                ')
-            }
-        }
-    })
-}
+
+
+// function load_widgets(){
+//     $.ajax({
+//         url: "/GetWidgets",
+//         method: "POST",
+//         success: function(data){
+//             $("#widgets_container").empty()
+//             for (i in data){
+//                 $("#widgets_container").append('\
+//                 <div class="widgets_contentbox">\
+//                     <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
+//                 </div>\
+//                 ')
+//             }
+//         }
+//     })
+// }
 
 function switch_load(id){
     var now_value = $("#"+id).val()
@@ -470,3 +472,5 @@ function loading(){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
 }
+
+
