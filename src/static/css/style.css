@@ -824,7 +824,7 @@ a {
 .dark{
   height: 100vh;
   width: 100vw;
-  background: rgb(120, 120, 120);
+  background: rgb(32, 32, 32);
 }
 .dark p{
   color: #d8d8d8;
@@ -843,7 +843,7 @@ a {
   width: 100px;
   height: 100vh;
   backdrop-filter: blur(18px);
-  background: rgb(32, 32, 32);
+  background: rgb(16, 16, 16);
   box-shadow: 0 0 30px rgba(0, 0, 0, .05);
   transition: .6s cubic-bezier(.8, .3, .3, .8);
 }
