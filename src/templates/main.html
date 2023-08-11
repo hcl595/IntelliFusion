@@ -8,10 +8,17 @@
 <body class="light" onload="refresh_website()">
 <iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
-    <div id="contentwrap"  class="contentwrap">
-        <ul class="tab" id="tabs">
-        </ul>
-        <div id="Contents">
+    <div class="chat">
+        <div id="contentwrap"  class="contentwrap">
+            <ul class="tab" id="tabs">
+            </ul>
+            <div id="Contents">
+            </div>
+        </div>
+    </div>
+    <div class="expand">
+        <button class="btn_expand"><i class="fa fa-plus"></i></button>
+        <div id="widgets_container_live" class="widgets_container">
         </div>
     </div>
 </div>
@@ -184,7 +191,7 @@
                         <p>活跃检测</p>
                     </td>
                     <td>
-                        <div class="ActiveExamin">
+                        <div class="switch-container">
                             <input type="checkbox" class="hidden-checkbox" name="" value="">
                             <span class="switch-area"></span>
                             <span class="switch-toggle"></span>
@@ -250,7 +257,7 @@
                         <p>DeBug模式</p>
                     </td>
                     <td>
-                        <div class="ActiveExamin">
+                        <div class="switch-container">
                             <input name="BugM"  type="checkbox" class="hidden-checkbox" name="" value="">
                             <span class="switch-area"></span>
                             <span class="switch-toggle"></span>
@@ -261,7 +268,6 @@
         </table>
         <hr class="line">
     </div>
-    <button type="submit" class="deny" style="float: left;margin-left: 10px;margin-right: 10px;" onclick="loading()">重置</button>
     <button type="submit" class="add" style="float: right;margin-left: 10px;margin-right: 10px;" onclick="loading()">更改</button>
 </div>
 
@@ -292,7 +298,6 @@
 <script type="text/javascript">
 $("#change-adjust").on("click",function(){
     var now = $("body").attr("class")
-    alert($("#DebugMode").val(),"danger")
     if (now == "light"){
         $("body").removeClass("light")
         $("body").addClass("dark")

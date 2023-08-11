@@ -377,12 +377,11 @@ function Refresh_Tabs(){
             $("#tabs").empty()
             $("#Contents").empty()
             for (i in data){
-                $("#tabs").append('\
-                <li draggable="true" class="li" id="Tab'+ data[i].id +'"" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>\
-                ')
+                if (data[i].id == 1){
+                $("#tabs").append('<li draggable="true" class="li current" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>')
                 if (data[i].type == "OpenAI" || data[i].type == "API"){
                     $("#Contents").append('\
-                    <div class="dialogbox_container" id='+ data[i].id +' style="display: none;">\
+                    <div class="dialogbox_container" id='+ data[i].id +'>\
                         <div class="content" id="output-'+ data[i].id +'"></div>\
                         <div class="prompt_container" id="Prompt-'+ data[i].id +'">\
                         </div>\
@@ -400,22 +399,41 @@ function Refresh_Tabs(){
                 }
                 if (data[i].type == "WebUI"){
                     $("#Contents").append('\
-                    <div id='+ data[i].id +' style="display: none;">\
-                        <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;" src="'+ data[i].url +'"></iframe>\
+                    <div id='+ data[i].id +'">\
+                        <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].url +'"></iframe>\
                     </div>')
                 }
+                }
+                else{
+                    $("#tabs").append('\
+                    <li draggable="true" class="li" id="Tab'+ data[i].id +'"" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>\
+                    ')
+                    if (data[i].type == "OpenAI" || data[i].type == "API"){
+                        $("#Contents").append('\
+                        <div class="dialogbox_container" id='+ data[i].id +' style="display: none;">\
+                            <div class="content" id="output-'+ data[i].id +'"></div>\
+                            <div class="prompt_container" id="Prompt-'+ data[i].id +'">\
+                            </div>\
+                            <div class="input-area">\
+                                </br>\
+                                <div class="txtb">\
+                                    <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +')"></textarea>\
+                                </div>\
+                                <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
+                                <div class="button-area">\
+                                    <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">发 送</button>\
+                                </div>\
+                            </div>\
+                        </div>')
+                    }
+                    if (data[i].type == "WebUI"){
+                        $("#Contents").append('\
+                        <div id='+ data[i].id +' style="display: none;" class="iframe_container">\
+                            <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].url +'"></iframe>\
+                        </div>')
+                    }
+                }
             }
-            $("#tabs").append('\
-                <li draggable="true" class="li current" value="-1" id="Tab-1" onclick="change_tab(`-1`)"><span>小组件</span></li>\
-                ')
-            $("#Contents").append('\
-                <div id="-1">\
-                    <div class="widgets">\
-                        <div id="widgets_container_live" class="widgets_container">\
-                        </div>\
-                    </div>\
-                </div>\
-                ')
             load_active_widgets()
         }
     })
@@ -429,7 +447,7 @@ function load_active_widgets(){
             $("#widgets_container_live").empty()
             for (i in data){
                 $("#widgets_container_live").append('\
-                <div class="widgets_contentbox big">\
+                <div class="widgets_contentbox">\
                     <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
                 </div>\
                 ')
@@ -447,7 +465,7 @@ function load_widgets(){
             for (i in data){
                 $("#widgets_container").append('\
                 <div class="widgets_contentbox">\
-                    <iframe src='+ data[i].widgets_url +' style="width: 100%; height: 95%; margin-right: auto;overflow-y: hidden;" frameborder=0></iframe>\
+                    <iframe src='+ data[i].widgets_url +' " frameborder=0></iframe>\
                 </div>\
                 ')
             }
