@@ -9,6 +9,12 @@ html::before {
   background-size: cover;
   -webkit-background-size:cover;
   -moz-background-size: cover;
+  transition: .6s cubic-bezier(.8, .3, .3, .8);
+}
+
+body {
+  transition: .6s cubic-bezier(.8, .3, .3, .8);
+
 }
 
  .light{
@@ -246,7 +252,7 @@ nav:hover .list li:nth-child(8) span {
   overflow: hidden;
   flex-flow: column;
   border-radius: 15px;
-  background-color: rgba(255, 255, 255, 0.459);
+  background-color: rgba(230, 230, 230, 0.406);
   backdrop-filter: blur(18px);
 }
 .content{
