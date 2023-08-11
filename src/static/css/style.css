@@ -14,7 +14,6 @@ html::before {
 
 body {
   transition: .6s cubic-bezier(.8, .3, .3, .8);
-
 }
 
  .light{
@@ -490,10 +489,10 @@ textarea{
   box-shadow: none;
 } 
 .widgets_container iframe{
-  width: 98%;
-  height: 98%;
+  width: 95%;
+  height: 95%;
   border: 0;
-  overflow: hidden;
+  overflow: auto;
 }
 
 /* Cards */
