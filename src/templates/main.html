@@ -5,7 +5,7 @@
 <title>Realizer v0.1.9 Beta</title>
 {% endblock %}
 {% block body %}
-<body class="light" onload="refresh_website()">
+<body class="" onload="refresh_website()">
 <iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
     <div class="chat">
@@ -270,7 +270,7 @@
         </table>
         <hr class="line">
     </div>
-    <button type="submit" class="add" style="float: left;margin-left: 10px;margin-right: 10px;" onclick="save_settings()">更改</button>
+    <button type="submit" class="save" onclick="save_settings()"><i class="fa fa-edit"></i>更改</button>
     <!-- TODO：更改更改大小 -->
 </div>
 

@@ -720,6 +720,13 @@ textarea{
   border: 1px solid rgba(5, 31, 0, 0.671);
   border-radius:20px;
 }
+.light .save {
+  margin: auto;
+  width: 100%;
+  background-color: rgba(117, 255, 89, 0.671);
+  border: 1px solid rgba(5, 31, 0, 0.671);
+  border-radius:20px;
+}
 .light .stop,.light .deny {
   background-color: rgba(255, 89, 89, 0.671);
   border: 1px solid rgba(31, 0, 0, 0.671);
@@ -999,6 +1006,14 @@ a {
   border: 3px solid #d4d4d4;
   color: #d4d4d4;
 }
+.dark .save {
+  margin: auto;
+  width: 100%;
+  background-color: rgba(117, 255, 89, 0);
+  border-radius:20px;
+  border: 3px solid #d4d4d4;
+  color: #d4d4d4;
+}
 .dark .stop,.dark .deny {
   background-color: rgba(255, 89, 89, 0);
   border: none;
@@ -1079,8 +1094,8 @@ a {
 }
 .dark .account table input{
   border-radius: 20px;
-  background-color: rgba(0, 0, 0, .05);
   border-color: rgba(0, 0, 0, .05);
+  background-color: rgba(255, 255, 255, 0.137);
   transition: .6s cubic-bezier(.8, .3, .3, .8);
   color: #d8d8d8;
 }
@@ -1088,6 +1103,7 @@ a {
   border-radius: 5px;
   box-shadow: #000;
   border-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.137);
   color: #d8d8d8;
 }
 .dark .account table .url{
@@ -1168,11 +1184,14 @@ a {
   max-width: 80vw;
   border-radius: 20px;
   border-color: rgba(0, 0, 0, .05);
+  background-color: rgba(255, 255, 255, 0.137);
   color: #d8d8d8;
 }
 .dark .settings select{
   border-radius: 20px;
   border-color: rgba(0, 0, 0, .05);
+  background-color: rgba(255, 255, 255, 0.137);
+  color: #d8d8d8;
   transition: .6s cubic-bezier(.8, .3, .3, .8);
 }
 .dark .settings .content table thead tr th h3,.settings table td p{
