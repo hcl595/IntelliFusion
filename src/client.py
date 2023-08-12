@@ -395,7 +395,7 @@ if __name__ == "__main__":
         logger.debug("run in debug mode")
         app.run(
             debug=cfg.read("BaseConfig", "Develop"),
-            port=8800, #cfg.read("RemoteConfig", "Port"),
+            port=cfg.read("RemoteConfig", "Port"),
             host=cfg.read("RemoteConfig", "Host"),
         )
     elif cfg.read("BaseConfig", "Develop") == "False" or cfg.read("BaseConfig", "Develop") == False:
