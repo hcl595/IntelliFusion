@@ -382,6 +382,10 @@ if cfg.read("BaseConfig", "Develop") == "True":
     @app.route("/test")
     def DevTest():
         return render_template("test.html")
+    
+    @app.route("/offline")
+    def offline():
+        return render_template("offline.html")
 
 # launch
 if __name__ == "__main__":
@@ -391,7 +395,7 @@ if __name__ == "__main__":
         logger.debug("run in debug mode")
         app.run(
             debug=cfg.read("BaseConfig", "Develop"),
-            port=cfg.read("RemoteConfig", "Port"),
+            port=8800, #cfg.read("RemoteConfig", "Port"),
             host=cfg.read("RemoteConfig", "Host"),
         )
     elif cfg.read("BaseConfig", "Develop") == "False" or cfg.read("BaseConfig", "Develop") == False:

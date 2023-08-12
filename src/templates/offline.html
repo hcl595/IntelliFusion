@@ -1,0 +1,443 @@
+{% extends 'base.html' %}
+<head>
+{% block include %}
+{{ super() }}
+<title>Realizer v0.1.9 Beta</title>
+{% endblock %}
+{% block body %}
+<body class="light">
+<div class="main" id="main-box">
+    <div class="chat">
+        <div id="contentwrap"  class="contentwrap">
+            <ul class="tab" id="tabs">
+                <li draggable="true" class="li" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>OFFLINE</span></li>
+            </ul>
+            <div id="Contents">
+                <div class="dialogbox_container" id='+ data[i].id +'>
+                    <div class="content" id="output-'+ data[i].id +'"></div>
+                    <div class="prompt_container" id="Prompt-'+ data[i].id +'">
+                    </div>
+                    <div class="input-area">
+                        <div class="txtb">
+                            <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +')"></textarea>
+                        </div>
+                        <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />
+                        <div class="button-area">
+                            <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">发 送</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="expand">
+        <div id="widgets_container_live" class="widgets_container">
+            <div class="widgets_contentbox">
+                <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+            </div>
+            <div class="widgets_contentbox">
+                <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+            </div>
+            <div class="widgets_contentbox">
+                <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+            </div>
+            <div class="widgets_contentbox">
+                <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+            </div>
+            <div class="widgets_contentbox">
+                <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+            </div>
+            <div class="widgets_contentbox">
+                <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+            </div>
+            <div class="widgets_contentbox">
+                <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+            </div>
+            <div class="widgets_contentbox">
+                <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="account" id="account-box" style="display: none;">
+    <div style="margin-left:20px">
+        <table>
+            <thead>
+                <tr>
+                    <td>
+                        <h3>模型</h3>                           
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>模型类型</p>
+                    </td>
+                    <td>
+                        <p>模型名称</p>
+                    </td>
+                    <td>
+                        <p>调用地址</p>
+                    </td>
+                    <td>
+                        <p>访问密钥</p>
+                    </td>
+                    <td>
+                        <p>编译地址</p>
+                    </td>
+                    <td>
+                        <p>启动地址</p>
+                    </td>
+                    <td>
+                        <p>运行/暂停</p>
+                    </td>
+                    <td>
+                        <p>删除</p>
+                    </td>
+                    <td>
+                        <p>启动</p>
+                    </td>
+                </tr>
+            </thead>
+            <tbody id="ModelTable">
+            </tbody>
+            <tfoot>
+                <input type="hidden" id="id-1" value="-1">
+                <tr id="AddTr">
+                    <td>
+                        <select id="Type-1" name="type">
+                            <option selected>OpenAI</option>
+                            <option>WebUI</option>
+                            <option>API</option>
+                        </select>
+                    </td>
+                    <td> 
+                        <input type="text" id="Comment-1" placeholder="ChatGLM">
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000">
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none" />
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="LcCompiler-1" placeholder=".venv\scripts\python.exe">
+                    </td>
+                    <td>
+                        <input type="text" class="url" id="LcUrl-1" placeholder=".\venv\launch.py">
+                    </td>
+                    <td>
+                        <button type="submit" class="add" id="add" value="-1"><i class="fa fa-plus"></i></button>
+                    </td>
+                    <td>
+                        <button disabled class="edit"><i class="fa fa-ban"></i></button>
+                    </td>
+                    <td>
+                        <button disabled class="deny"><i class="fa fa-ban"></i></button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="widgets_box" id="widgets-box" style="display: none;">
+    <button class="btn_expand"><i class="fa fa-plus"></i></button>
+    <div id="widgets_container" class="widgets_container">
+        <div class="widgets_contentbox">
+            <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+        </div>
+        <div class="widgets_contentbox">
+            <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+        </div>
+        <div class="widgets_contentbox">
+            <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+        </div>
+        <div class="widgets_contentbox">
+            <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+        </div>
+        <div class="widgets_contentbox">
+            <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+        </div>
+        <div class="widgets_contentbox">
+            <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+        </div>
+        <div class="widgets_contentbox">
+            <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+        </div>
+        <div class="widgets_contentbox">
+            <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+        </div>
+        <div class="widgets_contentbox">
+            <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
+        </div>
+    </div>
+    </div>
+
+<div class="models" id="models-box" style="display: none;">
+    <div class="card_container">
+        <a href="https://github.com/THUDM/ChatGLM-6B">
+            <div class="card_contentbox">
+                    <h2>ChatGLM-6B</h2>
+                    <p>ChatGLM-6B 是一个开源的、支持中英双语的对话语言模型。更多信息请点击本链接</p>
+            </div>
+        </a>
+
+        <a href="https://www.openai.com/">
+            <div class="card_contentbox">
+                <h2>ChatGPT</h2>
+                <p>ChatGPT是由OpenAI开发的大型语言模型,用于进行自然语言交互。更多信息请点击本链接</p>
+            </div>
+        </a>
+
+        <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui">
+            <div class="card_contentbox">
+                <h2>StableDiffusion</h2>
+                <p>Stable Diffusion是一种潜在扩散模型,能够从文本描述中生成详细的图像。更多信息请点击本链接</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="settings" id="setting-box" style="display: none;">
+    <div style="margin-left:20px" class="content">
+        <hr class="line">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <h3>外观设置  </h3>
+                    </th>
+                    <th>
+                        <h3>UI Settings</h3>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>深色模式</p>
+                    </td>
+                    <td>
+                        <p><i class="fa fa-adjust" id="change-adjust"></i></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="line">
+        <table>
+            <tr>
+                <th>
+                    <h3>基础设置  </h3>
+                </th>
+                <th>
+                    <h3>Base Settings</h3>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>语言设置</p>
+                    </td>
+                    <td>
+                        <select id="Language">
+                            <option id="Chinese">Chinese</option>
+                            <option id="Japanese">Japanese</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>活跃检测</p>
+                    </td>
+                    <td>
+                        <div class="switch-container">
+                            <input id="ActiveExamine" type="hidden" value="False">
+                            <input id="ActiveExamine_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('ActiveExamine')">
+                            <span class="switch-area"></span>
+                            <span class="switch-toggle"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>启动超时限制</p>
+                    </td>
+                    <td>
+                        <input type="number" id="Timeout" placeholder="60" value="" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="line">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <h3>分享设置</h3>
+                    </th>
+                    <th>
+                        <h3>Share Setting</h3>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>远程地址</p>
+                    </td>
+                    <td>
+                        <input type="text" id="Host" placeholder="127.0.0.1" value="" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>端口</p>
+                    </td>
+                    <td>
+                        <input type="number" id="Port" placeholder="5000" value="" />
+                    </td>
+                </tr>
+            </thead>
+        </table>
+        <hr class="line">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <h3>开发者设置  </h3>
+                    </th>
+                    <th>
+                        <h3>Developer Settings</h3>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>DeBug模式</p>
+                    </td>
+                    <td>
+                        <div class="switch-container">
+                            <input id="Develop" type="hidden" value="False">
+                            <input id="Develop_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('Develop')">
+                            <span class="switch-area"></span>
+                            <span class="switch-toggle"></span>
+                        </div>
+                    </td>
+                </tr>
+            </thead>
+        </table>
+        <hr class="line">
+    </div>
+    <button type="submit" class="save" onclick="save_settings()"><i class="fa fa-edit"></i>更改</button>
+</div>
+
+<div class="copyright" id="rights-box" style="display: none;" type="checkbox">
+    <button class="btn"><i class="fa fa-close"></i></button>
+    <div id="box">
+        <img style="margin: 10px;width: 150px;height: 150px;" src="/static/res/icon-o.ico" alt="iF">
+        <h3 style="margin: 50px;">inteliFusi0n Version 0.1.9(202308032000) <br>Developer Alpha</h3>
+        <h5 style="margin: 50px;width: 100px;">use bootstrap5 framework<br>use E charts</h4>
+        <a style="width: 100px;height: 50px;" href="https://www.github.com/hcl595/intellifusion/">
+            <button class="Hyperlink">learn more...</button>
+        </a>
+        <h5  style="margin: 30px;">
+        </h5>
+    </div>
+</div>
+
+<div class="loadingOne" id="loading" style="display: none;">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<div class="AlertPlaceholder" id="liveAlertPlaceholder">
+
+</div>
+
+</body>
+<script type="text/javascript">
+$("#change-adjust").on("click",function(){
+    var now = $("body").attr("class")
+    if (now == "light"){
+        $("body").removeClass("light")
+        $("body").addClass("dark")
+    }
+    if (now == "dark"){
+        $("body").removeClass("dark")
+        $("body").addClass("light")
+    }
+})
+
+//send request
+$("#add").on('click',function() {
+    $("#loading").fadeIn(100)
+    $('#add').attr("disabled",true)
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: 'add' ,
+            number: $('#id').val() ,
+            type: $('#Type-1').val() ,
+            comment: $('#Comment-1').val() ,
+            url: $('#Url-1').val() ,
+            APIkey: $('#APIkey-1').val() ,
+            LcCompiler: $('#LcCompiler-1').val() ,
+            LcUrl: $('#LcUrl-1').val() ,
+        },
+        success: function(response) {
+            if (response.response){
+                alert("添加成功","success")
+                $("#loading").fadeOut(100)
+                $('#add').removeAttr("disabled")
+            }
+            else{
+                alert("添加失败","danger")
+                $("#loading").fadeOut(100)
+                $('#add').removeAttr("disabled")
+            }
+            $('#Comment-1').val("")
+            $('#Url-1').val("")
+            $('#APIkey-1').val("")
+            $('#LcCompiler-1').val("")
+            $('#LcUrl-1').val("")
+            Refresh_ModelList()
+        }
+    });
+});
+
+//alert message
+const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+
+const alert = (message, type) => {
+  const wrapper = document.createElement('div')
+  wrapper.innerHTML = [
+    `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+    `   <div>${message}</div>`,
+    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+    '</div>'
+  ].join('')
+  alertPlaceholder.append(wrapper)
+  setTimeout(function(){
+    wrapper.remove()
+  },5000)
+}
+
+var int = setInterval(function(){
+    refresh_website()
+  },1000000)
+
+</script>
+{% endblock %}
+{% block footer %}
+{% endblock %}
+</html>

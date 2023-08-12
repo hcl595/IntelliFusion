@@ -381,7 +381,7 @@ function Refresh_Tabs(){
                 }
                 else{
                     $("#tabs").append('\
-                    <li draggable="true" class="li" id="Tab'+ data[i].id +'"" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>\
+                    <li draggable="true" class="li" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>\
                     ')
                     if (data[i].type == "OpenAI" || data[i].type == "API"){
                         $("#Contents").append('\
