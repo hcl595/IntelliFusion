@@ -23,7 +23,8 @@ def setup():
             logger.info("create config.json")
             data = {
                 "BaseConfig": {
-                    "devmode": "False",
+                    "Theme": "light",
+                    "Develop": "False",
                     "ActiveExamine": "True",
                     "TimeOut": 60, 
                     "Language":"Chinese",
