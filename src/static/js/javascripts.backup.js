@@ -179,6 +179,32 @@ function TypeAnime(input){ //打字机动画
     var c = setInterval(myprint, 100);//定时器
 }
 
+function msgshow(choose){ //Toast显示错误
+    if (choose == 1)
+    showToast('{{ error }}',800);
+}
+
+function showToast(msg,duration){ //Toast弹窗
+    duration=isNaN(duration)?3000:duration;
+    var m = document.createElement('div');
+    m.innerHTML = msg;
+    m.style.cssText="width:100px; min-width:180px; background:#000; opacity:0.6; height:auto;min-height: 30px; color:#fff; line-height:30px; text-align:center; border-radius:4px; position:fixed; top:50%; left:45.5%; z-index:999999;";
+    document.body.appendChild(m);
+    setTimeout(function() {
+        var d = 0.5;
+        m.style = '-webkit-transform ' + d + 's ease-in, opacity ' + d + 's ease-in';
+        m.style.opacity = '0';
+        setTimeout(function() { document.body.removeChild(m) }, d * 10);
+    }, duration);
+}
+
+function edit_msg(edit_judge_msg){ //Toast弹窗一体化
+if (edit_judge_msg == 1)
+    showToast('{{ edit_msg }}',800);
+    let height = document.querySelector('.content').scrollHeight;
+    document.querySelector(".content").scrollTop = height;
+}
+
 //版本号
 $(document).ready(function(){
     $("button").click(function(){
@@ -242,7 +268,7 @@ function commit_model(id,operate){
         },
         success: function(response) {
             if (response.response){
-                alert(response.message,"success")
+                alert(response.message,"warning")
                 $("#loading").fadeOut(100)
                 $('#'+operate+id).removeAttr("disabled")
             }
@@ -284,15 +310,10 @@ function SendInput(id) {
     }
 }
 
-// function edit_settings()
-
 // Refresh Data
 function refresh_website(){
     Refresh_ModelList();
     Refresh_Tabs();
-    load_active_widgets();
-    load_widgets();
-    load_settings();
 }
 
 function Refresh_ModelList(){
@@ -352,11 +373,12 @@ function Refresh_Tabs(){
             $("#tabs").empty()
             $("#Contents").empty()
             for (i in data){
-                if (data[i].id == 1){
-                $("#tabs").append('<li draggable="true" class="li current" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>')
+                $("#tabs").append('\
+                <li draggable="true" class="li" id="Tab'+ data[i].id +'"" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>\
+                ')
                 if (data[i].type == "OpenAI" || data[i].type == "API"){
                     $("#Contents").append('\
-                    <div class="dialogbox_container" id='+ data[i].id +'>\
+                    <div class="dialogbox_container" id='+ data[i].id +' style="display: none;">\
                         <div class="content" id="output-'+ data[i].id +'"></div>\
                         <div class="prompt_container" id="Prompt-'+ data[i].id +'">\
                         </div>\
@@ -374,149 +396,32 @@ function Refresh_Tabs(){
                 }
                 if (data[i].type == "WebUI"){
                     $("#Contents").append('\
-                    <div id='+ data[i].id +'">\
-                        <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].url +'"></iframe>\
+                    <div id='+ data[i].id +' style="display: none;">\
+                        <iframe allow="autoplay *; encrypted-media *;" style="height:100vh;width:100%;overflow:hidden;background:transparent;" src="'+ data[i].url +'"></iframe>\
                     </div>')
                 }
-                }
-                else{
-                    $("#tabs").append('\
-                    <li draggable="true" class="li" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>\
-                    ')
-                    if (data[i].type == "OpenAI" || data[i].type == "API"){
-                        $("#Contents").append('\
-                        <div class="dialogbox_container" id='+ data[i].id +' style="display: none;">\
-                            <div class="content" id="output-'+ data[i].id +'"></div>\
-                            <div class="prompt_container" id="Prompt-'+ data[i].id +'">\
-                            </div>\
-                            <div class="input-area">\
-                                </br>\
-                                <div class="txtb">\
-                                    <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +')"></textarea>\
-                                </div>\
-                                <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
-                                <div class="button-area">\
-                                    <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">发 送</button>\
-                                </div>\
-                            </div>\
-                        </div>')
-                    }
-                    if (data[i].type == "WebUI"){
-                        $("#Contents").append('\
-                        <div id='+ data[i].id +' style="display: none;" class="iframe_container">\
-                            <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].url +'"></iframe>\
-                        </div>')
-                    }
-                }
             }
-            load_active_widgets()
+            $("#tabs").append('\
+                <li draggable="true" class="li current" value="-1" id="Tab-1" onclick="change_tab(`-1`)"><span>小组件</span></li>\
+                ')
+            $("#Contents").append('\
+                <div id="-1">\
+                    <div class="widgets">\
+                        <div id="widgets_container_live" class="widgets_container">\
+                        </div>\
+                    </div>\
+                </div>\
+                ')
         }
     })
 }
 
 function load_active_widgets(){
     $.ajax({
-        url: "/GetActiveWidgets",
-        method: "POST",
-        success: function(data){
-            $("#widgets_container_live").empty()
-            for (i in data){
-                $("#widgets_container_live").append('\
-                <div class="widgets_contentbox">\
-                    <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
-                </div>\
-                ')
-            }
-        }
-    })
-}
-
-function load_widgets(){
-    $.ajax({
         url: "/GetWidgets",
-        method: "POST",
-        success: function(data){
-            $("#widgets_container").empty()
-            for (i in data){
-                $("#widgets_container").append('\
-                <div class="widgets_contentbox">\
-                    <iframe src='+ data[i].widgets_url +' " frameborder=0></iframe>\
-                </div>\
-                ')
-            }
-        }
     })
 }
 
-function switch_load(id){
-    var now_value = $("#"+id).val()
-    if (now_value == "True"){
-        $("#"+id).val("False")
-    }
-    if (now_value == "False"){
-        $("#"+id).val("True")
-    }
-}
-
-function save_settings(){
-    $.ajax({
-        url: "/EditSetting",
-        method : "POST",
-        data: {
-            Theme : $("body").attr("class"),
-            Language : $("#Language").val(),
-            ActiveExamine : $("#ActiveExamine").val(),
-            Timeout : $("#Timeout").val(),
-            Host : $("#Host").val(),
-            Port : $("#Port").val(),
-            Develop : $("#Develop").val(),
-        },
-    success: function(data){
-        if (data.response == true){
-            alert("保存成功","success")
-            alert("部分更改将在重启程序后生效","warning")
-            load_settings()
-        }
-    }
-    })
-}
-
-function load_settings(){
-    $.ajax({
-        url: "/GetSetting",
-        method : "POST",
-    success: function(data){
-        if (data.response == "true"){
-            var now = $("body").attr("class")
-            if (now == data.Theme){}
-            else{
-                $("body").removeClass(now)
-                $("body").addClass(data.Theme)
-            }
-            $("#"+data.Language).attr("selected",true)
-            $("#ActiveExamine").val(data.ActiveExamine)
-            if (data.ActiveExamine == "True"){
-                $("#ActiveExamine_Checkbox").attr("checked",true)
-            }
-            else{
-                $("#ActiveExamine_Checkbox").removeAttr("checked")
-            }
-            if (data.Develop == "True"){
-                $("#Develop_Checkbox").attr("checked",true)
-            }
-            else{
-                $("#Develop_Checkbox").removeAttr("checked")
-            }
-            $("#ActiveExamine").val(data.ActiveExamine)
-            $("#Develop").val(data.Develop)
-            $("#Timeout").val(data.Timeout)
-            $("#Host").val(data.Host)
-            $("#Port").val(data.Port)
-            $("Develop").val(data.Develop)
-        }
-    }
-    })
-}
 
 //CommitModel
 function loading(){

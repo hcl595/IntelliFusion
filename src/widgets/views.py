@@ -11,6 +11,10 @@ def CorePercent():
 def RAMPercent():
     return render_template("Memory_Percent.html") 
 
+@widgets_blue.route('/GPU_Percent')
+def GPURAMPercent():
+    return render_template("GPU_Percent.html") 
+
 @widgets_blue.post('/Get_CPU_Percent')
 def Get_CPU_Precent():
     cpu_percent = psutil.cpu_percent()
@@ -20,3 +24,18 @@ def Get_CPU_Precent():
 def Get_RAM_Precent():
     memory_percent = psutil.virtual_memory().percent
     return jsonify({'data':memory_percent})
+
+@widgets_blue.post('/Get_GPU_Percent')
+def Get_GPU_RAM_Precent():
+    try:
+        import pynvml
+        pynvml.nvmlInit()
+        handler = pynvml.nvmlDeviceGetHandleByIndex(0)
+        meminfo = pynvml.nvmlDeviceGetMemoryInfo(handler)
+        total = round(meminfo.total / 1024 / 1024, 2)
+        used = round(meminfo.used / 1024 / 1024, 2)
+        GPU_RAM_Per = round(used / total * 100, 1)
+        return jsonify({'data':GPU_RAM_Per})
+    except ImportError:
+        memory_percent = psutil.virtual_memory().percent
+        return jsonify({'data':memory_percent})
