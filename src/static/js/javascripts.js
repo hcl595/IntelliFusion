@@ -179,32 +179,6 @@ function TypeAnime(input){ //打字机动画
     var c = setInterval(myprint, 100);//定时器
 }
 
-function msgshow(choose){ //Toast显示错误
-    if (choose == 1)
-    showToast('{{ error }}',800);
-}
-
-function showToast(msg,duration){ //Toast弹窗
-    duration=isNaN(duration)?3000:duration;
-    var m = document.createElement('div');
-    m.innerHTML = msg;
-    m.style.cssText="width:100px; min-width:180px; background:#000; opacity:0.6; height:auto;min-height: 30px; color:#fff; line-height:30px; text-align:center; border-radius:4px; position:fixed; top:50%; left:45.5%; z-index:999999;";
-    document.body.appendChild(m);
-    setTimeout(function() {
-        var d = 0.5;
-        m.style = '-webkit-transform ' + d + 's ease-in, opacity ' + d + 's ease-in';
-        m.style.opacity = '0';
-        setTimeout(function() { document.body.removeChild(m) }, d * 10);
-    }, duration);
-}
-
-function edit_msg(edit_judge_msg){ //Toast弹窗一体化
-if (edit_judge_msg == 1)
-    showToast('{{ edit_msg }}',800);
-    let height = document.querySelector('.content').scrollHeight;
-    document.querySelector(".content").scrollTop = height;
-}
-
 //版本号
 $(document).ready(function(){
     $("button").click(function(){
@@ -268,7 +242,7 @@ function commit_model(id,operate){
         },
         success: function(response) {
             if (response.response){
-                alert(response.message,"warning")
+                alert(response.message,"success")
                 $("#loading").fadeOut(100)
                 $('#'+operate+id).removeAttr("disabled")
             }
@@ -318,6 +292,7 @@ function refresh_website(){
     Refresh_Tabs();
     load_active_widgets();
     load_widgets();
+    load_settings();
 }
 
 function Refresh_ModelList(){
@@ -481,6 +456,66 @@ function switch_load(id){
     if (now_value == "False"){
         $("#"+id).val("True")
     }
+}
+
+function save_settings(){
+    $.ajax({
+        url: "/EditSetting",
+        method : "POST",
+        data: {
+            Theme : $("body").attr("class"),
+            Language : $("#Language").val(),
+            ActiveExamine : $("#ActiveExamine").val(),
+            Timeout : $("#Timeout").val(),
+            Host : $("#Host").val(),
+            Port : $("#Port").val(),
+            Develop : $("#Develop").val(),
+        },
+    success: function(data){
+        if (data.response == true){
+            alert("保存成功","success")
+            alert("部分更改将在重启程序后生效","warning")
+            load_settings()
+        }
+    }
+    })
+}
+
+function load_settings(){
+    $.ajax({
+        url: "/GetSetting",
+        method : "POST",
+    success: function(data){
+        if (data.response == "true"){
+            var now = $("body").attr("class")
+            if (now == data.Theme){}
+            else{
+                $("body").removeClass(now)
+                $("body").addClass(data.Theme)
+            }
+            $("#"+data.Language).attr("selected",true)
+            $("#ActiveExamine").val(data.ActiveExamine)
+            if (data.ActiveExamine == "True"){
+                $("#ActiveExamine_Checkbox").attr("checked",true)
+            }
+            else{
+                $("#ActiveExamine_Checkbox").removeAttr("checked")
+            }
+            if (data.Develop == "True"){
+                $("#Develop_Checkbox").attr("checked",true)
+            }
+            else{
+                $("#Develop_Checkbox").removeAttr("checked")
+            }
+            $("#ActiveExamine").val(data.ActiveExamine)
+            $("#Develop").val(data.Develop)
+            $("#Timeout").val(data.Timeout)
+            $("#Host").val(data.Host)
+            $("#Port").val(data.Port)
+            $("Develop").val(data.Develop)
+        }
+    }
+    })
 }
 
 //CommitModel

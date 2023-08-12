@@ -5,7 +5,7 @@
 <title>Realizer v0.1.9 Beta</title>
 {% endblock %}
 {% block body %}
-<body class="dark" onload="refresh_website()">
+<body class="light" onload="refresh_website()">
 <iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
     <div class="chat">
@@ -17,7 +17,7 @@
         </div>
     </div>
     <div class="expand">
-        <button class="btn_expand"><i class="fa fa-plus"></i></button>
+        <!-- <button class="btn_expand"><i class="fa fa-plus"></i></button> -->
         <div id="widgets_container_live" class="widgets_container">
         </div>
     </div>
@@ -108,10 +108,10 @@
 </div>
 
 <div class="widgets_box" id="widgets-box" style="display: none;">
-        <button style="float: right;width: 100px;"><i class="fa fa-plus"></i></button>
-        <div id="widgets_container" class="widgets_container">
+    <button class="btn_expand"><i class="fa fa-plus"></i></button>
+    <div id="widgets_container" class="widgets_container">
     </div>
-</div>
+    </div>
 
 <div class="models" id="models-box" style="display: none;">
     <div class="card_container">
@@ -181,8 +181,8 @@
                     </td>
                     <td>
                         <select id="Language">
-                            <option>Chinese</option>
-                            <option>中文</option>
+                            <option id="Chinese">Chinese</option>
+                            <option id="Japanese">Japanese</option>
                         </select>
                     </td>
                 </tr>
@@ -192,7 +192,8 @@
                     </td>
                     <td>
                         <div class="switch-container">
-                            <input type="checkbox" class="hidden-checkbox" name="" value="">
+                            <input id="ActiveExamine" type="hidden" value="False">
+                            <input id="ActiveExamine_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('ActiveExamine')">
                             <span class="switch-area"></span>
                             <span class="switch-toggle"></span>
                         </div>
@@ -203,7 +204,7 @@
                         <p>启动超时限制</p>
                     </td>
                     <td>
-                        <input type="number" name="setTimeout" placeholder="60" value='{{ TimeOut }}' />
+                        <input type="number" id="Timeout" placeholder="60" value="" />
                     </td>
                 </tr>
             </tbody>
@@ -213,20 +214,20 @@
             <thead>
                 <tr>
                     <th>
-                        <h3>远程设置</h3>
+                        <h3>分享设置</h3>
                     </th>
                     <th>
-                        <h3>Remote Setting</h3>
+                        <h3>Share Setting</h3>
                     </th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>
-                        <p>iPv4地址</p>
+                        <p>远程地址</p>
                     </td>
                     <td>
-                        <input type="text" name="iPv4" placeholder="127.0.0.1" value={{ host }} />
+                        <input type="text" id="Host" placeholder="127.0.0.1" value="" />
                     </td>
                 </tr>
                 <tr>
@@ -234,7 +235,7 @@
                         <p>端口</p>
                     </td>
                     <td>
-                        <input type="number" name="Port" placeholder="5000" value={{ port }} />
+                        <input type="number" id="Port" placeholder="5000" value="" />
                     </td>
                 </tr>
             </thead>
@@ -257,15 +258,9 @@
                         <p>DeBug模式</p>
                     </td>
                     <td>
-                        <div id="switch-Debug-container" class="switch-container">
-                            {% if DebugMode == "True" %}
-                                <input id="DebugMode" name="DebugMode" type="hidden" value="True">
-                                <input type="checkbox" checked class="hidden-checkbox" onclick="switch_load('DebugMode')">
-                            {% endif %}
-                            {% if DebugMode == "False" %}
-                                <input id="DebugMode" name="DebugMode" type="hidden" value="False">
-                                <input type="checkbox" class="hidden-checkbox" onclick="switch_load('DebugMode')">
-                            {% endif %}
+                        <div class="switch-container">
+                            <input id="Develop" type="hidden" value="False">
+                            <input id="Develop_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('Develop')">
                             <span class="switch-area"></span>
                             <span class="switch-toggle"></span>
                         </div>
@@ -275,7 +270,7 @@
         </table>
         <hr class="line">
     </div>
-    <button type="submit" class="add" style="float: right;margin-left: 10px;margin-right: 10px;" onclick="loading()">更改</button>
+    <button type="submit" class="add" style="float: right;margin-left: 10px;margin-right: 10px;" onclick="save_settings()">更改</button>
     <!-- TODO：更改更改大小 -->
 </div>
 

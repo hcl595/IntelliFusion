@@ -52,9 +52,9 @@ def root():
         "main.html",
         NeedLogin=NeedLogin,
         # historys=histroys,
-        host=cfg.read("RemoteConfig", "host"),
-        port=cfg.read("RemoteConfig", "port"),
-        DebugMode=cfg.read("BaseConfig", "devmode"),
+        host=cfg.read("RemoteConfig", "Host"),
+        port=cfg.read("RemoteConfig", "Port"),
+        DebugMode=cfg.read("BaseConfig", "Develop"),
         TimeOut=cfg.read("BaseConfig", "TimeOut"),
     )
 
@@ -109,15 +109,27 @@ def GetWidgets():
 
 @app.post("/EditSetting")  # 编辑设置
 def EditSetting():
-    InputiPv4 = request.form.get("iPv4")
-    InputPort = request.form.get("Port")
-    InputDebugMode = request.form.get("DebugMode")
-    logger.info("{}",InputDebugMode)
-    cfg.write("BaseConfig", "devmode", InputDebugMode)
-    cfg.write("RemoteConfig", "host", InputiPv4)
-    cfg.write("RemoteConfig", "port", InputPort)
+    cfg.write("BaseConfig","Theme", request.form.get("Theme"))
+    cfg.write("BaseConfig","Language", request.form.get("Language"))
+    cfg.write("BaseConfig","Timeout", request.form.get("Timeout"))
+    cfg.write("BaseConfig","ActiveExamine", request.form.get("ActiveExamine"))
+    cfg.write("BaseConfig", "Develop", request.form.get("Develop"))
+    cfg.write("RemoteConfig", "Host", request.form.get("Host"))
+    cfg.write("RemoteConfig", "Port", request.form.get("Port"))
     return jsonify({"response": True,})
 
+@app.post("/GetSetting")
+def GetSetting():
+    return jsonify({
+        "response": "true",
+        "Theme": cfg.read("BaseConfig","Theme"),
+        "Language": cfg.read("BaseConfig","Language"),
+        "ActiveExamine": cfg.read("BaseConfig","ActiveExamine"),
+        "Timeout": cfg.read("BaseConfig","Timeout"),
+        "Host": cfg.read("RemoteConfig","Host"),
+        "Port": cfg.read("RemoteConfig","Port"),
+        "Develop": cfg.read("BaseConfig","Develop"),
+        })
 
 @app.post("/exchange")
 def AddModel():
@@ -366,27 +378,25 @@ def get_historys(model:str, userinput:str):
     result = {t:ModelListDict[t] for (t,_) in result}
 
 
-if cfg.read("BaseConfig", "devmode") == "True":
+if cfg.read("BaseConfig", "Develop") == "True":
     @app.route("/test")
     def DevTest():
         return render_template("test.html")
 
 # launch
 if __name__ == "__main__":
-    logger.info(
-        "Application(v0.1.9a) Launched!", cfg.read("BaseConfig", "devmode")
-    )
-    if cfg.read("BaseConfig", "devmode") == "True":
+    logger.info("Application(v0.1.9 ∆) Launched!")
+    if cfg.read("BaseConfig", "Develop") == "True":
         logger.level("DEBUG")
         logger.debug("run in debug mode")
         app.run(
-            debug=cfg.read("BaseConfig", "devmode"),
-            port=cfg.read("RemoteConfig", "port"),
-            host=cfg.read("RemoteConfig", "host"),
+            debug=cfg.read("BaseConfig", "Develop"),
+            port=cfg.read("RemoteConfig", "Port"),
+            host=cfg.read("RemoteConfig", "Host"),
         )
-    elif cfg.read("BaseConfig", "devmode") == "False" or cfg.read("BaseConfig", "devmode") == False:
+    elif cfg.read("BaseConfig", "Develop") == "False" or cfg.read("BaseConfig", "Develop") == False:
         logger.debug("run in GUI mode")
-        print(cfg.read("BaseConfig", "devmode"))
+        print(cfg.read("BaseConfig", "Develop"))
         try:
             ctypes.windll.user32.ShowWindow(
                 ctypes.windll.kernel32.GetConsoleWindow(), 0
@@ -396,7 +406,7 @@ if __name__ == "__main__":
         FlaskUI(
             app=app,
             server="flask",
-            port=cfg.read("RemoteConfig", "port"),
+            port=cfg.read("RemoteConfig", "Port"),
             width=1800,
             height=1000,
         ).run()
