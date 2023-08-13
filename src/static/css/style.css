@@ -552,7 +552,7 @@ textarea{
   border-radius: 15px;
   width:30px;
   height:100%;
-  overflow: auto;
+  overflow: hidden;
   flex:2;
 }
 
@@ -706,7 +706,22 @@ textarea{
   right: 10px;
   top: 10px;
 }
-
+/* 拖拽 */
+.wigets_box ul {
+  list-style-type: disc;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
+}
+.wigets_box li {
+  height: 50px;
+  line-height: 50px;
+  border: 1px solid #aaaaaa;
+  width: 200px;
+  padding: 0 10px;
+}
 
 /* Others */
 .light .run {
@@ -721,8 +736,10 @@ textarea{
   border-radius:20px;
 }
 .light .save {
-  margin: auto;
-  width: 100%;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 20px;
+  width: 100px;
   background-color: rgba(117, 255, 89, 0.671);
   border: 1px solid rgba(5, 31, 0, 0.671);
   border-radius:20px;
@@ -1007,8 +1024,10 @@ a {
   color: #d4d4d4;
 }
 .dark .save {
-  margin: auto;
-  width: 100%;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 20px;
+  width: 100px;
   background-color: rgba(117, 255, 89, 0);
   border-radius:20px;
   border: 3px solid #d4d4d4;
@@ -1046,7 +1065,7 @@ a {
   background-color: rgba(32, 32, 32, 0.15);
   width:30px;
   height:100%;
-  overflow: auto;
+  overflow: hidden;
   flex:2;
 }
 

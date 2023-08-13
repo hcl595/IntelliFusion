@@ -383,6 +383,10 @@ if cfg.read("BaseConfig", "Develop") == "True":
     @app.route("/test")
     def DevTest():
         return render_template("test.html")
+    
+    @app.route("/offline")
+    def offline():
+        return render_template("offline.html")
 
 # launch
 if __name__ == "__main__":
