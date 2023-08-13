@@ -220,8 +220,8 @@ nav:hover .list li:nth-child(8) span {
 }
 .light ul.tab li.li {
   padding: 0px 25px 0px;
-  border-top-left-radius: 100px;
-  border-top-right-radius: 100px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
   font-size: 13px;
   height: 40px;
   line-height: 40px;
@@ -232,7 +232,8 @@ nav:hover .list li:nth-child(8) span {
   background-color: rgba(0, 0, 0, .05);
 }
 .light ul.tab li.current {
-  border-radius: 14px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
   border-bottom: 0px;
   border-top: 2px solid #7599DE;
   font-size: 13px;
@@ -470,7 +471,7 @@ textarea{
   position: relative;
   display: inline-block;
   background-color: rgba(255, 255, 255, 0.486);
-  box-shadow: 5px 5px 10px 0px lightgray;
+  box-shadow: none;
   border-radius: 10px;
   transition: 0.3s;
   word-break:break-word;
@@ -486,8 +487,8 @@ textarea{
   color: black;
 }
 .widgets_contentbox:hover {
-  scale: 0.97;
-  box-shadow: none;
+  scale: 1.03;
+  box-shadow: 5px 5px 10px 0px lightgray;
 } 
 .widgets_container iframe{
   width: 95%;
