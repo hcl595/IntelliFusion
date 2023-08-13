@@ -19,7 +19,8 @@ from flask import (Flask, json, jsonify, render_template, request,)
 from flaskwebgui import FlaskUI, close_application
 from thefuzz import process, fuzz
 from loguru import logger
-from peewee import InternalError
+from langchain.llms import OpenAI
+from langchain.chains import ConversationChain
 
 from config import Settings, Prompt
 from data import Models, History, Widgets
