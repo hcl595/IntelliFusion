@@ -232,8 +232,8 @@ nav:hover .list li:nth-child(8) span {
   background-color: rgba(0, 0, 0, .05);
 }
 .light ul.tab li.current {
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   border-bottom: 0px;
   border-top: 2px solid #7599DE;
   font-size: 13px;
@@ -252,13 +252,12 @@ nav:hover .list li:nth-child(8) span {
   display: flex;
   overflow: hidden;
   flex-flow: column;
-  border-radius: 15px;
   background-color: rgba(230, 230, 230, 0.406);
   backdrop-filter: blur(18px);
 }
-.content{
+.dialogbox_container .content{
   max-width: 100%;
-  height: 80vh;
+  height: 79vh;
   overflow-y: auto;
 }
 .content:hover::-webkit-scrollbar-thumb{
@@ -338,35 +337,35 @@ nav:hover .list li:nth-child(8) span {
 }
 .input-area{
   border-top:0.3px solid #e0e0e0;
-  height: 80%;
   width: 100%;
+  height: 80%;
   display: flex;
   background-color: #fff;
-  border-radius: 1rem;
+  border-radius: 15px;
+  transition: .4s ease-in-out;
+}
+.txtb {
+  width: 100%;
+  height: 100%;
 }
 textarea{
-  flex: 5;
   padding: 5px;
   font-size: 14px;
-  border: none;
   cursor: pointer;
-  overflow: auto;
   outline:none;
   resize:none;
-  border-radius: 1rem;
-  max-width: 100vw;
-  min-width: 50vw;
+  width: 100%;
   margin-top:10px;
   margin-left: 10px;
   border: 0;
   border-radius: 4px;
 }
 .button-area{
-  flex: 1;
   display: flex;
+  float: left;
   height: 40px;
   margin-top: 3px;
-  margin-right: 10px;
+  margin-left: 10px;
   line-height: 40px;
   padding: 5px;
   justify-content: flex-end;
@@ -376,6 +375,8 @@ textarea{
   margin-right: 5px;
   width: 80px;
   height: 40px;
+  background-color: #027cff;
+  color: white;
   border: none;
   outline: none;
   border-radius: 15px;
@@ -464,9 +465,12 @@ textarea{
   overflow: auto;
   float: right;
 }
+.widgets_container:first-child{
+  margin-top: 30px;
+}
 .widgets_contentbox {
-  width: 320px;
-  height: 320px;
+  width: 300px;
+  height: 300px;
   margin: 10px;
   position: relative;
   display: inline-block;
@@ -491,10 +495,10 @@ textarea{
   box-shadow: 5px 5px 10px 0px lightgray;
 } 
 .widgets_container iframe{
-  width: 95%;
-  height: 95%;
+  width: 100%;
+  height: 100%;
   border: 0;
-  overflow: auto;
+  overflow: hidden;
 }
 
 /* Cards */
@@ -636,7 +640,7 @@ textarea{
 
 .light .settings {
   height: 100vh;
-  min-width: 40px;
+  min-width: 40vw;
   max-width: 100%;
   display: flex;
   flex-flow: column;
@@ -650,7 +654,7 @@ textarea{
 }
 .light .settings .content{
   max-width: 100%;
-  max-height: 90vh;
+  max-height: 100%;
   overflow-y: auto;
 }
 .light .settings .content:hover::-webkit-scrollbar-thumb{
@@ -740,7 +744,7 @@ textarea{
 .light .save {
   margin-top: auto;
   margin-bottom: auto;
-  margin-left: 20px;
+  margin-left: 85vw;
   width: 100px;
   background-color: rgba(117, 255, 89, 0.671);
   border: 1px solid rgba(5, 31, 0, 0.671);
@@ -844,6 +848,12 @@ a {
 	        transition: All 0.3s ease; 
 }
 
+.alert {
+  transition: .5 ease-in-out;
+}
+.alert .remove {
+  transform: scaleY(100px);
+}
 
 
 /* Dark */
