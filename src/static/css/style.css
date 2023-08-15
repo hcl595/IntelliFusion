@@ -638,6 +638,31 @@ textarea{
   border-radius: 12px;
 }
 
+/* 拖拽 */
+.light .widgets_container ul {
+  border-radius: 15px;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
+  width: 80%;
+}
+.light .widgets_container li {
+  height: 50px;
+  line-height: 50px;
+  border: 1px solid #aaaaaa;
+  border-radius: 15px;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.light .widgets_container li i {
+  float: right;
+  margin-top: 5px;
+  font-size: 30px;
+}
+
 .light .settings {
   height: 100vh;
   min-width: 40vw;
@@ -711,22 +736,6 @@ textarea{
   position: fixed;
   right: 10px;
   top: 10px;
-}
-/* 拖拽 */
-.wigets_box ul {
-  list-style-type: disc;
-  margin-block-start: 0;
-  margin-block-end: 0;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-  padding-inline-start: 0;
-}
-.wigets_box li {
-  height: 50px;
-  line-height: 50px;
-  border: 1px solid #aaaaaa;
-  width: 200px;
-  padding: 0 10px;
 }
 
 /* Others */
@@ -1179,6 +1188,32 @@ a {
   border-radius: 12px;
 }
 
+/* 拖拽 */
+.dark .widgets_container ul {
+  border-radius: 15px;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
+  width: 80%;
+}
+.dark .widgets_container li {
+  height: 50px;
+  line-height: 50px;
+  border: 1px solid rgba(230, 235, 240, .3);
+  color: #ffffff;
+  border-radius: 15px;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.dark .widgets_container li i {
+  float: right;
+  margin-top: 5px;
+  font-size: 30px;
+}
+
 .dark .settings {
   height: 100vh;
   min-width: 40px;
@@ -1247,28 +1282,4 @@ a {
   background-color: #a1abb8;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
-}
-
-.widgets_container ul {
-  list-style-type: disc;
-  margin-block-start: 0;
-  margin-block-end: 0;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-  padding-inline-start: 0;
-  width: 80%;
-}
-.widgets_container li {
-  height: 50px;
-  line-height: 50px;
-  border: 1px solid #aaaaaa;
-  width: 100%;
-  padding: 0 10px;
-}
-
-.oneonefour{
-  max-width: 100%;
-  display: flex;
-  justify-content: center;
-  float: right;
 }

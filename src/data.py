@@ -5,7 +5,7 @@ from peewee import *
 # 基础类
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
-DATABASE_FILE = DATA_DIR / "models.sqlite"
+DATABASE_FILE = DATA_DIR / "models.v2.sqlite"
 
 from peewee import *
 
@@ -34,6 +34,7 @@ class Models(BaseModel):
 class Widgets(BaseModel):
     order = IntegerField(column_name="order",)
     avaliable =  BooleanField(column_name="avaliable")
+    widgets_name = CharField(column_name="name",)
     widgets_url = CharField(column_name="URL",)
 
 class History(BaseModel):
@@ -55,12 +56,14 @@ def SetupDatabase():
     BaseModel.save()
     BaseWidgets = Widgets(
         order=1,
+        widgets_name="内置核心小组件",
         avaliable = True,
         widgets_url = "/widgets/Core_Percent",
     )
     BaseWidgets.save()
     BaseWidgets = Widgets(
         order=2,
+        widgets_name="内置内存小组件",
         avaliable = True,
         widgets_url = "/widgets/Ram_Percent",
     )

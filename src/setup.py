@@ -7,7 +7,7 @@ from data import SetupDatabase
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
 CONFIG_FILE = DATA_DIR / "config.json"
-DATABASE_FILE = DATA_DIR / "models.sqlite"
+DATABASE_FILE = DATA_DIR / "models.v2.sqlite"
 LOG_FILE = DATA_DIR / "models.log"
 
 def setup():

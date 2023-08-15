@@ -439,9 +439,11 @@ function load_widgets(){
             $("#widgets_container").empty()
             for (i in data){
                 $("#widgets_container").append('\
-                <div class="widgets_contentbox">\
-                    <iframe src='+ data[i].widgets_url +' " frameborder=0></iframe>\
-                </div>\
+                <li class="ele" draggable="true">\
+                    '+ data[i].widgets_name +' | \
+                    '+ data[i].widgets_url +'\
+                    <i class="fa fa-bars"></i>\
+                </li>\
                 ')
             }
         }
