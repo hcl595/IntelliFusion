@@ -70,7 +70,7 @@ def SetupDatabase():
     BaseWidgets.save()
     BaseWidgets = Widgets(
         order=3,
-        widgets_name="内置显卡小组件",
+        widgets_name="内置显存小组件",
         avaliable = True,
         widgets_url = "/widgets/GPU_Percent",
     )
