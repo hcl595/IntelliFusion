@@ -37,5 +37,5 @@ def Get_GPU_RAM_Precent():
         GPU_RAM_Per = round(used / total * 100, 1)
         return jsonify({'data':GPU_RAM_Per})
     except ImportError:
-        memory_percent = psutil.virtual_memory().percent
+        memory_percent = 0
         return jsonify({'data':memory_percent})

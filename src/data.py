@@ -5,7 +5,7 @@ from peewee import *
 # 基础类
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
-DATABASE_FILE = DATA_DIR / "models.v2.sqlite"
+DATABASE_FILE = DATA_DIR / "models.v2.1.sqlite"
 
 from peewee import *
 
@@ -66,6 +66,13 @@ def SetupDatabase():
         widgets_name="内置内存小组件",
         avaliable = True,
         widgets_url = "/widgets/Ram_Percent",
+    )
+    BaseWidgets.save()
+    BaseWidgets = Widgets(
+        order=3,
+        widgets_name="内置显卡小组件",
+        avaliable = True,
+        widgets_url = "/widgets/GPU_Percent",
     )
     BaseWidgets.save()
 
