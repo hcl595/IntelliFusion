@@ -247,17 +247,19 @@ nav:hover .list li:nth-child(8) span {
 /* 对话框 */
 
 .dialogbox_container{
-  min-height: 90vh;
+  min-height: calc(100vh - 45px);
   min-width: 100%;
   display: flex;
   overflow: hidden;
   flex-flow: column;
   background-color: rgba(230, 230, 230, 0.406);
   backdrop-filter: blur(18px);
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 .dialogbox_container .content{
   max-width: 100%;
-  height: 79vh;
+  height: calc(100vh - 170px);
   overflow-y: auto;
 }
 .content:hover::-webkit-scrollbar-thumb{
@@ -338,7 +340,7 @@ nav:hover .list li:nth-child(8) span {
 .input-area{
   border-top:0.3px solid #e0e0e0;
   width: 100%;
-  height: 80%;
+  height: 70px;
   display: flex;
   background-color: #fff;
   border-radius: 15px;
@@ -480,7 +482,7 @@ textarea{
   transition: 0.3s;
   word-break:break-word;
   white-space: nowrap; 
-  overflow: auto;
+  overflow: hidden;
 }
 .widgets_contentbox h2 {
   margin-left: 20px;
@@ -545,6 +547,8 @@ textarea{
   max-width: 100%;
   background: rgba(230, 235, 240, .3);
   display: flex;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
 .light .main .chat{
   border:2px solid rgba(255, 255, 255, 0.363);
@@ -753,7 +757,7 @@ textarea{
 .light .save {
   margin-top: auto;
   margin-bottom: auto;
-  margin-left: 85vw;
+  margin-left: calc(100% - 150px);
   width: 100px;
   background-color: rgba(117, 255, 89, 0.671);
   border: 1px solid rgba(5, 31, 0, 0.671);
@@ -1047,7 +1051,7 @@ a {
 .dark .save {
   margin-top: auto;
   margin-bottom: auto;
-  margin-left: 20px;
+  margin-left: calc(100% - 150px);
   width: 100px;
   background-color: rgba(117, 255, 89, 0);
   border-radius:20px;
@@ -1229,7 +1233,7 @@ a {
 }
 .dark .settings .content{
   max-width: 100%;
-  max-height: 90vh;
+  max-height: 100%;
   overflow-y: auto;
 }
 .dark .settings .content:hover::-webkit-scrollbar-thumb{
