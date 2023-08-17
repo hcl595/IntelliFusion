@@ -5,7 +5,7 @@
 <title>Realizer v0.1.9 Beta</title>
 {% endblock %}
 {% block body %}
-<body class="" onload="refresh_website()">
+<body class="light" onload="refresh_website()">
 <iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
     <div class="chat">
@@ -113,16 +113,17 @@
         </ul>
         <button class="btn_expand"><i class="fa fa-plus" onclick="show_widgets_edit()"></i></button>
     </div>
-    <div class="widgets_edit" id="widgets_edit" style="display: none;">
+    <div class="widgets_edit" id="widgets_edit">
         <button class="btn" id="widgets_close"><i class="fa fa-close"></i></button>
-        <input type="name" id="widgets_name" value="" />
-        <input type="url" id="widgets_url" value="" />
         <br>
         <div class="widgets_contentbox">
             <iframe id="widgets_preview" allow="autoplay *"></iframe>
         </div>
+        <p class="p_widgets_bzdz">备注：<input type="name" class="widgets_name" id="widgets_name" value="" /></p>
+        <p class="p_widgets_bzdz">地址：<input type="url" class="widgets_url" id="widgets_url" value="" /></p>
+        <button id="btn_edit" class="btn_edit">更新</button>
     </div>
-    </div>
+</div>
 
 <div class="models" id="models-box" style="display: none;">
     <div class="card_container">
