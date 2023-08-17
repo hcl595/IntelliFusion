@@ -458,6 +458,7 @@ function Refresh_Tabs(){
                             </div>\
                             <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
                             <div class="button-area">\
+                                <button value="'+ data[i].id +'" onclick="LoadHistory(`'+ data[i].id +'`)">加载历史</button>\
                                 <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">发 送</button>\
                             </div>\
                         </div>\

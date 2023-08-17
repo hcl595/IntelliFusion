@@ -10,6 +10,7 @@
     <div class="chat">
         <div id="contentwrap"  class="contentwrap">
             <ul class="tab" id="tabs">
+                <li draggable="true" class="li current" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>CURRENT</span></li>
                 <li draggable="true" class="li" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>OFFLINE</span></li>
             </ul>
             <div id="Contents">
@@ -23,6 +24,7 @@
                         </div>
                         <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />
                         <div class="button-area">
+                            <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">加载历史</button>
                             <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">发 送</button>
                         </div>
                     </div>
@@ -151,7 +153,7 @@
             <li class="ele" draggable="true">
                 widgets_name | widgets_url
                 <i class="fa fa-bars"></i>
-                <i class="fa fa-info" id="widgets_1" widgets_name="widgets_container" widgets_url="/widgets/url" onclick="show_widgets_edit(1)"></i>
+                <i class="fa fa-info" id="widgets_1" widgets_name="widgets_container" widgets_url="/widgets/RAM_Percent" onclick="show_widgets_edit(1)"></i>
             </li>
             <li class="ele" draggable="true">
                 widgets_name | widgets_url
@@ -178,9 +180,12 @@
     </div>
     <div class="widgets_edit" id="widgets_edit" style="display: none;"><!-- TODO:优化界面，主要内容： 1，小组件名字：value ；2，小组件地址： value 3，需要一个提交按钮和一个删除按钮 4.优化排版 -->
         <button class="btn" id="widgets_close"><i class="fa fa-close"></i></button>
+        <div class="widgets_contentbox">
+            <iframe id="widgets_preview" allow="autoplay *" src="/widgets/RAM_Percent"></iframe>
+        </div>
+        <br>
         <input type="name" id="widgets_name" placeholder="小组件名称" />
         <input type="url" id="widgets_url" placeholder="小组件调用地址" />
-        <iframe ></iframe>
         <button class="deny">del</button>
         <button class="edit">edit</button>
     </div>
@@ -369,74 +374,9 @@
 </div>
 
 <div class="AlertPlaceholder" id="liveAlertPlaceholder">
-
 </div>
 
 </body>
-<script type="text/javascript">
-
-//alert message
-const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
-
-const alert = (message, type) => {
-  const wrapper = document.createElement('div')
-  wrapper.innerHTML = [
-    `<div class="alert alert-${type} alert-dismissible" role="alert">`,
-    `   <div>${message}</div>`,
-    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
-    '</div>'
-  ].join('')
-  alertPlaceholder.append(wrapper)
-  setTimeout(function(){
-    wrapper.remove()
-  },5000)
-}
-
-var int = setInterval(function(){
-    refresh_website()
-  },1000000)
-
-//   拖动
-var node = document.querySelector("#container")
-	var draging = null
-	node.ondragstart = function(event) {
-		console.log("start:")
-		// dataTransfer.setData把拖动对象的数据存入其中，可以用dataTransfer.getData来获取数据
-		event.dataTransfer.setData("te", event.target.innerText)
-		draging = event.target
-	}
-	node.ondragover = function(event) {
-		console.log("over:")
-		// 默认地，无法将数据/元素放置到其他元素中。如果需要设置允许放置，必须阻止对元素的默认处理方式
-		event.preventDefault()
-		var target = event.target
-		if (target.nodeName === "LI" && target !== draging) {
-			// 获取初始位置
-			var targetRect = target.getBoundingClientRect()
-			var dragingRect = draging.getBoundingClientRect()
-			if (target) {
-				// 判断是否动画元素
-				if (target.animated) {
-					return;
-				}
-			}
-			if (_index(draging) < _index(target)) {
-				// 目标比元素大，插到其后面
-				// extSibling下一个兄弟元素
-				target.parentNode.insertBefore(draging, target.nextSibling)
-			} else {
-				// 目标比元素小，插到其前面
-				target.parentNode.insertBefore(draging, target)
-			}
-			_animate(dragingRect, draging)
-			_animate(targetRect, target)
-            load_active_widgets()
-            alert("a","danger")
-		}
-	}
-
-
-</script>
 {% endblock %}
 {% block footer %}
 {% endblock %}

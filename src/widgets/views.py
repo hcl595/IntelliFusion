@@ -3,11 +3,11 @@ import psutil
 from flask import Flask, render_template, jsonify
 
 
-@widgets_blue.route('/Core_Percent')
+@widgets_blue.route('/CPU_Percent')
 def CorePercent():
     return render_template("CPU_Percent.html")
 
-@widgets_blue.route('/Ram_Percent')
+@widgets_blue.route('/RAM_Percent')
 def RAMPercent():
     return render_template("Memory_Percent.html") 
 

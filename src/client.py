@@ -295,6 +295,14 @@ def GetActiveModels():
     return jsonify(ActiveModelList_json)
 
 
+@app.post('/GetHistory')
+def GetHistory():
+    model = request.form.get("model")
+    history = History.select().where(History.model == model)
+    history_json = [model_to_dict(h) for h in history]
+    return jsonify(history_json)
+
+
 @app.errorhandler(404)
 def error404(error):
     return render_template("404.html"), 404
