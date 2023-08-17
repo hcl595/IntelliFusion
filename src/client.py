@@ -19,8 +19,6 @@ from flask import (Flask, json, jsonify, render_template, request,)
 from flaskwebgui import FlaskUI, close_application
 from thefuzz import process, fuzz
 from loguru import logger
-# from langchain.llms import OpenAI
-# from langchain.chains import ConversationChain
 
 from config import Settings, Prompt
 from data import Models, History, Widgets
@@ -96,16 +94,25 @@ def GetHistorys():
 
 @app.post("/GetActiveWidgets")
 def GetActiveWidgets():
-    ActiveWidgets = Widgets.select().where(Widgets.avaliable == True)
+    ActiveWidgets = Widgets.select().order_by(Widgets.order).where(Widgets.avaliable == True)
     ActiveWidgets_json = [model_to_dict(Model) for Model in ActiveWidgets]
     return jsonify(ActiveWidgets_json)
 
 
 @app.post("/GetWidgets")
 def GetWidgets():
-    ActiveWidgets = Widgets.select()
+    ActiveWidgets = Widgets.select().order_by(Widgets.order)
     ActiveWidgets_json = [model_to_dict(Model) for Model in ActiveWidgets]
     return jsonify(ActiveWidgets_json)
+
+
+@app.post("/EditWidgetsOrder")
+def EditWidgetsOrder():
+    Temp = Widgets.update({
+        Widgets.order : request.form.get("order")
+    }).where(Widgets.id == request.form.get("id"))
+    Temp.execute()
+    return jsonify({"response":True,})
 
 
 @app.post("/EditSetting")  # 编辑设置

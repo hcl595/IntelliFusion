@@ -119,6 +119,7 @@ function show_widgets_edit(id) {
     $("#widgets_edit").fadeIn(100)
     var name = $("#widgets_"+id).attr("widgets_name")
     var url = $("#widgets_"+id).attr("widgets_url")
+    $("#widgets_preview").attr("src", url)
     $("#widgets_name").val(name)
     $("#widgets_url").val(url)
 }
@@ -137,6 +138,69 @@ $(document).ready(function(){
     });
 });
 
+$(document).ready(function() {
+    //alert message
+const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+
+const alert = (message, type) => {
+  const wrapper = document.createElement('div')
+  wrapper.innerHTML = [
+    `<div class="alert alert-${type} alert-dismissible fade show" role="alert">`,
+    `   <div>${message}</div>`,
+    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+    '</div>'
+  ].join('')
+  alertPlaceholder.append(wrapper)
+  setTimeout(function(){
+    wrapper.remove()
+  },5001)
+}
+
+var int = setInterval(function(){
+    refresh_website()
+  },1000000)
+
+
+//   拖动
+var node = document.querySelector("#widgets_container")
+	var draging = null
+	node.ondragstart = function(event) {
+		console.log("start:")
+		// dataTransfer.setData把拖动对象的数据存入其中，可以用dataTransfer.getData来获取数据
+		event.dataTransfer.setData("te", event.target.innerText)
+		draging = event.target
+	}
+	node.ondragover = function(event) {
+		console.log("over:")
+		// 默认地，无法将数据/元素放置到其他元素中。如果需要设置允许放置，必须阻止对元素的默认处理方式
+		event.preventDefault()
+		var target = event.target
+		if (target.nodeName === "LI" && target !== draging) {
+			// 获取初始位置
+			var targetRect = target.getBoundingClientRect()
+			var dragingRect = draging.getBoundingClientRect()
+			if (target) {
+				// 判断是否动画元素
+				if (target.animated) {
+					return;
+				}
+			}
+			if (_index(draging) < _index(target)) {
+				// 目标比元素大，插到其后面
+				// extSibling下一个兄弟元素
+				target.parentNode.insertBefore(draging, target.nextSibling)
+			} else {
+				// 目标比元素小，插到其前面
+				target.parentNode.insertBefore(draging, target)
+			}
+			_animate(dragingRect, draging)
+			_animate(targetRect, target)
+            load_active_widgets()
+            upload_widgets_edit_order()
+		}
+	}
+
+})
 
 //Single
 function change_tab(id){
@@ -148,6 +212,31 @@ function change_tab(id){
 }
 
 //ajax Interface
+//edit
+function upload_widgets_edit_order(){
+    var ctn = true
+    var ele = document.getElementById("widgets_container")
+    var child = ele.firstElementChild
+    var last = ele.lastElementChild
+    for (i =1;child != last + 1;i++){
+        var value = child.id
+        $.ajax({
+            url: "/EditWidgetsOrder",
+            method: "POST",
+            data: {
+                id: value,
+                order: i,
+            },
+            success: function(response){
+                if (response.response){
+                    load_active_widgets()
+                }
+            }
+        })
+        child = child.nextElementSibling
+    }
+}
+
 //prompt
 function GetPrompts(id){
     var text = $("#user-input-"+id).val();
@@ -441,7 +530,7 @@ function load_widgets(){
             $("#widgets_container").empty()
             for (i in data){
                 $("#widgets_container").append('\
-                <li class="ele" draggable="true">\
+                <li class="ele" draggable="true" id="'+ data[i].id +'" title="<iframe></iframe>">\
                     '+ data[i].widgets_name +' | \
                     '+ data[i].widgets_url +'\
                     <i class="fa fa-bars"></i>\

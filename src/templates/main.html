@@ -111,12 +111,16 @@
     <div class="widgets_container">
         <ul id="widgets_container">
         </ul>
-        <button class="btn_expand"><i class="fa fa-plus"></i></button>
+        <button class="btn_expand"><i class="fa fa-plus" onclick="show_widgets_edit()"></i></button>
     </div>
     <div class="widgets_edit" id="widgets_edit" style="display: none;">
-        <button class="btn"><i class="fa fa-close"></i></button>
+        <button class="btn" id="widgets_close"><i class="fa fa-close"></i></button>
         <input type="name" id="widgets_name" value="" />
         <input type="url" id="widgets_url" value="" />
+        <br>
+        <div class="widgets_contentbox">
+            <iframe id="widgets_preview" allow="autoplay *"></iframe>
+        </div>
     </div>
     </div>
 
@@ -284,7 +288,7 @@
     <button class="btn"><i class="fa fa-close"></i></button>
     <div id="box">
         <img style="margin: 10px;width: 150px;height: 150px;" src="/static/res/icon-o.ico" alt="iF">
-        <h3 style="margin: 50px;">inteliFusi0n Version 0.1.9(202308032000) <br>Developer Alpha</h3>
+        <h3 style="margin: 50px;">inteliFusi0n Version Test Page!!!</h3>
         <h5 style="margin: 50px;width: 100px;">use bootstrap5 framework<br>use E charts</h4>
         <a style="width: 100px;height: 50px;" href="https://www.github.com/hcl595/intellifusion/">
             <button class="Hyperlink">learn more...</button>
@@ -307,72 +311,6 @@
 </div>
 
 </body>
-<script type="text/javascript">
-
-//alert message
-const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
-
-const alert = (message, type) => {
-  const wrapper = document.createElement('div')
-  wrapper.innerHTML = [
-    `<div class="alert alert-${type} alert-dismissible fade show" role="alert">`,
-    `   <div>${message}</div>`,
-    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
-    '</div>'
-  ].join('')
-  alertPlaceholder.append(wrapper)
-  setTimeout(function(){
-    wrapper.remove()
-  },5001)
-}
-
-var int = setInterval(function(){
-    refresh_website()
-  },1000000)
-
-
-//   拖动
-var node = document.querySelector("#widgets_container")
-	var draging = null
-	node.ondragstart = function(event) {
-		console.log("start:")
-		// dataTransfer.setData把拖动对象的数据存入其中，可以用dataTransfer.getData来获取数据
-		event.dataTransfer.setData("te", event.target.innerText)
-		draging = event.target
-	}
-	node.ondragover = function(event) {
-		console.log("over:")
-		// 默认地，无法将数据/元素放置到其他元素中。如果需要设置允许放置，必须阻止对元素的默认处理方式
-		event.preventDefault()
-		var target = event.target
-		if (target.nodeName === "LI" && target !== draging) {
-			// 获取初始位置
-			var targetRect = target.getBoundingClientRect()
-			var dragingRect = draging.getBoundingClientRect()
-			if (target) {
-				// 判断是否动画元素
-				if (target.animated) {
-					return;
-				}
-			}
-			if (_index(draging) < _index(target)) {
-				// 目标比元素大，插到其后面
-				// extSibling下一个兄弟元素
-				target.parentNode.insertBefore(draging, target.nextSibling)
-			} else {
-				// 目标比元素小，插到其前面
-				target.parentNode.insertBefore(draging, target)
-			}
-			_animate(dragingRect, draging)
-			_animate(targetRect, target)
-            load_active_widgets()
-            alert("a","danger")
-		}
-	}
-
-
-
-</script>
 {% endblock %}
 {% block footer %}
 {% endblock %}

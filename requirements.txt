@@ -5,7 +5,6 @@ loguru
 openai
 peewee
 pyautogui
-python-Levenshtein
 requests
 thefuzz
 validators
