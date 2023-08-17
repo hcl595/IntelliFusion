@@ -108,55 +108,6 @@ function ChangeToRts(){
     $("#rts").addClass("active")
 }
 
-function showLogin(){
-    $("#login-box").fadeIn(200)
-}
-function CloseLogin(){
-    $("#login-box").fadeOut(200)
-}
-
-function toGLM() {
-	document.getElementById("li_GLM").className="li current";
-	document.getElementById("li_GPT").className="li";
-	document.getElementById("li_SD").className="li";
-	document.getElementById("li_WIG").className="li";
-	$("#DefaultBox").fadeIn(100)
-	$("#SecondBox").fadeOut(100)
-	$("#ThridBox").fadeOut(100)
-	$("#WidgtBox").fadeOut(100)
-}
-function toGPT() {
-	document.getElementById("li_GLM").className="li";
-	document.getElementById("li_GPT").className="li current";
-	document.getElementById("li_SD").className="li";
-	document.getElementById("li_WIG").className="li";
-	$("#DefaultBox").fadeOut(100)
-	$("#SecondBox").fadeIn(100)
-	$("#ThridBox").fadeOut(100)
-	$("#WidgtBox").fadeOut(100)
-}
-function toSD() {
-	document.getElementById("li_GLM").className="li";
-	document.getElementById("li_GPT").className="li";
-	document.getElementById("li_SD").className="li current";
-	document.getElementById("li_WIG").className="li";
-	$("#DefaultBox").fadeOut(100)
-	$("#SecondBox").fadeOut(100)
-	$("#ThridBox").fadeIn(100)
-	$("#WidgtBox").fadeOut(100)
-}
-function toWIG() {
-	document.getElementById("li_GLM").className="li";
-	document.getElementById("li_GPT").className="li";
-	document.getElementById("li_SD").className="li";
-	document.getElementById("li_WIG").className="li current";
-	$("#DefaultBox").fadeOut(100)
-	$("#SecondBox").fadeOut(100)
-	$("#ThridBox").fadeOut(100)
-	$("#WidgtBox").fadeIn(100)
-}
-
-
 function Loading(){
     $("#loading").fadeIn(100)
 }
@@ -164,19 +115,12 @@ function Load() {
     $("#loading").fadeOut(100)
 }
 
-function TypeAnime(input){ //打字机动画
-    var text = document.getElementById(input).getAttribute("data-text");//获取要输出的文字
-    var index = 0;
-    var element = document.getElementById(input);//获取元素
-    function myprint() {
-        if (index < text.length) {
-            element.innerText = element.innerText + text.charAt(index);
-            index++;
-        } else {
-            clearInterval(c);//输出完后关闭定时器
-        }
-    }
-    var c = setInterval(myprint, 100);//定时器
+function show_widgets_edit(id) {
+    $("#widgets_edit").fadeIn(100)
+    var name = $("#widgets_"+id).attr("widgets_name")
+    var url = $("#widgets_"+id).attr("widgets_url")
+    $("#widgets_name").val(name)
+    $("#widgets_url").val(url)
 }
 
 //版本号
@@ -184,6 +128,12 @@ $(document).ready(function(){
     $("button").click(function(){
       $("#rights-box").fadeOut(100);
       $("#rts").removeClass("active")
+    });
+});
+
+$(document).ready(function(){
+    $("#widgets_close").click(function(){
+      $("#widgets_edit").fadeOut(100);
     });
 });
 
@@ -284,7 +234,59 @@ function SendInput(id) {
     }
 }
 
-// function edit_settings()
+$(document).ready(function() {
+//send request
+$("#add").on('click',function() {
+    $("#loading").fadeIn(100)
+    $('#add').attr("disabled",true)
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: 'add' ,
+            number: $('#id').val() ,
+            type: $('#Type-1').val() ,
+            comment: $('#Comment-1').val() ,
+            url: $('#Url-1').val() ,
+            APIkey: $('#APIkey-1').val() ,
+            LcCompiler: $('#LcCompiler-1').val() ,
+            LcUrl: $('#LcUrl-1').val() ,
+        },
+        success: function(response) {
+            if (response.response){
+                alert("添加成功","success")
+                $("#loading").fadeOut(100)
+                $('#add').removeAttr("disabled")
+            }
+            else{
+                alert("添加失败","danger")
+                $("#loading").fadeOut(100)
+                $('#add').removeAttr("disabled")
+            }
+            $('#Comment-1').val("")
+            $('#Url-1').val("")
+            $('#APIkey-1').val("")
+            $('#LcCompiler-1').val("")
+            $('#LcUrl-1').val("")
+            Refresh_ModelList()
+        }
+    });
+});
+})
+
+$(document).ready(function() {
+    $("#change-adjust").on("click",function(){
+        var now = $("body").attr("class")
+        if (now == "light"){
+            $("body").removeClass("light")
+            $("body").addClass("dark")
+        }
+        if (now == "dark"){
+            $("body").removeClass("dark")
+            $("body").addClass("light")
+        }
+    })
+})
 
 // Refresh Data
 function refresh_website(){
@@ -443,6 +445,8 @@ function load_widgets(){
                     '+ data[i].widgets_name +' | \
                     '+ data[i].widgets_url +'\
                     <i class="fa fa-bars"></i>\
+                    <i class="fa fa-info" id="widgets_'+ data[i].id +'" widgets_name="'+ data[i].widgets_name +'"\
+                    widgets_url="'+ data[i].widgets_url +'" onclick="show_widgets_edit('+ data[i].id +')"></i>\
                 </li>\
                 ')
             }
@@ -524,4 +528,65 @@ function load_settings(){
 function loading(){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
+}
+
+
+// 获取元素在父元素中的index
+function _index(el) {
+    var index = 0
+    if (!el || !el.parentNode) {
+        return -1
+    }
+    // previousElementSibling：上一个兄弟元素
+    while (el && (el = el.previousElementSibling)) {
+        index++
+    }
+    return index
+}
+// 触发动画
+function _animate(prevRect, target) {
+    var ms = 300
+    if (ms) {
+        var currentRect = target.getBoundingClientRect()
+        if (prevRect.nodeType === 1) {
+            prevRect = prevRect.getBoundingClientRect()
+        }
+        _css(target, 'transition', 'none')
+        _css(target, 'transform', 'translate3d(' +
+            (prevRect.left - currentRect.left) + 'px,' +
+            (prevRect.top - currentRect.top) + 'px,0)'
+        );
+
+        target.offsetWidth; // 触发重绘
+
+        _css(target, 'transition', 'all ' + ms + 'ms');
+        _css(target, 'transform', 'translate3d(0,0,0)');
+        // 事件到了之后把transition和transform清空
+        clearTimeout(target.animated);
+        target.animated = setTimeout(function() {
+            _css(target, 'transition', '');
+            _css(target, 'transform', '');
+            target.animated = false;
+        }, ms);
+    }
+}
+
+// 给元素添加style
+function _css(el, prop, val) {
+    var style = el && el.style
+    if (style) {
+        if (val === void 0) {
+            if (document.defaultView && document.defaultView.getComputedStyle) {
+                val = document.defaultView.getComputedStyle(el, '')
+            } else if (el.currentStyle) {
+                val = el.currentStyle
+            }
+            return prop === void 0 ? val : val[prop]
+        } else {
+            if (!(prop in style)) {
+                prop = '-webkit-' + prop;
+            }
+            style[prop] = val + (typeof val === 'string' ? '' : 'px')
+        }
+    }
 }

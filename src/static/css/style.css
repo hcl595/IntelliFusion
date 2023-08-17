@@ -664,6 +664,8 @@ textarea{
 .light .widgets_container li i {
   float: right;
   margin-top: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
   font-size: 30px;
 }
 
@@ -735,6 +737,20 @@ textarea{
 }
 .copyright p{
   word-break: break-all;
+}
+.widgets_edit {
+  background: #ffffff70;
+  backdrop-filter: blur(500px);
+  border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
+  overflow: hidden;
+  margin-top: auto;
+  width: 50vw;
+  min-height: 30vh;   
+  z-index: 3;
+  position:fixed;
+  top:  20vh;
+  left: 30vw;
 }
 .AlertPlaceholder {
   position: fixed;
@@ -1215,6 +1231,8 @@ a {
 .dark .widgets_container li i {
   float: right;
   margin-top: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
   font-size: 30px;
 }
 

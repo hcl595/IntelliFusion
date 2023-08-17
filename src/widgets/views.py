@@ -36,6 +36,6 @@ def Get_GPU_RAM_Precent():
         used = round(meminfo.used / 1024 / 1024, 2)
         GPU_RAM_Per = round(used / total * 100, 1)
         return jsonify({'data':GPU_RAM_Per})
-    except ImportError:
+    except:
         memory_percent = 0
         return jsonify({'data':memory_percent})

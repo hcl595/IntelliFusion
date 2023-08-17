@@ -151,25 +151,37 @@
             <li class="ele" draggable="true">
                 widgets_name | widgets_url
                 <i class="fa fa-bars"></i>
+                <i class="fa fa-info" id="widgets_1" widgets_name="widgets_container" widgets_url="/widgets/url" onclick="show_widgets_edit(1)"></i>
             </li>
             <li class="ele" draggable="true">
                 widgets_name | widgets_url
                 <i class="fa fa-bars"></i>
+                <i class="fa fa-info" onclick="show_widgets_edit()"></i>
             </li>
             <li class="ele" draggable="true">
                 widgets_name | widgets_url
                 <i class="fa fa-bars"></i>
+                <i class="fa fa-info" onclick="show_widgets_edit()"></i>
             </li>
             <li class="ele" draggable="true">
                 widgets_name | widgets_url
                 <i class="fa fa-bars"></i>
+                <i class="fa fa-info" onclick="show_widgets_edit()"></i>
             </li>
             <li class="ele" draggable="true">
                 widgets_name | widgets_url
                 <i class="fa fa-bars"></i>
+                <i class="fa fa-info" onclick="show_widgets_edit()"></i>
             </li>
         </ul>
         <button class="btn_expand"><i class="fa fa-plus"></i></button>
+    </div>
+    <div class="widgets_edit" id="widgets_edit" style="display: none;"><!-- TODO:优化界面，主要内容： 1，小组件名字：value ；2，小组件地址： value 3，需要一个提交按钮和一个删除按钮 4.优化排版 -->
+        <button class="btn"><i class="fa fa-close"></i></button>
+        <input type="name" id="widgets_name" placeholder="小组件名称" />
+        <input type="url" id="widgets_url" placeholder="小组件调用地址" />
+        <button class="deny">del</button>
+        <button class="edit">edit</button>
     </div>
 </div>
 
