@@ -373,7 +373,6 @@ function setup_website(){
 }
 
 function load_history(id) {
-    alert("id:" + id,"danger")
     $.ajax({
         url: "/GetHistory",
         method: "POST",
@@ -381,6 +380,7 @@ function load_history(id) {
             id: id,
         },
         success: function(data){
+            $('#output-' + id).empty()
             for (i in data){
             $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + data[i].UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
             $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + data[i].response + '</div></div>');
@@ -434,6 +434,7 @@ function Refresh_ModelList(){
                     <td><button class="deny" id="del-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`del`)"><i class="fa fa-trash"></i></button>\
                     </td>\
                 </tr>')
+                load_history(data[i].id)
             }
         }
     })
@@ -463,7 +464,6 @@ function Refresh_Tabs(){
                             </div>\
                             <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
                             <div class="button-area">\
-                                <button onclick="load_history(`'+ data[i].id +'`)">加载历史</button>\
                                 <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">发 送</button>\
                             </div>\
                         </div>\
@@ -493,7 +493,6 @@ function Refresh_Tabs(){
                                 </div>\
                                 <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
                                 <div class="button-area">\
-                                <button onclick="load_history(`'+ data[i].id +'`)">加载历史</button>\
                                 <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">发 送</button>\
                                 </div>\
                             </div>\

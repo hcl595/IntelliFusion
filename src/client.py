@@ -87,9 +87,11 @@ def Request_Models():
 
 @app.post("/GetHistory")
 def GetHistorys():
-    Historys = History.select()
-    HistorysDict = [model_to_dict(history) for history in Historys]
-    return jsonify(HistorysDict)
+    h_id = request.form.get("id")
+    model = Models.get(Models.id == h_id).name
+    history = History.select().where(History.Model == model)
+    history_json = [model_to_dict(h) for h in history]
+    return jsonify(history_json)
 
 
 @app.post("/GetActiveWidgets")
@@ -293,19 +295,6 @@ def GetActiveModels():
     ActiveModelList_json = [model_to_dict(Model) for Model in ActiveModels]
     logger.info("{}", ActiveModelList_json)
     return jsonify(ActiveModelList_json)
-
-
-@app.post("/GetHistory")
-def GetHistory(): #TODO:finish load_history
-    breakpoint()
-    h_id = request.form.get("id")
-    print(h_id)
-    logger.info("id:{}", h_id)
-    model = History.select().where(History.id == h_id).one()
-    logger.debug("{},{}",h_id, model)
-    history = History.select().where(History.model == model)
-    history_json = [model_to_dict(h) for h in history]
-    return jsonify(history_json)
 
 
 @app.errorhandler(404)

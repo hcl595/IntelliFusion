@@ -768,7 +768,7 @@ textarea{
   border: none;
   background-color: #738a8a1f;
 }
-.btn_edit{
+.light .btn_edit{
   width: 560px;
   margin-left: 20px;
   margin-bottom: 10px;
@@ -1261,6 +1261,18 @@ a {
   margin-left: 10px;
   margin-right: 10px;
   font-size: 30px;
+}
+
+.dark .btn_edit {
+  width: 560px;
+  margin-left: 20px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  background-color: rgba(89, 147, 255, 0);
+  border: none;
+  border-radius:20px;
+  border: 3px solid #d4d4d4;
+  color: #d4d4d4;
 }
 
 .dark .settings {

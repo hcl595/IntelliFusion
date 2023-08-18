@@ -7,8 +7,6 @@ APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
 DATABASE_FILE = DATA_DIR / "models.v2.2.sqlite"
 
-from peewee import *
-
 db = SqliteDatabase(DATABASE_FILE)
 
 class UnknownField(object):
