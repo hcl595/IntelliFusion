@@ -5,7 +5,7 @@
 <title>Realizer v0.1.9 Beta</title>
 {% endblock %}
 {% block body %}
-<body class="light" onload="refresh_website()">
+<body class="light" onload="setup_website()">
 <iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
     <div class="chat">
@@ -327,6 +327,11 @@ const alert = (message, type) => {
     wrapper.remove()
   },5001)
 }
+
+
+var int = setInterval(function(){
+    refresh_website()
+  },1000000)
 </script>
 {% endblock %}
 {% block footer %}

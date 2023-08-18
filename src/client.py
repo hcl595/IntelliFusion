@@ -295,9 +295,14 @@ def GetActiveModels():
     return jsonify(ActiveModelList_json)
 
 
-@app.post('/GetHistory')
-def GetHistory():
-    model = request.form.get("model")
+@app.post("/GetHistory")
+def GetHistory(): #TODO:finish load_history
+    breakpoint()
+    h_id = request.form.get("id")
+    print(h_id)
+    logger.info("id:{}", h_id)
+    model = History.select().where(History.id == h_id).one()
+    logger.debug("{},{}",h_id, model)
     history = History.select().where(History.model == model)
     history_json = [model_to_dict(h) for h in history]
     return jsonify(history_json)
