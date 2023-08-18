@@ -474,7 +474,6 @@ textarea{
   width: 300px;
   height: 300px;
   margin: 10px;
-  left: 150px;
   position: relative;
   display: inline-block;
   background-color: rgba(255, 255, 255, 0.486);
@@ -503,7 +502,9 @@ textarea{
   border: 0;
   overflow: hidden;
 }
-
+.widgets_edit .widgets_contentbox {
+  left: 150px;
+}
 /* Cards */
 
 .card_container {

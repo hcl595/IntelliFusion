@@ -139,28 +139,6 @@ $(document).ready(function(){
 });
 
 $(document).ready(function() {
-    //alert message
-const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
-
-const alert = (message, type) => {
-  const wrapper = document.createElement('div')
-  wrapper.innerHTML = [
-    `<div class="alert alert-${type} alert-dismissible fade show" role="alert">`,
-    `   <div>${message}</div>`,
-    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
-    '</div>'
-  ].join('')
-  alertPlaceholder.append(wrapper)
-  setTimeout(function(){
-    wrapper.remove()
-  },5001)
-}
-
-var int = setInterval(function(){
-    refresh_website()
-  },1000000)
-
-
 //   拖动
 var node = document.querySelector("#widgets_container")
 	var draging = null
@@ -384,6 +362,18 @@ function refresh_website(){
     load_active_widgets();
     load_widgets();
     load_settings();
+}
+
+function setup_website(){
+    Refresh_ModelList();
+    Refresh_Tabs();
+    load_active_widgets();
+    load_widgets();
+    load_settings();
+}
+
+function load_history(model) {
+
 }
 
 function Refresh_ModelList(){
