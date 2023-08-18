@@ -46,11 +46,10 @@ NeedLogin = True
 # main
 @app.route("/")  # 根目录
 def root():
-    logger.debug("login error: {}".format(login_error))
+    logger.debug("historys:{}",History.select(History.UserInput).where(History.Model == "gpt-3.5-turbo"))
     return render_template(
         "main.html",
         NeedLogin=NeedLogin,
-        # historys=histroys,
         host=cfg.read("RemoteConfig", "Host"),
         port=cfg.read("RemoteConfig", "Port"),
         DebugMode=cfg.read("BaseConfig", "Develop"),
@@ -312,6 +311,9 @@ def ai(ModelID: str, question: str):
     response = ""
     logger.debug("{}", Models.get(Models.name == ModelID).url)
     openai.api_base = (Models.get(Models.name == ModelID).url)
+    prompts = [ model_to_dict(history)['UserInput'] for history in History.select(History.UserInput).where(History.Model == "gpt-3.5-turbo") ]
+    # prompt = "\n".join([f"{'role': 'user'},{'content'}: {item}" for item in prompts])
+    # logger.debug("{}", prompt)
     openai.api_key = (
         Models.get(Models.name == ModelID).api_key
     )
@@ -320,6 +322,7 @@ def ai(ModelID: str, question: str):
         messages=[{"role": "user", "content": question}],
         stream=True,
         temperature=0,
+        max_tokens = 5000,
     ):
         if hasattr(chunk.choices[0].delta, "content"):
             print(chunk.choices[0].delta.content, end="", flush=True)
