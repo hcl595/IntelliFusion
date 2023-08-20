@@ -262,6 +262,7 @@ function commit_model(id,operate){
         success: function(response) {
             if (response.response){
                 alert(response.message,"success")
+                Refresh_Tabs()
                 $("#loading").fadeOut(100)
                 $('#'+operate+id).removeAttr("disabled")
             }
@@ -279,6 +280,8 @@ function SendInput(id) {
     if ($('#user-input-' + id).val() != ""){
         $("#loading").fadeIn(100);
         $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+        let height = document.querySelector('.content').scrollHeight;
+        document.querySelector(".content").scrollTop = height;
         var input = $('#user-input-' + id).val()
         $('#user-input-' + id).val('');
         $.ajax({

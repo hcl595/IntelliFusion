@@ -311,10 +311,11 @@ def ai(ModelID: str, question: str):
     response = ""
     logger.debug("{}", Models.get(Models.name == ModelID).url)
     openai.api_base = (Models.get(Models.name == ModelID).url)
-    prompts = [ model_to_dict(history)['UserInput'] for history in History.select(History.UserInput).where(History.Model == "gpt-3.5-turbo") ]
-    prompt = ["{'role': 'user'},{'content': " + item + "} " for item in prompts]
-    prompt.append["{'role': 'user'},{'content': " + question + "} "]
-    logger.debug("{}", prompt)
+    # TODO: 完善上下文
+    # prompts = [ model_to_dict(history)['UserInput'] for history in History.select(History.UserInput).where(History.Model == ModelID) ]
+    # prompt = ["{'role': 'user'},{'content': " + item + "}," for item in prompts]
+    # prompt.append["{'role': 'user'},{'content': " + question + "} "]
+    # logger.debug("{}", prompt)
     openai.api_key = (
         Models.get(Models.name == ModelID).api_key
     )
