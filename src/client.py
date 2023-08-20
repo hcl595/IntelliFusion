@@ -313,21 +313,20 @@ class Message(TypedDict):
 
 
 # functions
-def ai(ModelID: str, question: str):
+def ai(ModelID: str, question_in: str):
     response = ""
     logger.debug("{}", Models.get(Models.name == ModelID).url)
     openai.api_base = (Models.get(Models.name == ModelID).url)
     messages = []
     for r in History.select().where(History.Model == ModelID):
         r: History
-        print(r.response)
         assert isinstance(r.UserInput, str)
         assert isinstance(r.response, str)
         question: Message = {"role": "user", "content": r.UserInput}
-        response: Message = {"role": "assistant", "content": r.response}
+        response_model: Message = {"role": "assistant", "content": r.response}
         messages.append(question)
-        messages.append(response)
-    question: Message = {"role": "user", "content": question}
+        messages.append(response_model)
+    question: Message = {"role": "user", "content": question_in}
     messages.append(question)
     openai.api_key = (
         Models.get(Models.name == ModelID).api_key
