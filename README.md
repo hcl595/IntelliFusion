@@ -18,16 +18,18 @@ intelliFusion 运用flask处理后端，webui处理前端。使用echarts，可�
 
 ## 更新信息
 
-**[2023/08]** 发布[intelliFusion](https://github.com/hcl595/IntelliFusion),intelliFusion 的升级版本，在保留了之前带有的功能的基础之上，intelliFusion 引入了如下新特性：
+**[2023/08/05]** 发布[intelliFusion](https://github.com/hcl595/IntelliFusion),intelliFusion 的升级版本，在保留了之前带有的功能的基础之上，intelliFusion 引入了如下新特性：
 
 1. **更好的体验**：修复了之前出现的bug
-2. **更好的小插件**：添加了启动失败的提示
+2. **优化小组件**：新增内置GPU占用监测
 3. **更好的背景**：添加了深浅模式切换按钮，可以按照用户需求切换背景色
+4. **更好的对胡**：提示词可更换语言（目前仅支持日语和中文）
+5. **优化底层代码**：使用ajax，代替jinjia2和form表单
 
 ----
 **[2023/08/01]** 发布[intelliFusion](https://github.com/hcl595/IntelliFusion),intelliFusion 的升级版本，在保留了之前带有的功能的基础之上，intelliFusion 引入了如下新特性：
 
-1. **更好的小插件**：我们优化了小插件的显示，更新了一部分的内容.
+1. **优化小组件**：我们优化了小插件的显示，更新了一部分的内容.
 2. **更好的优化**：修复了bug.
 3. **更好的调用**：添加了活跃检测，实时监测您所启用的模型，可以只调用在线模型.
 4. **更好的沟通**：内置多语言提示词库，拥有提示词框，可以辅助您更方便的调用模型.
