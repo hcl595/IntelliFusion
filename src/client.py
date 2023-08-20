@@ -46,7 +46,6 @@ NeedLogin = True
 # main
 @app.route("/")  # 根目录
 def root():
-    logger.debug("historys:{}",History.select(History.UserInput).where(History.Model == "gpt-3.5-turbo"))
     return render_template(
         "main.html",
         NeedLogin=NeedLogin,
@@ -77,7 +76,7 @@ def Request_Models():
     elif Models.get(Models.name == InputModel).type == "API":
             Model_response = llm(InputModel, InputInfo)
             History.create(
-                model=InputModel,
+                Model=InputModel,
                 UserInput = InputInfo,
                 response=Model_response,
             )
@@ -356,7 +355,8 @@ def llm(ModelID: str, question: str):
         data=json.dumps({"prompt": question, "history": []}),
         headers={"Content-Type": "application/json"},
     )
-    response = str.replace(response,"\n","<br/>")
+    logger.debug(response.json()["history"][0][1])
+    response = str.replace(response.json()["history"][0][1],"\n","<br/>")
     last_code_block_index: int = -1
     is_code_block_start = True
     while (last_code_block_index := response.find("```")) != -1:
@@ -366,7 +366,7 @@ def llm(ModelID: str, question: str):
             response=response.replace("```", "</pre>", 1)
         last_code_block_index=-1
         is_code_block_start=not is_code_block_start
-    return response.json()["history"][0][1]
+    return response
 
 
 def get_ports(url: str):
@@ -380,16 +380,16 @@ def get_ports(url: str):
     return port
 
 
-def get_historys(model:str, userinput:str):
-    ModelList = History.get(History.Model == model)
-    logger.debug("ModelList: {}",list(ModelList))
-    ModelListDict = [model_to_dict(Model) for Model in ModelList]
-    keywords = jieba.lcut_for_search(userinput)
-    keywords = " ".join(keywords)
-    result = process.extract(
-        keywords, ModelListDict.keys(), limit=5, scorer=fuzz.partial_token_sort_ratio
-    )
-    result = {t:ModelListDict[t] for (t,_) in result}
+# def get_historys(model:str, userinput:str):
+#     ModelList = History.get(History.Model == model)
+#     logger.debug("ModelList: {}",list(ModelList))
+#     ModelListDict = [model_to_dict(Model) for Model in ModelList]
+#     keywords = jieba.lcut_for_search(userinput)
+#     keywords = " ".join(keywords)
+#     result = process.extract(
+#         keywords, ModelListDict.keys(), limit=5, scorer=fuzz.partial_token_sort_ratio
+#     )
+#     result = {t:ModelListDict[t] for (t,_) in result}
 
 
 if cfg.read("BaseConfig", "Develop") == "True":
