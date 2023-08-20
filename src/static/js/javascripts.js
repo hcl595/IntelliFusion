@@ -187,6 +187,8 @@ function change_tab(id){
     $("#Tab"+id).addClass("current")
     $('#'+now).fadeOut(100)
     $('#'+id).fadeIn(110)
+    smoothScroll("output-"+id);
+
 }
 
 //ajax Interface
@@ -377,6 +379,13 @@ function setup_website(){
     load_settings();
 }
 
+const smoothScroll = (id) => {
+    const element = $(`#${id}`);
+    element.stop().animate({
+        scrollTop: element.prop("scrollHeight")
+    }, 500);
+}
+
 function load_history(id) {
     $.ajax({
         url: "/GetHistory",
@@ -387,11 +396,12 @@ function load_history(id) {
         success: function(data){
             $('#output-' + id).empty()
             for (i in data){
-            $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + data[i].UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-            $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + data[i].response + '</div></div>');
+                $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + data[i].UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + data[i].response + '</div></div>');
+                smoothScroll("output-"+id);
             }
-            let height = document.querySelector('.content').scrollHeight;
-            document.querySelector(".content").scrollTop = height;
+
+
         }
     })
 }
@@ -439,7 +449,6 @@ function Refresh_ModelList(){
                     <td><button class="deny" id="del-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`del`)"><i class="fa fa-trash"></i></button>\
                     </td>\
                 </tr>')
-                load_history(data[i].id)
             }
         }
     })
@@ -510,6 +519,7 @@ function Refresh_Tabs(){
                         </div>')
                     }
                 }
+                load_history(data[i].id)
             }
             load_active_widgets()
         }
