@@ -9,6 +9,7 @@ from pathlib import Path
 import ipaddress
 from urllib.parse import urlparse
 from playhouse.shortcuts import model_to_dict
+from typing import Literal, TypedDict
 
 import openai
 import jieba
@@ -305,22 +306,35 @@ from widgets import widgets_blue
 app.register_blueprint(widgets_blue)
 
 
+# class
+class Message(TypedDict):
+    role: Literal["admin"] | Literal["user"]
+    content: str
+
+
 # functions
 def ai(ModelID: str, question: str):
     response = ""
     logger.debug("{}", Models.get(Models.name == ModelID).url)
     openai.api_base = (Models.get(Models.name == ModelID).url)
-    # TODO: 完善上下文
-    # prompts = [ model_to_dict(history)['UserInput'] for history in History.select(History.UserInput).where(History.Model == ModelID) ]
-    # prompt = ["{'role': 'user'},{'content': " + item + "}," for item in prompts]
-    # prompt.append["{'role': 'user'},{'content': " + question + "} "]
-    # logger.debug("{}", prompt)
+    messages = []
+    for r in History.select().where(History.Model == ModelID):
+        r: History
+        print(r.response)
+        assert isinstance(r.UserInput, str)
+        assert isinstance(r.response, str)
+        question: Message = {"role": "user", "content": r.UserInput}
+        response: Message = {"role": "assistant", "content": r.response}
+        messages.append(question)
+        messages.append(response)
+    question: Message = {"role": "user", "content": question}
+    messages.append(question)
     openai.api_key = (
         Models.get(Models.name == ModelID).api_key
     )
     for chunk in openai.ChatCompletion.create(
         model=ModelID,
-        messages=[{"role": "user", "content": question}],
+        messages=messages,
         stream=True,
         temperature=0,
     ):
@@ -380,18 +394,6 @@ def get_ports(url: str):
             port = "url"
     logger.debug("parse ports: {}", port)
     return port
-
-
-# def get_historys(model:str, userinput:str):
-#     ModelList = History.get(History.Model == model)
-#     logger.debug("ModelList: {}",list(ModelList))
-#     ModelListDict = [model_to_dict(Model) for Model in ModelList]
-#     keywords = jieba.lcut_for_search(userinput)
-#     keywords = " ".join(keywords)
-#     result = process.extract(
-#         keywords, ModelListDict.keys(), limit=5, scorer=fuzz.partial_token_sort_ratio
-#     )
-#     result = {t:ModelListDict[t] for (t,_) in result}
 
 
 if cfg.read("BaseConfig", "Develop") == "True":
