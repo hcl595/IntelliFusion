@@ -322,7 +322,6 @@ def ai(ModelID: str, question: str):
         messages=[{"role": "user", "content": question}],
         stream=True,
         temperature=0,
-        max_tokens = 5000,
     ):
         if hasattr(chunk.choices[0].delta, "content"):
             print(chunk.choices[0].delta.content, end="", flush=True)
