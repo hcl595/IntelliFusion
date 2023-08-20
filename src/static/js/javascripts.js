@@ -227,18 +227,20 @@ function GetPrompts(id){
         },
         success: function(prompts) {
             $('#Prompt-'+source_id).empty()
+            e = 0
             for (i in prompts){
                 $('#Prompt-'+source_id).append("\
-                <button id='prompt"+ source_id +"' class='prompt' value='"+ prompts[i] + "' source_id= " + source_id +' onclick="prompts('+ source_id +')" >'+ i +'</button>')
+                <button id='prompt-single-"+ e +"' class='prompt' value='"+ prompts[i] + "' source_id= " + id +" onclick='prompts(`" + e + "`)' >"+ i +"</button>")
+                e++
             }
         }
     })
 }
 function prompts(id){
-    var value = $("#prompt"+id).val()
-    var source_id = $("#prompt"+id).attr("source_id");
+    var value = $("#prompt-single-"+id).val()
+    var source_id = $("#prompt-single-"+id).attr("source_id");
     $('#Prompt-'+source_id).empty()
-    $('#user-input-'+id).val(""+value)
+    $('#user-input-'+source_id).val(""+value)
 }
 
 function commit_model(id,operate){

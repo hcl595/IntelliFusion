@@ -312,8 +312,9 @@ def ai(ModelID: str, question: str):
     logger.debug("{}", Models.get(Models.name == ModelID).url)
     openai.api_base = (Models.get(Models.name == ModelID).url)
     prompts = [ model_to_dict(history)['UserInput'] for history in History.select(History.UserInput).where(History.Model == "gpt-3.5-turbo") ]
-    # prompt = "\n".join([f"{'role': 'user'},{'content'}: {item}" for item in prompts])
-    # logger.debug("{}", prompt)
+    prompt = ["{'role': 'user'},{'content': " + item + "} " for item in prompts]
+    prompt.append["{'role': 'user'},{'content': " + question + "} "]
+    logger.debug("{}", prompt)
     openai.api_key = (
         Models.get(Models.name == ModelID).api_key
     )
