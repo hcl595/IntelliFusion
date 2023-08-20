@@ -350,6 +350,8 @@ def ai(ModelID: str, question: str):
 
 
 def llm(ModelID: str, question: str):
+    # TODO: 上下文
+    # historys = [ model_to_dict(history)['UserInput'] for history in History.select(History.UserInput).where(History.Model == ModelID) ]
     response = requests.post(
         url=Models.get(Models.name == ModelID).url,
         data=json.dumps({"prompt": question, "history": []}),
