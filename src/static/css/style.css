@@ -801,8 +801,8 @@ textarea{
   margin-top: auto;
   margin-bottom: auto;
   margin-left: calc(100% - 150px);
-  width: 100px;
-  background-color: rgba(117, 255, 89, 0.671);
+  width: 130px;
+  background-color: rgba(45, 241, 255, 0.712);
   border: 1px solid rgba(5, 31, 0, 0.671);
   border-radius:20px;
 }
