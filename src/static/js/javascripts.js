@@ -188,7 +188,6 @@ function change_tab(id){
     $('#'+now).fadeOut(100)
     $('#'+id).fadeIn(110)
     smoothScroll("output-"+id);
-
 }
 
 //ajax Interface
@@ -282,8 +281,7 @@ function SendInput(id) {
     if ($('#user-input-' + id).val() != ""){
         $("#loading").fadeIn(100);
         $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-        let height = document.querySelector('.content').scrollHeight;
-        document.querySelector(".content").scrollTop = height;
+        smoothScroll("output-"+id);
         var input = $('#user-input-' + id).val()
         $('#user-input-' + id).val('');
         $.ajax({
@@ -298,8 +296,7 @@ function SendInput(id) {
                 alert(chatGptResponse.message,"sucess")
                 $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
                 $("#loading").fadeOut(100)
-                let height = document.querySelector('.content').scrollHeight;
-                document.querySelector(".content").scrollTop = height;
+                smoothScroll("output-"+id);
             }
         });
     }
