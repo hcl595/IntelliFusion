@@ -562,7 +562,7 @@ function load_widgets(){
             $("#widgets_container").empty()
             for (i in data){
                 $("#widgets_container").append('\
-                <li class="ele" draggable="true" id="'+ data[i].id +'" title="<iframe></iframe>">\
+                <li class="ele" draggable="true" id="'+ data[i].id +'">\
                     '+ data[i].widgets_name +' | \
                     '+ data[i].widgets_url +'\
                     <i class="fa fa-bars"></i>\
