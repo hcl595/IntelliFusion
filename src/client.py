@@ -1,28 +1,28 @@
 # main.py | Intellifusion Version 0.1.9(2023080512000) Developer Alpha
 # headers
 import ctypes
+import ipaddress
 import json
 import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-import ipaddress
-from urllib.parse import urlparse
-from playhouse.shortcuts import model_to_dict
 from typing import Literal, TypedDict
+from urllib.parse import urlparse
 
-import openai
 import jieba
+import openai
 import psutil
 import requests
 import validators
-from flask import (Flask, json, jsonify, render_template, request,)
+from flask import Flask, json, jsonify, render_template, request
 from flaskwebgui import FlaskUI, close_application
-from thefuzz import process, fuzz
 from loguru import logger
+from playhouse.shortcuts import model_to_dict
+from thefuzz import fuzz, process
 
-from config import Settings, Prompt
-from data import Models, History, Widgets
+from config import Prompt, Settings
+from data import History, Models, Widgets
 from setup import setup
 
 pool = ThreadPoolExecutor()
@@ -303,6 +303,7 @@ def error404(error):
 
 #Blue Prints
 from widgets import widgets_blue
+
 app.register_blueprint(widgets_blue)
 
 
