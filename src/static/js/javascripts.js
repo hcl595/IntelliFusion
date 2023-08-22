@@ -121,6 +121,7 @@ function show_widgets_edit(id) {
     var name = $("#widgets_"+id).attr("widgets_name")
     var url = $("#widgets_"+id).attr("widgets_url")
     $("#widgets_preview").attr("src", url)
+    $("#widgets_id").val(id)
     $("#widgets_name").val(name)
     $("#widgets_url").val(url)
 }
