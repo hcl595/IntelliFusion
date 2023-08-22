@@ -746,13 +746,12 @@ textarea{
   border-radius: 10px;
   box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
   overflow: hidden;
-  margin-top: auto;
   width: 600px;
   min-height: 30vh;   
   z-index: 3;
   position:fixed;
-  top:  20vh;
-  left: 26vw;
+  margin-top: 80px;
+  margin-left: 35%;
 }
 .btn_expand_case{
   background: #ffffff70;
