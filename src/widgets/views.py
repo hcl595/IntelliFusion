@@ -3,6 +3,10 @@ import psutil
 from flask import Flask, render_template, jsonify
 
 
+@widgets_blue.route("/Translate_tran")
+def TranslateTranslate():
+    return render_template("translate.html")
+
 @widgets_blue.route('/CPU_Percent')
 def CorePercent():
     return render_template("CPU_Percent.html")

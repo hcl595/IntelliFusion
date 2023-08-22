@@ -1,28 +1,28 @@
 # main.py | Intellifusion Version 0.1.9(2023080512000) Developer Alpha
 # headers
 import ctypes
+import ipaddress
 import json
 import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-import ipaddress
-from urllib.parse import urlparse
-from playhouse.shortcuts import model_to_dict
 from typing import Literal, TypedDict
+from urllib.parse import urlparse
 
-import openai
 import jieba
+import openai
 import psutil
 import requests
 import validators
-from flask import (Flask, json, jsonify, render_template, request,)
+from flask import Flask, json, jsonify, render_template, request
 from flaskwebgui import FlaskUI, close_application
-from thefuzz import process, fuzz
 from loguru import logger
+from playhouse.shortcuts import model_to_dict
+from thefuzz import fuzz, process
 
-from config import Settings, Prompt
-from data import Models, History, Widgets
+from config import Prompt, Settings
+from data import History, Models, Widgets
 from setup import setup
 
 pool = ThreadPoolExecutor()
@@ -127,6 +127,7 @@ def EditSetting():
     cfg.write("RemoteConfig", "Port", request.form.get("Port"))
     return jsonify({"response": True,})
 
+
 @app.post("/GetSetting")
 def GetSetting():
     return jsonify({
@@ -139,6 +140,35 @@ def GetSetting():
         "Port": cfg.read("RemoteConfig","Port"),
         "Develop": cfg.read("BaseConfig","Develop"),
         })
+
+
+@app.post("/edit_widgets")
+def edit_widgets():
+    widgets_id = request.form.get("id")
+    widgets_name = request.form.get("name")
+    widgets_url = request.form.get("url")
+    avaliable = request.form.get("ava")
+    if widgets_id == -1:
+        try:
+            Widgets.create(
+                widgets_name = widgets_name,
+                widgets_url = widgets_url,
+                avaliable = avaliable,
+            )
+            return jsonify({"response": True, "message": "添加成功"})
+        except:
+            return jsonify({"response": True, "message": "添加失败"})
+    try:
+        u = Widgets.update({
+            Widgets.widgets_name : widgets_name,
+            Widgets.widgets_url : widgets_url,
+            Widgets.avaliable : avaliable,
+        }).where(Widgets.id == widgets_id)
+        u.execute()
+        return jsonify({"response": True, "message": "更改成功"})
+    except:
+        return jsonify({"response": False, "message": "更改失败"})
+
 
 @app.post("/exchange")
 def AddModel():
@@ -224,9 +254,11 @@ def AddModel():
                 launch_compiler=LaunchCompiler,
                 launch_path=LaunchPath,
             )
-            return jsonify({"response": True,})
+            return jsonify({"response": True,
+                            "message": "添加成功"})
         except:
-            return jsonify({"response": False,})
+            return jsonify({"response": False,
+                            "message": "添加失败"})
 
 
 @app.get("/close")  # 关闭
@@ -303,6 +335,7 @@ def error404(error):
 
 #Blue Prints
 from widgets import widgets_blue
+
 app.register_blueprint(widgets_blue)
 
 

@@ -111,7 +111,7 @@
     <div class="widgets_container">
         <ul id="widgets_container">
         </ul>
-        <button class="btn_expand"><i class="fa fa-plus" onclick="show_widgets_edit()"></i></button>
+        <button class="btn_expand" onclick="show_widgets_add()"><i class="fa fa-plus"></i></button>
     </div>
     <div class="widgets_edit" id="widgets_edit" style="display: none;">
         <button class="btn" id="widgets_close"><i class="fa fa-close"></i></button>
@@ -121,15 +121,39 @@
         </div>
         <p class="p_widgets_bzdz">备注: <input type="name" class="widgets_name" id="widgets_name" value="" /></p>
         <p class="p_widgets_bzdz">地址: <input type="url" class="widgets_url" id="widgets_url" value="" /></p>
-        <!-- <div class="switch-container">
-            <input id="ActiveExamine" type="hidden" value="False">
-            <input id="ActiveExamine_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('ActiveExamine')">
+        <p style="display: inline-block">是否启用:</p>
+        <div class="switch-container" style="display: inline-block">
+            <input id="Available" type="hidden" value="False">
+            <input id="Available_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('Available')">
             <span class="switch-area"></span>
             <span class="switch-toggle"></span>
-        </div> -->
-        <button id="widgets_edit" class="widgets_edit_commit">更新</button>
+        </div>
+        <br>
+        <button id="widgets_commit_del" class="widgets_edit_commit deny" onclick="widgets_commit('delete')" value="">删除</button>
+        <button id="widgets_commit_cmt" class="widgets_edit_commit edit"  onclick="widgets_commit('update')" value="">更新</button>
+    </div>
+
+    <div class="widgets_edit" id="widgets_add" style="display: none;">
+        <button class="btn" id="widgets_close_add"><i class="fa fa-close"></i></button>
+        <br>
+        <div class="widgets_contentbox">
+            <iframe id="widgets_preview" allow="autoplay *"></iframe>
+        </div>
+        <p class="p_widgets_bzdz">备注: <input type="name" class="widgets_name" id="widgets_name_add" value="" /></p>
+        <p class="p_widgets_bzdz">地址: <input type="url" class="widgets_url" id="widgets_url_add" value="" /></p>
+        <p style="display: inline-block">是否启用:</p>
+        <div class="switch-container" style="display: inline-block">
+            <input id="Available_add" type="hidden" value="False">
+            <input id="Available_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('Available_add')">
+            <span class="switch-area"></span>
+            <span class="switch-toggle"></span>
+        </div>
+        <br>
+        <button id="widgets_close_add_1" class="widgets_edit_commit deny">取消</button>
+        <button id="widgets_edit" class="widgets_edit_commit run" onclick="widgets_commit('update')">提交</button>
     </div>
 </div>
+
 
 <div class="models" id="models-box" style="display: none;">
     <div class="card_container">
@@ -295,7 +319,7 @@
     <button class="btn"><i class="fa fa-close"></i></button>
     <div id="box">
         <img style="margin: 10px;width: 150px;height: 150px;" src="/static/res/icon-o.ico" alt="iF">
-        <h3 style="margin: 50px;">inteliFusi0n Version Test Page!!!</h3>
+        <h3 style="margin: 50px;">inteliFusi0n Version v0.1.9.5</h3>
         <h5 style="margin: 50px;width: 100px;">use bootstrap5 framework<br>use E charts</h4>
         <a style="width: 100px;height: 50px;" href="https://www.github.com/hcl595/intellifusion/">
             <button class="Hyperlink">learn more...</button>

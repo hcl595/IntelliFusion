@@ -754,6 +754,76 @@ textarea{
   top:  20vh;
   left: 26vw;
 }
+.btn_expand_case{
+  background: #ffffff70;
+  backdrop-filter: blur(500px);
+  border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
+  overflow: hidden;
+  margin-top: auto;
+  width: 600px;
+  min-height: 30vh;   
+  z-index: 3;
+  position:fixed;
+  top: 20vh;
+  left: 26vw;
+}
+.btn_expand_zdy{
+  background: #ffffff70;
+  backdrop-filter: blur(500px);
+  border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
+  overflow: hidden;
+  margin-top: auto;
+  width: 350px;
+  min-height: 68px;   
+  z-index: 3;
+  position:fixed;
+  top: 20vh;
+  left: 26vw;
+}
+.addpage_title{
+  font-size: 25px;
+  margin-left: 10px;
+  margin-top: 5px;
+}
+.addpage_ipt{
+  margin-left: 10px;
+  margin-top: 5px;
+}
+.addpage_btn_1{
+  width: 100px;
+  margin-left: 270px;
+  margin-top: 120px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #88d5ffd8;
+}
+.addpage_btn_2{
+  width: 100px;
+  margin-left: 20px;
+  margin-top: 120px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #f37272d8;
+}
+.addpage_zdy{
+  width: 70px;
+  margin-left: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #88d5ffd8;
+}
+.btn_expand_zdy_ipt{
+  margin-top: 5px;
+  width: 300px;
+  margin-left: 5px;
+  border-radius: 5px;
+  border: none;
+  background-color: #88d5ffd8;
+}
 .widgets_name{
   margin-left: 10px;
   border-radius: 5px;
@@ -769,8 +839,8 @@ textarea{
   background-color: #738a8a1f;
 }
 .light .widgets_edit_commit{
-  width: 560px;
-  margin-left: 20px;
+  width: 250px;
+  margin-left: 30px;
   margin-bottom: 10px;
   border-radius: 5px;
   border: none;
@@ -801,8 +871,8 @@ textarea{
   margin-top: auto;
   margin-bottom: auto;
   margin-left: calc(100% - 150px);
-  width: 100px;
-  background-color: rgba(117, 255, 89, 0.671);
+  width: 130px;
+  background-color: rgba(45, 241, 255, 0.712);
   border: 1px solid rgba(5, 31, 0, 0.671);
   border-radius:20px;
 }
