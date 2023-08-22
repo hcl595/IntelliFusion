@@ -340,8 +340,6 @@ def ai(ModelID: str, question_in: str):
         if hasattr(chunk.choices[0].delta, "content"):
             print(chunk.choices[0].delta.content, end="", flush=True)
             response = response + chunk.choices[0].delta.content
-            print(type(chunk.choices[0].delta.content))
-    print(type(response))
     logger.info(
         "model: {},url: {}/v1/completions.\nquestion: {},response: {}.",
         ModelID,
