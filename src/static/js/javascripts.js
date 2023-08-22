@@ -116,12 +116,20 @@ function Load() {
 }
 
 function show_widgets_edit(id) {
+    $("#widgets_add").fadeOut(100)
     $("#widgets_edit").fadeIn(100)
     var name = $("#widgets_"+id).attr("widgets_name")
     var url = $("#widgets_"+id).attr("widgets_url")
     $("#widgets_preview").attr("src", url)
     $("#widgets_name").val(name)
     $("#widgets_url").val(url)
+}
+
+function show_widgets_add() {
+    $("#widgets_edit").fadeOut(100)
+    $("#widgets_add").fadeIn(100)
+    $("#widgets_name").val("")
+    $("#widgets_url").val("")
 }
 
 //版本号
@@ -134,7 +142,13 @@ $(document).ready(function(){
 
 $(document).ready(function(){
     $("#widgets_close").click(function(){
-      $("#widgets_edit").fadeOut(100);
+        $("#widgets_edit").fadeOut(100);
+    });
+    $("#widgets_close_add").click(function(){
+        $("#widgets_add").fadeOut(100);
+      });
+    $("#widgets_close_add_1").click(function(){
+        $("#widgets_add").fadeOut(100);
     });
 });
 
