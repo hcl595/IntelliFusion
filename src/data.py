@@ -30,9 +30,9 @@ class Models(BaseModel):
         table_name = 'models'
 
 class Widgets(BaseModel):
-    order = IntegerField(column_name="order",)
+    order = IntegerField(column_name="order",null=True)
     avaliable =  BooleanField(column_name="avaliable")
-    # size = CharField()
+    size = CharField(null=True)
     widgets_name = CharField(column_name="name",)
     widgets_url = CharField(column_name="URL",)
 

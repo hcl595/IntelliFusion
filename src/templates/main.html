@@ -6,7 +6,6 @@
 {% endblock %}
 {% block body %}
 <body class="light" onload="setup_website()">
-<iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
     <div class="chat">
         <div id="contentwrap"  class="contentwrap">
@@ -124,8 +123,8 @@
         <p class="p_widgets_bzdz">地址: <input type="url" class="widgets_url" id="widgets_url" value="" /></p>
         <p class="p_widgets_bzdz" style="display: inline-block">是否启用:</p>
         <div class="switch-container" style="display: inline-block">
-            <input id="Available" type="hidden" value="False">
-            <input id="Available_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('Available')">
+            <input id="available" type="hidden" value="False">
+            <input id="available_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('available')">
             <span class="switch-area"></span>
             <span class="switch-toggle"></span>
         </div>
@@ -144,14 +143,14 @@
         <p class="p_widgets_bzdz">地址: <input type="url" class="widgets_url" id="widgets_url_add" value="" placeholder="/widgets/your_widgets"/></p>
         <p class="p_widgets_bzdz" style="display: inline-block">是否启用:</p>
         <div class="switch-container" style="display: inline-block">
-            <input id="Available_add" type="hidden" value="False">
-            <input id="Available_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('Available_add')">
+            <input id="widgets_available_add" type="hidden" value="True">
+            <input id="widgets_available_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('widgets_available_add')">
             <span class="switch-area"></span>
             <span class="switch-toggle"></span>
         </div>
         <br>
         <button id="widgets_close_add_1" class="widgets_edit_commit deny">取消</button>
-        <button id="widgets_edit" class="widgets_edit_commit run" onclick="widgets_commit('add')">提交</button>
+        <button id="widgets_edit" class="widgets_edit_commit run" onclick="upload_widgets_add()">提交</button>
     </div>
 </div>
 

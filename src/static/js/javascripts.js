@@ -231,6 +231,59 @@ function upload_widgets_edit_order(){
     }
 }
 
+function upload_widgets_edit(){
+    $.ajax({
+        url: "/edit_widgets",
+        method : "POST",
+        data : {
+            id: $("#widgets_id").val(),
+            name: $("#widgets_name").val(),
+            url: $("#widgets_url").val(),
+            ava: $("#widgets_avaliable").val(),
+        },
+        success: function(response){
+            if (response.response){
+                alert(response.message,"success")
+            }
+            else{
+                alert(message,"danger")
+            }
+            load_active_widgets()
+            load_widgets()
+            $("#widgets_edit").fadeOut(100);
+        }
+    })
+}
+
+function upload_widgets_add(){
+    $.ajax({
+        url: "/edit_widgets",
+        method : "POST",
+        data : {
+            id: -1,
+            name: $("#widgets_name_add").val(),
+            url: $("#widgets_url_add").val(),
+            ava: $("#widgets_available_add").val(),
+        },
+        success: function(response){
+            if (response.response){
+                alert(response.message,"success")
+            }
+            else{
+                alert(response.message,"danger")
+            }
+            load_active_widgets()
+            load_widgets()
+            $("#widgets_add").fadeOut(100);
+            $("#widgets_name_add").val("");
+            $("#widgets_url_add").val("");
+            $("#widgets_available_add").val("False");
+            $("#widgets_available_add_Checkbox").attr("checked",false);
+
+        }
+    })
+}
+
 //prompt
 function GetPrompts(id){
     var text = $("#user-input-"+id).val();

@@ -15,11 +15,12 @@ import openai
 import psutil
 import requests
 import validators
-from flask import Flask, json, jsonify, render_template, request
+from flask import Flask, stream_with_context, json, jsonify, render_template, request
 from flaskwebgui import FlaskUI, close_application
 from loguru import logger
 from playhouse.shortcuts import model_to_dict
 from thefuzz import fuzz, process
+from peewee import fn
 
 from config import Prompt, Settings
 from data import History, Models, Widgets
@@ -55,6 +56,14 @@ def root():
         DebugMode=cfg.read("BaseConfig", "Develop"),
         TimeOut=cfg.read("BaseConfig", "TimeOut"),
     )
+
+
+@app.post("/request_models_stream")
+def request_models_stream():
+    InputInfo = request.form.get("userinput")
+    InputModel = request.form["modelinput"]
+    Model_response = ai(InputModel, InputInfo)
+    yield from Model_response
 
 
 @app.post("/requestmodels")
@@ -148,26 +157,30 @@ def edit_widgets():
     widgets_name = request.form.get("name")
     widgets_url = request.form.get("url")
     avaliable = request.form.get("ava")
-    if widgets_id == -1:
+    logger.debug("{},{}",type(widgets_id),widgets_name)
+    if widgets_id == "-1":
         try:
-            Widgets.create(
+            w = Widgets(
+                order =  Widgets.select(fn.MAX(Widgets.order)).get().order + 1,
                 widgets_name = widgets_name,
                 widgets_url = widgets_url,
                 avaliable = avaliable,
             )
+            w.save()
             return jsonify({"response": True, "message": "添加成功"})
         except:
-            return jsonify({"response": True, "message": "添加失败"})
-    try:
-        u = Widgets.update({
-            Widgets.widgets_name : widgets_name,
-            Widgets.widgets_url : widgets_url,
-            Widgets.avaliable : avaliable,
-        }).where(Widgets.id == widgets_id)
-        u.execute()
-        return jsonify({"response": True, "message": "更改成功"})
-    except:
-        return jsonify({"response": False, "message": "更改失败"})
+            return jsonify({"response": False, "message": "添加失败"})
+    else:
+        try:
+            u = Widgets.update({
+                Widgets.widgets_name : widgets_name,
+                Widgets.widgets_url : widgets_url,
+                Widgets.avaliable : avaliable,
+            }).where(Widgets.id == widgets_id)
+            u.execute()
+            return jsonify({"response": True, "message": "更改成功"})
+        except:
+            return jsonify({"response": False, "message": "更改失败"})
 
 
 @app.post("/exchange")
@@ -373,24 +386,19 @@ def ai(ModelID: str, question_in: str):
         if hasattr(chunk.choices[0].delta, "content"):
             print(chunk.choices[0].delta.content, end="", flush=True)
             response = response + chunk.choices[0].delta.content
-    logger.info(
-        "model: {},url: {}/v1/completions.\nquestion: {},response: {}.",
-        ModelID,
-        Models.get(Models.name == ModelID).url,
-        question,
-        response,
-    )
-    response = str.replace(response,"\n","<br/>")
-    last_code_block_index: int = -1
-    is_code_block_start = True
-    while (last_code_block_index := response.find("```")) != -1:
-        if is_code_block_start:
-            response=response.replace("```", "<pre>", 1)
-        else:
-            response=response.replace("```", "</pre>", 1)
-        last_code_block_index=-1
-        is_code_block_start=not is_code_block_start
-    return response
+            response = str.replace(response,"\n","<br/>")
+            last_code_block_index: int = -1
+            is_code_block_start = True
+            while (last_code_block_index := response.find("```")) != -1:
+                if is_code_block_start:
+                    response=response.replace("```", "<pre>", 1)
+                else:
+                    response=response.replace("```", "</pre>", 1)
+                last_code_block_index=-1
+                is_code_block_start=not is_code_block_start
+            logger.info("{}", response)
+            yield response
+    # return response
 
 
 def llm(ModelID: str, question: str):
