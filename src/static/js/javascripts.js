@@ -386,7 +386,6 @@ function SendInput(id) {
             },
             success: function(response) {
                 var chatGptResponse = response.response;
-                alert(chatGptResponse.message,"sucess")
                 $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
                 $("#loading").fadeOut(100)
                 smoothScroll("output-"+id);
@@ -396,6 +395,46 @@ function SendInput(id) {
     else{
         alert('内容不能为空',"warning");
     }
+}
+
+function send_input_stream(id) {
+    if ($('#user-input-' + id).val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
+    $("#loading").fadeIn(100);
+    $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+    smoothScroll("output-"+id);
+    let form = new FormData();
+    form.append("userinput",$('#user-input-' + id).val())
+    form.append("modelinput",$('#model-input-' + id).val())
+    fetch("/request_models_stream", {
+        method: "POST",
+        body: form,
+    }).then(async (response) => {
+        const reader = response.body.getReader();
+        $("#loading").fadeOut(100)
+        $('#output-' + id).append('<div class="item item-left"><div class="avatar">\
+        <i class="fa fa-user-circle-o"></i></div>\
+        <div class="bubble bubble-left" id="streaming"></div></div>');
+        for await (const chunk of readChunks(reader)) {
+            document.getElementById("streaming").innerHTML = new TextDecoder('utf-8').decode(chunk);
+            smoothScroll("output-"+id);
+        }
+        $("#streaming").removeAttr("id");
+    });
+}
+
+function readChunks(reader) {
+    return {
+        async *[Symbol.asyncIterator]() {
+            let readResult = await reader.read();
+            while (!readResult.done) {
+                yield readResult.value;
+                readResult = await reader.read();
+            }
+        },
+    };
 }
 
 $(document).ready(function() {
@@ -568,7 +607,7 @@ function Refresh_Tabs(){
                             </div>\
                             <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
                             <div class="button-area">\
-                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
+                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="send_input_stream(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
                             </div>\
                         </div>\
                     </div>')
@@ -597,7 +636,7 @@ function Refresh_Tabs(){
                                 </div>\
                                 <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
                                 <div class="button-area">\
-                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
+                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="send_input_stream(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
                                 </div>\
                             </div>\
                         </div>')

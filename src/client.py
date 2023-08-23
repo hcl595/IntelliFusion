@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Literal, TypedDict
 from urllib.parse import urlparse
+import socketserver
 
 import jieba
 import openai
@@ -42,6 +43,12 @@ cfg = Settings()
 pmt = Prompt()
 login_error = ""
 
+def get_free_port():
+    with socketserver.TCPServer(("localhost", 0), None) as s:
+        free_port = s.server_address[1]
+    return free_port
+
+api_port = get_free_port()
 
 # main
 @app.route("/")  # 根目录
@@ -49,13 +56,27 @@ def root():
     return render_template("main.html")
 
 
+@app.get("/get_api_port")
+def get_api_port():
+    return api_port
+
+
 @app.post("/request_models_stream")
 @stream_with_context
 def request_models_stream():
     InputInfo = request.form.get("userinput")
     InputModel = request.form["modelinput"]
-    Model_response = ai(InputModel, InputInfo, "stream")
-    yield from Model_response
+    try:
+        Model_response = ai(InputModel, InputInfo, "stream")
+        for r in Model_response:
+            yield r
+        History.create(
+            Model=InputModel,
+            UserInput = InputInfo,
+            response=r,
+        )
+    except openai.error.AuthenticationError:
+        yield "Check Your API Key"
 
 
 @app.post("/requestmodels")
@@ -77,6 +98,7 @@ def Request_Models():
         # except IntegrityError:
     elif Models.get(Models.name == InputModel).type == "API":
             Model_response = llm(InputModel, InputInfo)
+            # response = html.escape(response)
             History.create(
                 Model=InputModel,
                 UserInput = InputInfo,
@@ -435,7 +457,6 @@ def llm(ModelID: str, question: str):
         is_code_block_start=not is_code_block_start
     return response
 
-
 def get_ports(url: str):
     port = urlparse(url).port
     if port == None:
@@ -473,11 +494,18 @@ if __name__ == "__main__":
     if cfg.read("BaseConfig", "Develop") == "True":
         logger.level("DEBUG")
         logger.debug("run in debug mode")
-        app.run(
-            debug=cfg.read("BaseConfig", "Develop"),
-            port=cfg.read("RemoteConfig", "Port"),
-            host=cfg.read("RemoteConfig", "Host"),
-        )
+        if cfg.read("RemoteConfig", "Port") == "0":
+            app.run(
+                debug=cfg.read("BaseConfig", "Develop"),
+                port=get_free_port(),
+                host=cfg.read("RemoteConfig", "Host"),
+            )
+        else:
+            app.run(
+                debug=cfg.read("BaseConfig", "Develop"),
+                port=cfg.read("RemoteConfig", "Port"),
+                host=cfg.read("RemoteConfig", "Host"),
+            )
     elif cfg.read("BaseConfig", "Develop") == "False" or cfg.read("BaseConfig", "Develop") == False:
         logger.debug("run in GUI mode")
         print(cfg.read("BaseConfig", "Develop"))
