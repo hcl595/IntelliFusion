@@ -782,7 +782,7 @@ textarea{
   z-index: 3;
   position:fixed;
   top:  20vh;
-  left: 30vw;
+  margin-left: calc((100% - 630px)/2);
 }
 .copyright p{
   word-break: break-all;
@@ -798,7 +798,7 @@ textarea{
   z-index: 3;
   position:fixed;
   margin-top: 80px;
-  margin-left: calc((100%-600px)/2);
+  margin-left: calc((100% - 650px)/2);
 }
 .btn_expand_case{
   background: #ffffff70;
