@@ -50,6 +50,7 @@ def root():
 
 
 @app.post("/request_models_stream")
+@stream_with_context
 def request_models_stream():
     InputInfo = request.form.get("userinput")
     InputModel = request.form["modelinput"]
