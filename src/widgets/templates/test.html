@@ -1,15 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="zh-CN" style="height: 100%">
-<head>
-  <meta charset="utf-8">
-<script src="..\static\js\jquery.min.js" charset="utf-8"></script>
-<link rel="stylesheet" href="..\static\css\style.css">
-</head>
-<body style="height: 100%; margin: 0">
-  
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="zh-CN" style="height: 100%">
 <head>
@@ -19,25 +7,66 @@
   <style>
     .translate-container {
       position: fixed;
-      width: 80%;
-      height: 80%;
+      width: 100%;
+      height: 100%;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       background-color: #91d6f1d9;
-      padding: 20px;
+      padding: 25px;
       border-radius: 5px;
       box-shadow: none;
+    }
+    .translate_title{
+      margin-top: 2%;
+      margin-left: 44%;
+      max-width: 50%;
+      font-size: 20px;
+      
+    }
+    .input-text{
+      width: 90%;
+      height: 30%;
+      margin-top: -5%;
+    }
+    .translate_language{
+      margin-left: -1%;
+      width: 40%;
+    }
+    .translate_model{
+      margin-left: 2%;
+      width: 40%;
+    }
+    .translate-button{
+      margin-left: -1%;
+      width: 15%;
+    }
+    .translation-result{
+      width: 90%;
+      height: 35%;
+      margin-left: 4%;
     }
   </style>
 </head>
 <body style="height: 100%; margin: 0">
   <div class="translate-container">
-    <h2>翻译插件</h2>
-    <textarea id="input-text" placeholder="请输入要翻译的文本"></textarea>
+    <p class="translate_title">翻译</p>
+    <textarea class="input-text" id="input-text" placeholder="请输入要翻译的文本"></textarea>
+    <textarea class="translation-result" id="translation-result" placeholder="这里是翻译后的内容"></textarea>
+    <select class="translate_model">
+      <option selected hidden disabled value="">请选择使用模型</option>
+      <option value="option1">GPT-3.5</option>
+      <option value="option2">GLM-6B</option>
+      <option value="option3">ZSC-NB</option>
+    </select>
+    <select class="translate_language">
+      <option selected hidden disabled value="">请选择目标语言</option>
+      <option value="option1">英语</option>
+      <option value="option2">汉语</option>
+      <option value="option3">日语</option>
+      <option value="option4">赛博坦语</option>
+    </select>
     <button class="translate-button" id="translate-button">翻译</button>
-    <div id="translation-result"></div>
-  </div>
   <script>
     $(document).ready(function() {
       $('#translate-button').click(function() {
@@ -46,6 +75,9 @@
         $('#translation-result').text('翻译结果：' + inputText);
       });
     });
+    var int = setInterval(function(){
+      getData()
+    },10000)
   </script>
 </body>
 </html>
