@@ -1,0 +1,6 @@
+[
+    {
+        "act":"Classification de l’intention du texte",
+        "prompt":"Classez la liste de mots-clés suivante en groupes en fonction de leur intention de recherche, qu’elle soit commerciale, transactionnelle ou informative : [mot-clé]"
+    }
+]
