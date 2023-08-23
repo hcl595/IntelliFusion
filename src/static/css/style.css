@@ -275,19 +275,35 @@ nav:hover .list li:nth-child(8) span {
   word-wrap:break-word;
   word-break:normal; 
 }
-.item-left .bubble{
+.light .item-left .bubble{
   margin-left: 15px;
-  background-color: #6d7086;
-  color: #fff;
+  background-color: rgb(255, 255, 255);
+  color: #000000;
 }
-.item-left .bubble:before{
+.light .item-left .bubble:before{
   content: "";
   position: absolute;
   width: 0;
   height: 0;
   border-left: 10px solid transparent;
   border-top: 10px solid transparent;
-  border-right: 10px solid #6d7086;
+  border-right: 10px solid rgb(255, 255, 255);
+  border-bottom: 10px solid transparent;
+  left: -20px;
+}
+.dark .item-left .bubble{
+  margin-left: 15px;
+  background-color: rgb(64, 64, 64);
+  color: #fff;
+}
+.dark .item-left .bubble:before{
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-top: 10px solid transparent;
+  border-right: 10px solid rgb(64, 64, 64);
   border-bottom: 10px solid transparent;
   left: -20px;
 }
@@ -329,6 +345,15 @@ nav:hover .list li:nth-child(8) span {
   -ms-user-select:none; /*IE10*/
   -khtml-user-select:none; /*早期浏览器*/
   user-select:none;
+}
+.light .avatar{
+  color:rgb(32, 32, 32);
+}
+.dark .item-right .avatar{
+  color:rgb(255, 255, 255);
+}
+.dark .item-left .avatar{
+  color:rgb(40, 40, 40);
 }
 .avatar i{
   font-size: 35px;
@@ -375,7 +400,7 @@ textarea{
 .button-area button{
   margin-left: 5px;
   margin-right: 5px;
-  width: 80px;
+  width: 40px;
   height: 40px;
   background-color: #027cff;
   color: white;
@@ -472,7 +497,6 @@ textarea{
 }
 .widgets_contentbox {
   width: 300px;
-  height: 300px;
   margin: 10px;
   position: relative;
   display: inline-block;
@@ -483,6 +507,15 @@ textarea{
   word-break:break-word;
   white-space: nowrap; 
   overflow: hidden;
+}
+.widgets_container .medium{
+  height: 300px;
+}
+.widgets_container .small{
+  height: 100px;
+}
+.widgets_container .large{
+  height: 600px;
 }
 .widgets_contentbox h2 {
   margin-left: 20px;

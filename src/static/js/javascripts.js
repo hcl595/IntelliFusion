@@ -490,7 +490,7 @@ function Refresh_Tabs(){
                             </div>\
                             <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
                             <div class="button-area">\
-                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">发 送</button>\
+                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
                             </div>\
                         </div>\
                     </div>')
@@ -519,7 +519,7 @@ function Refresh_Tabs(){
                                 </div>\
                                 <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
                                 <div class="button-area">\
-                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">发 送</button>\
+                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
                                 </div>\
                             </div>\
                         </div>')
@@ -546,7 +546,7 @@ function load_active_widgets(){
             $("#widgets_container_live").empty()
             for (i in data){
                 $("#widgets_container_live").append('\
-                <div class="widgets_contentbox">\
+                <div class="widgets_contentbox medium">\
                     <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
                 </div>\
                 ')
