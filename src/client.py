@@ -54,7 +54,7 @@ def root():
 def request_models_stream():
     InputInfo = request.form.get("userinput")
     InputModel = request.form["modelinput"]
-    Model_response = ai(InputModel, InputInfo)
+    Model_response = ai(InputModel, InputInfo, "stream")
     yield from Model_response
 
 
@@ -64,7 +64,7 @@ def Request_Models():
     InputModel = request.form["modelinput"]
     if Models.get(Models.name == InputModel).type == "OpenAI":
         try:
-            Model_response = ai(InputModel, InputInfo)
+            Model_response = ai(InputModel, InputInfo, "normal")
             History.create(
                 Model=InputModel,
                 UserInput = InputInfo,
@@ -359,7 +359,7 @@ class Message(TypedDict):
 
 
 # functions
-def ai(ModelID: str, question_in: str):
+def ai(ModelID: str, question_in: str,method: str):
     response = ""
     logger.debug("{}", Models.get(Models.name == ModelID).url)
     openai.api_base = (Models.get(Models.name == ModelID).url)
@@ -383,23 +383,38 @@ def ai(ModelID: str, question_in: str):
         stream=True,
         temperature=0,
     ):
-        if hasattr(chunk.choices[0].delta, "content"):
-            print(chunk.choices[0].delta.content, end="", flush=True)
-            response = response + chunk.choices[0].delta.content
-            response = str.replace(response,"\n","<br/>")
-            last_code_block_index: int = -1
-            is_code_block_start = True
-            while (last_code_block_index := response.find("```")) != -1:
-                if is_code_block_start:
-                    response=response.replace("```", "<pre>", 1)
-                else:
-                    response=response.replace("```", "</pre>", 1)
-                last_code_block_index=-1
-                is_code_block_start=not is_code_block_start
-            logger.info("{}", response)
-            yield response
-    # return response
-
+        if method == "stream":
+            if hasattr(chunk.choices[0].delta, "content"):
+                print(chunk.choices[0].delta.content, end="", flush=True)
+                response = response + chunk.choices[0].delta.content
+                response = str.replace(response,"\n","<br/>")
+                last_code_block_index: int = -1
+                is_code_block_start = True
+                while (last_code_block_index := response.find("```")) != -1:
+                    if is_code_block_start:
+                        response=response.replace("```", "<pre>", 1)
+                    else:
+                        response=response.replace("```", "</pre>", 1)
+                    last_code_block_index=-1
+                    is_code_block_start=not is_code_block_start
+                logger.info("{}", response)
+                yield response
+        else:
+            if hasattr(chunk.choices[0].delta, "content"):
+                print(chunk.choices[0].delta.content, end="", flush=True)
+                response = response + chunk.choices[0].delta.content
+                response = str.replace(response,"\n","<br/>")
+                last_code_block_index: int = -1
+                is_code_block_start = True
+                while (last_code_block_index := response.find("```")) != -1:
+                    if is_code_block_start:
+                        response=response.replace("```", "<pre>", 1)
+                    else:
+                        response=response.replace("```", "</pre>", 1)
+                    last_code_block_index=-1
+                    is_code_block_start=not is_code_block_start
+                logger.info("{}", response)
+            return response
 
 def llm(ModelID: str, question: str):
     response = requests.post(
