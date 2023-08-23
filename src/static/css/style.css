@@ -508,6 +508,20 @@ textarea{
   white-space: nowrap; 
   overflow: hidden;
 }
+.widgets_contentbox_pre{
+  height: 300px;
+  width: 300px;
+  margin-left: 160px;
+  position: relative;
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.486);
+  box-shadow: none;
+  border-radius: 10px;
+  transition: 0.3s;
+  word-break:break-word;
+  white-space: nowrap; 
+  overflow: hidden;
+}
 .widgets_container .medium{
   height: 300px;
 }
@@ -529,7 +543,7 @@ textarea{
   scale: 1.03;
   box-shadow: 5px 5px 10px 0px lightgray;
 } 
-.widgets_container iframe , .widgets_contentbox iframe{
+.widgets_contentbox_pre iframe,.widgets_container iframe , .widgets_contentbox iframe{
   width: 100%;
   height: 100%;
   border: 0;
@@ -784,7 +798,7 @@ textarea{
   z-index: 3;
   position:fixed;
   margin-top: 80px;
-  margin-left: 35%;
+  margin-left: calc((100%-600px)/2);
 }
 .btn_expand_case{
   background: #ffffff70;

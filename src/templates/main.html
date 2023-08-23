@@ -116,27 +116,28 @@
     <div class="widgets_edit" id="widgets_edit" style="display: none;">
         <button class="btn" id="widgets_close"><i class="fa fa-close"></i></button>
         <br>
-        <div class="widgets_contentbox">
+        <div class="widgets_contentbox_pre">
             <iframe id="widgets_preview" allow="autoplay *"></iframe>
         </div>
-        <p class="p_widgets_bzdz">备注: <input type="name" class="widgets_name" id="widgets_name" value="" /></p>
-        <p class="p_widgets_bzdz">地址: <input type="url" class="widgets_url" id="widgets_url" value="" /></p>
+        <p class="p_widgets_bzdz">备注: <input type="name" class="widgets_name" id="widgets_name_edit" value="" /></p>
+        <p class="p_widgets_bzdz">地址: <input type="url" class="widgets_url" id="widgets_url_edit" value="" /></p>
         <p class="p_widgets_bzdz" style="display: inline-block">是否启用:</p>
         <div class="switch-container" style="display: inline-block">
-            <input id="available" type="hidden" value="False">
-            <input id="available_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('available')">
+            <input id="widgets_available_edit" type="hidden" value="False">
+            <input id="widgets_available_edit_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('widgets_available_edit')">
             <span class="switch-area"></span>
             <span class="switch-toggle"></span>
         </div>
         <br>
-        <button id="widgets_commit_del" class="widgets_edit_commit deny" onclick="widgets_commit('delete')" value="">删除</button>
-        <button id="widgets_commit_cmt" class="widgets_edit_commit edit"  onclick="widgets_commit('update')" value="">更新</button>
+        <input type="hidden" id="widgets_id_edit" value=""/>
+        <button id="widgets_commit_del" class="widgets_edit_commit deny" onclick="upload_widgets_del()" value="">删除</button>
+        <button id="widgets_commit_cmt" class="widgets_edit_commit edit"  onclick="upload_widgets_edit()" value="">更新</button>
     </div>
 
     <div class="widgets_edit" id="widgets_add" style="display: none;">
         <button class="btn" id="widgets_close_add"><i class="fa fa-close"></i></button>
         <br>
-        <div class="widgets_contentbox">
+        <div class="widgets_contentbox_pre">
             <iframe id="widgets_preview" allow="autoplay *"></iframe>
         </div>
         <p class="p_widgets_bzdz">备注: <input type="name" class="widgets_name" id="widgets_name_add" value="" /></p>

@@ -121,9 +121,9 @@ function show_widgets_edit(id) {
     var name = $("#widgets_"+id).attr("widgets_name")
     var url = $("#widgets_"+id).attr("widgets_url")
     $("#widgets_preview").attr("src", url)
-    $("#widgets_id").val(id)
-    $("#widgets_name").val(name)
-    $("#widgets_url").val(url)
+    $("#widgets_id_edit").val(id)
+    $("#widgets_name_edit").val(name)
+    $("#widgets_url_edit").val(url)
 }
 
 function show_widgets_add() {
@@ -236,17 +236,43 @@ function upload_widgets_edit(){
         url: "/edit_widgets",
         method : "POST",
         data : {
-            id: $("#widgets_id").val(),
-            name: $("#widgets_name").val(),
-            url: $("#widgets_url").val(),
-            ava: $("#widgets_avaliable").val(),
+            id: $("#widgets_id_edit").val(),
+            operation: "edit",
+            name: $("#widgets_name_edit").val(),
+            url: $("#widgets_url_edit").val(),
+            ava: $("#widgets_available_edit").val(),
         },
         success: function(response){
             if (response.response){
                 alert(response.message,"success")
             }
             else{
-                alert(message,"danger")
+                alert(response.message,"danger")
+            }
+            load_active_widgets()
+            load_widgets()
+            $("#widgets_edit").fadeOut(100);
+        }
+    })
+}
+
+function upload_widgets_del(){
+    $.ajax({
+        url: "/edit_widgets",
+        method : "POST",
+        data : {
+            id: $("#widgets_id_edit").val(),
+            operation: "del",
+            name: $("#widgets_name_edit").val(),
+            url: $("#widgets_url_edit").val(),
+            ava: $("#widgets_avaliable_edit").val(),
+        },
+        success: function(response){
+            if (response.response){
+                alert(response.message,"success")
+            }
+            else{
+                alert(response.message,"danger")
             }
             load_active_widgets()
             load_widgets()
@@ -278,8 +304,7 @@ function upload_widgets_add(){
             $("#widgets_name_add").val("");
             $("#widgets_url_add").val("");
             $("#widgets_available_add").val("False");
-            $("#widgets_available_add_Checkbox").attr("checked",false);
-
+            $("#widgets_available_add_Checkbox").prop("checked",false);
         }
     })
 }

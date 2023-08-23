@@ -162,16 +162,24 @@ def edit_widgets():
         except:
             return jsonify({"response": False, "message": "添加失败"})
     else:
-        try:
-            u = Widgets.update({
-                Widgets.widgets_name : widgets_name,
-                Widgets.widgets_url : widgets_url,
-                Widgets.avaliable : avaliable,
-            }).where(Widgets.id == widgets_id)
-            u.execute()
-            return jsonify({"response": True, "message": "更改成功"})
-        except:
-            return jsonify({"response": False, "message": "更改失败"})
+        if request.form.get("operation") == "edit":
+            try:
+                u = Widgets.update({
+                    Widgets.widgets_name: widgets_name,
+                    Widgets.widgets_url: widgets_url,
+                    Widgets.avaliable: avaliable,
+                }).where(Widgets.id == widgets_id)
+                u.execute()
+                return jsonify({"response": True, "message": "更改成功"})
+            except:
+                return jsonify({"response": False, "message": "更改失败"})
+        elif request.form.get("operation") == "del":
+            try:
+                w = Widgets.get(Widgets.id == widgets_id)
+                w.delete_instance()
+                return jsonify({"response": True, "message": "更改成功"})
+            except:
+                return jsonify({"response": False, "message": "更改失败"})
 
 
 @app.post("/exchange")
@@ -208,7 +216,7 @@ def AddModel():
                             "message":"编辑失败",})
     elif InputState == "del":
         try:
-            u = Models.get(id = InputID)
+            u = Models.get(Models.id == InputID)
             u.delete_instance()
             return jsonify({"response": True,
                             "message":"删除成功",})

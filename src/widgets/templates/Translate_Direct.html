@@ -25,8 +25,8 @@
       
     }
     .input-text{
-      width: 90%;
-      height: 30%;
+      width: 80%;
+      height: calc((100% - 100px)/2);
       margin-top: -5%;
     }
     .translate_language{
@@ -42,8 +42,8 @@
       width: 15%;
     }
     .translation-result{
-      width: 90%;
-      height: 35%;
+      width: 80%;
+      height: calc((100% - 100px)/2);
       margin-left: 4%;
     }
   </style>
@@ -75,9 +75,6 @@
         $('#translation-result').text('翻译结果：' + inputText);
       });
     });
-    var int = setInterval(function(){
-      getData()
-    },10000)
   </script>
 </body>
 </html>
