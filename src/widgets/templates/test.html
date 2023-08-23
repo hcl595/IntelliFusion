@@ -1,0 +1,51 @@
+<!-- <!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+<script src="..\static\js\jquery.min.js" charset="utf-8"></script>
+<link rel="stylesheet" href="..\static\css\style.css">
+</head>
+<body style="height: 100%; margin: 0">
+  
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+  <script src="..\static\js\jquery.min.js" charset="utf-8"></script> <!-- 引入 jquery.js -->
+  <link rel="stylesheet" href="..\static\css\style.css"> <!-- 引入 style.css 样式表 -->
+  <style>
+    .translate-container {
+      position: fixed;
+      width: 80%;
+      height: 80%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #91d6f1d9;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body style="height: 100%; margin: 0">
+  <div class="translate-container">
+    <h2>翻译插件</h2>
+    <textarea id="input-text" placeholder="请输入要翻译的文本"></textarea>
+    <button class="translate-button" id="translate-button">翻译</button>
+    <div id="translation-result"></div>
+  </div>
+  <script>
+    $(document).ready(function() {
+      $('#translate-button').click(function() {
+        var inputText = $('#input-text').val();
+        // 发送翻译请求，并将结果显示在 translation-result 元素中
+        $('#translation-result').text('翻译结果：' + inputText);
+      });
+    });
+  </script>
+</body>
+</html>
