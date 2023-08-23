@@ -1,51 +1,67 @@
-<!-- <!DOCTYPE html>
-<html lang="zh-CN" style="height: 100%">
-<head>
-  <meta charset="utf-8">
-<script src="..\static\js\jquery.min.js" charset="utf-8"></script>
-<link rel="stylesheet" href="..\static\css\style.css">
-</head>
-<body style="height: 100%; margin: 0">
-  
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="zh-CN" style="height: 100%">
 <head>
   <meta charset="utf-8">
-  <script src="..\static\js\jquery.min.js" charset="utf-8"></script> <!-- 引入 jquery.js -->
-  <link rel="stylesheet" href="..\static\css\style.css"> <!-- 引入 style.css 样式表 -->
-  <style>
-    .translate-container {
-      position: fixed;
-      width: 80%;
-      height: 80%;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #91d6f1d9;
-      padding: 20px;
-      border-radius: 5px;
-      box-shadow: none;
-    }
-  </style>
+<script src="..\static\js\jquery.min.js" charset="utf-8"></script> <!-- jquery.js -->
 </head>
-<body style="height: 100%; margin: 0">
-  <div class="translate-container">
-    <h2>翻译插件</h2>
-    <textarea id="input-text" placeholder="请输入要翻译的文本"></textarea>
-    <button class="translate-button" id="translate-button">翻译</button>
-    <div id="translation-result"></div>
-  </div>
-  <script>
-    $(document).ready(function() {
-      $('#translate-button').click(function() {
-        var inputText = $('#input-text').val();
-        // 发送翻译请求，并将结果显示在 translation-result 元素中
-        $('#translation-result').text('翻译结果：' + inputText);
-      });
+<body style="height: 100%; margin: 0" onload="getData()">
+  <div id="widgets_cpu_percent_container" style="height: 100%;width: 100%;"></div>
+
+  
+  <script type="text/javascript" src="../static/js/echarts.min.js"></script>
+
+  <script type="text/javascript">
+    function getData(){
+      $.ajax({
+        url: '/widgets/Get_CPU_Percent',
+        type: 'POST',
+        success: function(response) {
+          var GPU_Data = response.data
+          var dom = document.getElementById('widgets_cpu_percent_container');
+          var myChart = echarts.init(dom, null, {
+            renderer: 'canvas',
+            useDirtyRect: false
+          });
+          var app = {};
+          
+          var option;
+      
+          option = {
+            animation: false,
+        //      tooltip: {
+        //    formatter: '{a} <br/>{b} : {c}%'
+        // },
+        series: [
+          {
+            name: 'Occupancy Rate',
+            type: 'gauge',
+            progress: {
+              show: true
+            },
+            detail: {
+              valueAnimation: true,
+              formatter: '{value}'
+            },
+            data: [
+              {
+                value: GPU_Data,
+                name: 'GPU (%)'
+              }
+            ]
+          }
+        ]
+      };
+      if (option && typeof option === 'object') {
+        myChart.setOption(option);
+      }
+  
+      window.addEventListener('resize', myChart.resize);
+        }
     });
+    }
+    var int = setInterval(function(){
+      getData()
+    },10000)
   </script>
 </body>
 </html>

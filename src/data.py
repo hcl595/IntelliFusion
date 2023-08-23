@@ -32,11 +32,13 @@ class Models(BaseModel):
 class Widgets(BaseModel):
     order = IntegerField(column_name="order",)
     avaliable =  BooleanField(column_name="avaliable")
+    # size = CharField()
     widgets_name = CharField(column_name="name",)
     widgets_url = CharField(column_name="URL",)
 
 class History(BaseModel):
     Model = CharField()
+    # session = CharField()
     UserInput = CharField()
     response = CharField()
 

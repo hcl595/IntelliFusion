@@ -3,6 +3,10 @@ import psutil
 from flask import Flask, render_template, jsonify
 
 
+@widgets_blue.route("/test")
+def test_widgets():
+    return render_template("test.html")
+
 @widgets_blue.route("/Translate_Direct")
 def TranslateTranslate():
     return render_template("Translate_Direct.html")
