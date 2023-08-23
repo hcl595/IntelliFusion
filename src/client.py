@@ -41,21 +41,12 @@ logger.add(LOG_FILE)
 cfg = Settings()
 pmt = Prompt()
 login_error = ""
-result = None
-NeedLogin = True
 
 
 # main
 @app.route("/")  # 根目录
 def root():
-    return render_template(
-        "main.html",
-        NeedLogin=NeedLogin,
-        host=cfg.read("RemoteConfig", "Host"),
-        port=cfg.read("RemoteConfig", "Port"),
-        DebugMode=cfg.read("BaseConfig", "Develop"),
-        TimeOut=cfg.read("BaseConfig", "TimeOut"),
-    )
+    return render_template("main.html")
 
 
 @app.post("/request_models_stream")
