@@ -425,9 +425,9 @@ def get_ports(url: str):
 
 
 if cfg.read("BaseConfig", "Develop") == "True":
-    if Widgets.get(Widgets.widgets_name == "test"):
-        pass
-    else:
+    try:
+        id = Widgets.get(Widgets.widgets_name == "test").id
+    except:
         w = Widgets(
             order = 4,
             widgets_name = "test",
@@ -435,7 +435,7 @@ if cfg.read("BaseConfig", "Develop") == "True":
             avaliable = True,
         )
         w.save()
-
+    
     @app.route("/test")
     def DevTest():
         return render_template("test.html")
