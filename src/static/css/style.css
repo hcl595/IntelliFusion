@@ -472,7 +472,6 @@ textarea{
 }
 .widgets_contentbox {
   width: 300px;
-  height: 300px;
   margin: 10px;
   position: relative;
   display: inline-block;
@@ -483,6 +482,15 @@ textarea{
   word-break:break-word;
   white-space: nowrap; 
   overflow: hidden;
+}
+.widgets_container .medium{
+  height: 300px;
+}
+.widgets_container .small{
+  height: 100px;
+}
+.widgets_container .large{
+  height: 600px;
 }
 .widgets_contentbox h2 {
   margin-left: 20px;

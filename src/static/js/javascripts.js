@@ -546,7 +546,7 @@ function load_active_widgets(){
             $("#widgets_container_live").empty()
             for (i in data){
                 $("#widgets_container_live").append('\
-                <div class="widgets_contentbox">\
+                <div class="widgets_contentbox medium">\
                     <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
                 </div>\
                 ')
