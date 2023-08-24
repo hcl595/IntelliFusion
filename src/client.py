@@ -175,7 +175,6 @@ def edit_widgets():
     widgets_name = request.form.get("name")
     widgets_url = request.form.get("url")
     available = request.form.get("ava")
-    logger.debug("{},{}",type(available),available)
     if widgets_id == "-1":
         try:
             w = Widgets(
@@ -223,7 +222,6 @@ def AddModel():
         port = int(urlparse(InputUrl).port)
     except:
         port = 80
-    logger.debug(LaunchCompiler)
     if InputState == "edit":
         try:
             logger.info("User Inputs: {}, {}, {}", InputType, InputID,InputAPIkey)
@@ -330,7 +328,6 @@ def GetModelList():
         ModelList = Models.select()
     except:
         ModelList = {}
-    logger.debug("ModelList: {}",list(ModelList))
     ModelList_json = [model_to_dict(Model) for Model in ModelList]
     logger.info("{}", ModelList_json)
     return jsonify(ModelList_json)
@@ -342,7 +339,6 @@ def GetActiveModels():
         ModelList = Models.select()
     except:
         ModelList = {}
-    logger.debug("ModelList: {}",list(ModelList))
     ActiveModels = []
     if cfg.read("BaseConfig","ActiveExamine") == "True":
         for i in ModelList:
@@ -358,8 +354,6 @@ def GetActiveModels():
             port = conn.laddr.port
             if port in model_ports:
                 ActiveModels.append(model_ports[port])
-                logger.debug("model_ports: {}", model_ports[port])
-        logger.debug("ActiveModels: {}", ActiveModels)
     else:
         ActiveModels = ModelList
     ActiveModelList_json = [model_to_dict(Model) for Model in ActiveModels]
@@ -387,7 +381,6 @@ class Message(TypedDict):
 # functions
 def ai(ModelID: str, question_in: str,method: str):
     response = ""
-    logger.debug("{}", Models.get(Models.name == ModelID).url)
     openai.api_base = (Models.get(Models.name == ModelID).url)
     messages = []
     for r in History.select().where(History.Model == ModelID):
@@ -448,7 +441,6 @@ def llm(ModelID: str, question: str):
         data=json.dumps({"prompt": question, "history": []}),
         headers={"Content-Type": "application/json"},
     )
-    logger.debug(response.json()["history"][0][1])
     response = str.replace(response.json()["history"][0][1],"\n","<br/>")
     last_code_block_index: int = -1
     is_code_block_start = True
@@ -460,17 +452,6 @@ def llm(ModelID: str, question: str):
         last_code_block_index=-1
         is_code_block_start=not is_code_block_start
     return response
-
-def get_ports(url: str):
-    port = urlparse(url).port
-    if port == None:
-        if not validators.url(url):
-            pass
-        else:
-            port = "url"
-    logger.debug("parse ports: {}", port)
-    return port
-
 
 if cfg.read("BaseConfig", "Develop") == "True":
     try:
