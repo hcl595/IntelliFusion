@@ -1,7 +1,7 @@
-# IntelliFusion 1.9.1
+# IntelliFusion 0.2.0
 A project that allows you to start and manage models such as LLM model and GPT model with one click.
 
-### Version IntelliFusion Version 0.1.9.1(202308122200V) Developer Alpha.
+### Version IntelliFusion Version 0.2.0 Flask Pre-Release.
 1. Support running and stopping your models on 'Accounts' page.
 2. Support Widgets on 'Wigets' page (Available Now).
 3. Now you'll be able to talk to the AI more fluidly.
@@ -9,7 +9,11 @@ A project that allows you to start and manage models such as LLM model and GPT m
 
 
 #### New Features.
-Add Prompts(Chinese only)
+Support Stream
+Improve Performance
+Support Widgets
+Add Document.md
+Add Prompts
 Add Dark/Light UI Mode
 Add ActiveExamine
 Support AC Refesh
