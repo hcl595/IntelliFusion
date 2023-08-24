@@ -31,7 +31,7 @@ class Models(BaseModel):
 
 class Widgets(BaseModel):
     order = IntegerField(column_name="order",null=True)
-    available =  CharField(column_name="available",default="true")
+    available =  CharField(column_name="available",default="True")
     size = CharField(null=True)
     widgets_name = CharField(column_name="name",)
     widgets_url = CharField(column_name="URL",)
@@ -57,21 +57,21 @@ def SetupDatabase():
     BaseWidgets = Widgets(
         order=1,
         widgets_name="内置核心小组件",
-        available = "true",
+        available = "True",
         widgets_url = "/widgets/CPU_Percent",
     )
     BaseWidgets.save()
     BaseWidgets = Widgets(
         order=2,
         widgets_name="内置内存小组件",
-        available = "true",
+        available = "True",
         widgets_url = "/widgets/RAM_Percent",
     )
     BaseWidgets.save()
     BaseWidgets = Widgets(
         order=3,
         widgets_name="内置显存小组件",
-        available = "true",
+        available = "True",
         widgets_url = "/widgets/GPU_Percent",
     )
     BaseWidgets.save()

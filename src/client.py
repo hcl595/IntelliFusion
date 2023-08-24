@@ -121,7 +121,7 @@ def GetHistorys():
 
 @app.post("/GetActiveWidgets")
 def GetActiveWidgets():
-    ActiveWidgets = Widgets.select().order_by(Widgets.order).where(Widgets.available == "true")
+    ActiveWidgets = Widgets.select().order_by(Widgets.order).where(Widgets.available == "True")
     ActiveWidgets_json = [model_to_dict(Model) for Model in ActiveWidgets]
     return jsonify(ActiveWidgets_json)
 
@@ -175,11 +175,7 @@ def edit_widgets():
     widgets_name = request.form.get("name")
     widgets_url = request.form.get("url")
     available = request.form.get("ava")
-    if available == "true":
-        available_data = True
-    elif available == "false":
-        available_data = False
-    # logger.debug("{},{}",type(available_data),available_data)
+    logger.debug("{},{}",type(available),available)
     if widgets_id == "-1":
         try:
             w = Widgets(

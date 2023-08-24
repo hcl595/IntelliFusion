@@ -121,10 +121,10 @@ function show_widgets_edit(id) {
     var name = $("#widgets_"+id).attr("widgets_name")
     var url = $("#widgets_"+id).attr("widgets_url")
     var ava = $("#widgets_"+id).attr("widgets_available")
-    if (ava == "true"){
+    if (ava == "True"){
         $("#widgets_available_edit_Checkbox").attr("checked",true)
     }
-    if (ava == "false"){
+    if (ava == "False"){
         $("#widgets_available_edit_Checkbox").prop("checked",false)
     }
     $("#widgets_preview").attr("src", url)
