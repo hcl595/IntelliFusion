@@ -1,4 +1,4 @@
-# config.py | IntelliFusion Version 0.1.9(202308032000) Developer Alpha
+# config.py | IntelliFusion Version 0.2.0(202308242000) Developer Alpha
 from pathlib import Path
 from loguru import logger
 import json
@@ -29,7 +29,9 @@ def setup():
                     "TimeOut": 60, 
                     "Language":"Chinese",
                     },
-                "RemoteConfig": {"host": "127.0.0.1", "port": "5000"},
+                "RemoteConfig": {
+                    "Host": "127.0.0.1",
+                    "Port": "0"},
             }
             with CONFIG_FILE.open("w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)

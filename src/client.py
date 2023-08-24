@@ -1,4 +1,4 @@
-# main.py | Intellifusion Version 0.1.9(2023080512000) Developer Alpha
+# main.py | Intellifusion Version 0.2.0(2023082412000) Developer Alpha
 # headers
 import ctypes
 import ipaddress

@@ -1,4 +1,4 @@
-# config.py | IntelliFusion Version 0.1.7(202307292000) Developer Alpha
+# config.py | IntelliFusion Version 0.1.9(202308242000) Pre_Release
 import json
 from pathlib import Path
 from typing import Any
