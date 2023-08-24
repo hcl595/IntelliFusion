@@ -96,7 +96,8 @@ body {
 }
 
 .light nav .list li.active {
-    background: #3681f6;
+  background: #3681f6;
+  box-shadow: 5px 5px 10px 0px rgb(141, 196, 255);
 }
 
 .light nav .list li.active span {
@@ -363,20 +364,31 @@ nav:hover .list li:nth-child(8) span {
   border-radius: 50%;
 }
 .input-area{
+  margin-left: auto;
+  margin-right: auto;
   border-top:0.3px solid #e0e0e0;
-  width: 100%;
-  height: 70px;
+  width: 90%;
+  height: 50px;
   display: flex;
   background-color: #fff;
-  border-radius: 15px;
+  border-radius: 30px;
   transition: .4s ease-in-out;
+  box-shadow: 5px 5px 10px 0px rgb(165, 165, 165);
 }
+.input-area:hover{
+  height: 70px;
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 5px 5px 10px 0px rgb(165, 165, 165);
+}
+
 .txtb {
   width: 100%;
   height: 100%;
 }
 textarea{
   padding: 5px;
+  height: 80%;
   font-size: 14px;
   cursor: pointer;
   outline:none;
@@ -385,7 +397,10 @@ textarea{
   margin-top:10px;
   margin-left: 10px;
   border: 0;
-  border-radius: 4px;
+  background-color: rgb(255, 255, 255);
+}
+.input-area textarea {
+  border-radius: 30px;
 }
 .button-area{
   display: flex;
@@ -400,8 +415,10 @@ textarea{
 .button-area button{
   margin-left: 5px;
   margin-right: 5px;
-  width: 40px;
-  height: 40px;
+  margin-top: auto;
+  margin-bottom: auto;
+  width: 35px;
+  height: 35px;
   background-color: #027cff;
   color: white;
   border: none;
@@ -409,9 +426,15 @@ textarea{
   border-radius: 15px;
   float: left;
   cursor: pointer;
+  box-shadow: 5px 5px 10px 0px rgb(141, 196, 255);
+}
+.input-area:focus ~ .button-area button{
+  width: 100px;
+  height: 40px;
 }
 .button-area button i{
   margin-top: auto;
+  margin-bottom: auto;
 }
 .prompt_container{
   border-top:0.3px solid #9cedff60;
@@ -420,17 +443,19 @@ textarea{
   display: flex;
   overflow: auto;
   flex-flow:nowrap;
-  background-color: #32fcff3a;
+  /* background-color: #32fcff3a; */
   border-radius: 1rem;
+  justify-content: center;
 }
 .prompt_container .prompt{
   margin-top: auto;
   margin-bottom: auto;
-  margin-left: 5px;
-  margin-right: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
   border-radius: 5px;
   border: none;
   background-color: #ffffff;
+  box-shadow: 5px 5px 10px 0px rgb(165, 165, 165);
   backdrop-filter: blur(20px);
 }
 
@@ -484,8 +509,8 @@ textarea{
 
 .widgets_container {
   max-width: 100%;
-  max-height: 100vh;
-  min-height: 95vh;
+  max-height: 95vh;
+  min-height: 90vh;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -494,6 +519,9 @@ textarea{
 }
 .widgets_container:first-child{
   margin-top: 30px;
+}
+.widgets_container:last-child {
+  margin-bottom: 30px;
 }
 .widgets_contentbox {
   width: 300px;
@@ -1454,13 +1482,13 @@ pre {
   margin: auto;
   margin-left: 50%;
   background-color: #d3e0f1;
-  box-shadow: 0 3px #929191;
   font-size:20px;
   width: 40px;
   height: 40px;
   border:2px solid;
   border-radius:15px;
-  border:none
+  border:none;
+  box-shadow: 5px 5px 10px 0px rgb(142, 142, 142);
 }
 
 .btn_expand:active {

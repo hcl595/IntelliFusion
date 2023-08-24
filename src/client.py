@@ -121,7 +121,7 @@ def GetHistorys():
 
 @app.post("/GetActiveWidgets")
 def GetActiveWidgets():
-    ActiveWidgets = Widgets.select().order_by(Widgets.order).where(Widgets.avaliable == True)
+    ActiveWidgets = Widgets.select().order_by(Widgets.order).where(Widgets.available == "true")
     ActiveWidgets_json = [model_to_dict(Model) for Model in ActiveWidgets]
     return jsonify(ActiveWidgets_json)
 
@@ -130,6 +130,7 @@ def GetActiveWidgets():
 def GetWidgets():
     ActiveWidgets = Widgets.select().order_by(Widgets.order)
     ActiveWidgets_json = [model_to_dict(Model) for Model in ActiveWidgets]
+    logger.debug(ActiveWidgets_json)
     return jsonify(ActiveWidgets_json)
 
 
@@ -173,15 +174,19 @@ def edit_widgets():
     widgets_id = request.form.get("id")
     widgets_name = request.form.get("name")
     widgets_url = request.form.get("url")
-    avaliable = request.form.get("ava")
-    logger.debug("{},{}",type(widgets_id),widgets_name)
+    available = request.form.get("ava")
+    if available == "true":
+        available_data = True
+    elif available == "false":
+        available_data = False
+    # logger.debug("{},{}",type(available_data),available_data)
     if widgets_id == "-1":
         try:
             w = Widgets(
                 order =  Widgets.select(fn.MAX(Widgets.order)).get().order + 1,
                 widgets_name = widgets_name,
                 widgets_url = widgets_url,
-                avaliable = avaliable,
+                available = available,
             )
             w.save()
             return jsonify({"response": True, "message": "添加成功"})
@@ -193,7 +198,7 @@ def edit_widgets():
                 u = Widgets.update({
                     Widgets.widgets_name: widgets_name,
                     Widgets.widgets_url: widgets_url,
-                    Widgets.avaliable: avaliable,
+                    Widgets.available: available,
                 }).where(Widgets.id == widgets_id)
                 u.execute()
                 return jsonify({"response": True, "message": "更改成功"})
@@ -479,7 +484,7 @@ if cfg.read("BaseConfig", "Develop") == "True":
             order = 4,
             widgets_name = "test",
             widgets_url = "/widgets/test",
-            avaliable = True,
+            available = "true",
         )
         w.save()
     

@@ -120,10 +120,18 @@ function show_widgets_edit(id) {
     $("#widgets_edit").fadeIn(100)
     var name = $("#widgets_"+id).attr("widgets_name")
     var url = $("#widgets_"+id).attr("widgets_url")
+    var ava = $("#widgets_"+id).attr("widgets_available")
+    if (ava == "true"){
+        $("#widgets_available_edit_Checkbox").attr("checked",true)
+    }
+    if (ava == "false"){
+        $("#widgets_available_edit_Checkbox").prop("checked",false)
+    }
     $("#widgets_preview").attr("src", url)
     $("#widgets_id_edit").val(id)
     $("#widgets_name_edit").val(name)
     $("#widgets_url_edit").val(url)
+    $("#widgets_available_edit").val(ava)
 }
 
 function show_widgets_add() {
@@ -370,32 +378,32 @@ function commit_model(id,operate){
     });
 }
 
-function SendInput(id) {
-    if ($('#user-input-' + id).val() != ""){
-        $("#loading").fadeIn(100);
-        $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-        smoothScroll("output-"+id);
-        var input = $('#user-input-' + id).val()
-        $('#user-input-' + id).val('');
-        $.ajax({
-            url: '/requestmodels',
-            type: 'POST',
-            data: {
-                userinput: input,
-                modelinput: $('#model-input-' + id).val(),
-            },
-            success: function(response) {
-                var chatGptResponse = response.response;
-                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-                $("#loading").fadeOut(100)
-                smoothScroll("output-"+id);
-            }
-        });
-    }
-    else{
-        alert('内容不能为空',"warning");
-    }
-}
+// function SendInput(id) {
+//     if ($('#user-input-' + id).val() != ""){
+//         $("#loading").fadeIn(100);
+//         $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+//         smoothScroll("output-"+id);
+//         var input = $('#user-input-' + id).val()
+//         $('#user-input-' + id).val('');
+//         $.ajax({
+//             url: '/requestmodels',
+//             type: 'POST',
+//             data: {
+//                 userinput: input,
+//                 modelinput: $('#model-input-' + id).val(),
+//             },
+//             success: function(response) {
+//                 var chatGptResponse = response.response;
+//                 $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+//                 $("#loading").fadeOut(100)
+//                 smoothScroll("output-"+id);
+//             }
+//         });
+//     }
+//     else{
+//         alert('内容不能为空',"warning");
+//     }
+// }
 
 function send_input_stream(id) {
     if ($('#user-input-' + id).val() == ""){
@@ -421,6 +429,7 @@ function send_input_stream(id) {
             document.getElementById("streaming").innerHTML = new TextDecoder('utf-8').decode(chunk);
             smoothScroll("output-"+id);
         }
+        $('#user-input-' + id).val("")
         $("#streaming").removeAttr("id");
     });
 }
@@ -685,7 +694,7 @@ function load_widgets(){
                     '+ data[i].widgets_url +'\
                     <i class="fa fa-bars"></i>\
                     <i class="fa fa-info" id="widgets_'+ data[i].id +'" widgets_name="'+ data[i].widgets_name +'"\
-                    widgets_url="'+ data[i].widgets_url +'" onclick="show_widgets_edit('+ data[i].id +')"></i>\
+                    widgets_url="'+ data[i].widgets_url +'" widgets_available="' + data[i].available + '" onclick="show_widgets_edit('+ data[i].id +')"></i>\
                 </li>\
                 ')
             }
@@ -695,10 +704,10 @@ function load_widgets(){
 
 function switch_load(id){
     var now_value = $("#"+id).val()
-    if (now_value == "True"){
+    if (now_value == "True" || now_value == "true"){
         $("#"+id).val("False")
     }
-    if (now_value == "False"){
+    if (now_value == "False" || now_value == "false"){
         $("#"+id).val("True")
     }
 }
