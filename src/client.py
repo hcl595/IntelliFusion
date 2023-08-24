@@ -34,10 +34,13 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
+DICT_DIR = APP_DIR / "dicts" / "dict.txt"
 LOG_FILE = DATA_DIR / "models.log"
 
 # setup
 setup()
+jieba.set_dictionary(DICT_DIR)
+jieba.initialize()
 logger.add(LOG_FILE)
 cfg = Settings()
 pmt = Prompt()
