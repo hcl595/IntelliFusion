@@ -438,6 +438,7 @@ function send_input_stream(id) {
             document.getElementById("streaming").innerHTML = new TextDecoder('utf-8').decode(chunk);
             smoothScroll("output-"+id);
         }
+        hljs.highlightAll();
         $('#user-input-' + id).val("")
         $("#streaming").removeAttr("id");
     });
@@ -516,6 +517,7 @@ function refresh_website(){
     load_active_widgets();
     load_widgets();
     load_settings();
+    hljs.highlightAll();
 }
 
 function setup_website(){
@@ -524,6 +526,7 @@ function setup_website(){
     load_active_widgets();
     load_widgets();
     load_settings();
+    hljs.highlightAll();
 }
 
 const smoothScroll = (id) => {
@@ -543,12 +546,15 @@ function load_history(id) {
         success: function(data){
             $('#output-' + id).empty()
             for (i in data){
-                $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + data[i].UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + data[i].response + '</div></div>');
+                $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right" id="high_light_1">' + data[i].UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left" id="high_light_2">' + data[i].response + '</div></div>');
                 smoothScroll("output-"+id);
-            }
-
-
+                // hljs.highlightBlock(document.getElementById("high_light_1"));
+                // hljs.highlightBlock(document.getElementById("high_light_2"));
+                // $("#high_light_1").removeAttr("id");
+                // $("#high_light_2").removeAttr("id");
+                hljs.highlightAll();
+                }
         }
     })
 }
