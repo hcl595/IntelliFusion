@@ -1,3 +1,12 @@
+function focus_input(id){
+    if ($('#user-input-'+id).val() == ""){
+        $("#input-area-"+id).removeClass("focus")
+    } 
+    else{
+        $("#input-area-"+id).addClass("focus")
+    }
+}
+
 function ChangeToMainA(){
     $("#main-box").fadeIn(200)
 }
@@ -108,55 +117,6 @@ function ChangeToRts(){
     $("#rts").addClass("active")
 }
 
-function showLogin(){
-    $("#login-box").fadeIn(200)
-}
-function CloseLogin(){
-    $("#login-box").fadeOut(200)
-}
-
-function toGLM() {
-	document.getElementById("li_GLM").className="li current";
-	document.getElementById("li_GPT").className="li";
-	document.getElementById("li_SD").className="li";
-	document.getElementById("li_WIG").className="li";
-	$("#DefaultBox").fadeIn(100)
-	$("#SecondBox").fadeOut(100)
-	$("#ThridBox").fadeOut(100)
-	$("#WidgtBox").fadeOut(100)
-}
-function toGPT() {
-	document.getElementById("li_GLM").className="li";
-	document.getElementById("li_GPT").className="li current";
-	document.getElementById("li_SD").className="li";
-	document.getElementById("li_WIG").className="li";
-	$("#DefaultBox").fadeOut(100)
-	$("#SecondBox").fadeIn(100)
-	$("#ThridBox").fadeOut(100)
-	$("#WidgtBox").fadeOut(100)
-}
-function toSD() {
-	document.getElementById("li_GLM").className="li";
-	document.getElementById("li_GPT").className="li";
-	document.getElementById("li_SD").className="li current";
-	document.getElementById("li_WIG").className="li";
-	$("#DefaultBox").fadeOut(100)
-	$("#SecondBox").fadeOut(100)
-	$("#ThridBox").fadeIn(100)
-	$("#WidgtBox").fadeOut(100)
-}
-function toWIG() {
-	document.getElementById("li_GLM").className="li";
-	document.getElementById("li_GPT").className="li";
-	document.getElementById("li_SD").className="li";
-	document.getElementById("li_WIG").className="li current";
-	$("#DefaultBox").fadeOut(100)
-	$("#SecondBox").fadeOut(100)
-	$("#ThridBox").fadeOut(100)
-	$("#WidgtBox").fadeIn(100)
-}
-
-
 function Loading(){
     $("#loading").fadeIn(100)
 }
@@ -164,19 +124,30 @@ function Load() {
     $("#loading").fadeOut(100)
 }
 
-function TypeAnime(input){ //打字机动画
-    var text = document.getElementById(input).getAttribute("data-text");//获取要输出的文字
-    var index = 0;
-    var element = document.getElementById(input);//获取元素
-    function myprint() {
-        if (index < text.length) {
-            element.innerText = element.innerText + text.charAt(index);
-            index++;
-        } else {
-            clearInterval(c);//输出完后关闭定时器
-        }
+function show_widgets_edit(id) {
+    $("#widgets_add").fadeOut(100)
+    $("#widgets_edit").fadeIn(100)
+    var name = $("#widgets_"+id).attr("widgets_name")
+    var url = $("#widgets_"+id).attr("widgets_url")
+    var ava = $("#widgets_"+id).attr("widgets_available")
+    if (ava == "True"){
+        $("#widgets_available_edit_Checkbox").attr("checked",true)
     }
-    var c = setInterval(myprint, 100);//定时器
+    if (ava == "False"){
+        $("#widgets_available_edit_Checkbox").prop("checked",false)
+    }
+    $("#widgets_preview").attr("src", url)
+    $("#widgets_id_edit").val(id)
+    $("#widgets_name_edit").val(name)
+    $("#widgets_url_edit").val(url)
+    $("#widgets_available_edit").val(ava)
+}
+
+function show_widgets_add() {
+    $("#widgets_edit").fadeOut(100)
+    $("#widgets_add").fadeIn(100)
+    $("#widgets_name").val("")
+    $("#widgets_url").val("")
 }
 
 //版本号
@@ -187,6 +158,59 @@ $(document).ready(function(){
     });
 });
 
+$(document).ready(function(){
+    $("#widgets_close").click(function(){
+        $("#widgets_edit").fadeOut(100);
+    });
+    $("#widgets_close_add").click(function(){
+        $("#widgets_add").fadeOut(100);
+      });
+    $("#widgets_close_add_1").click(function(){
+        $("#widgets_add").fadeOut(100);
+    });
+});
+
+$(document).ready(function() {
+//   拖动
+var node = document.querySelector("#widgets_container")
+	var draging = null
+	node.ondragstart = function(event) {
+		console.log("start:")
+		// dataTransfer.setData把拖动对象的数据存入其中，可以用dataTransfer.getData来获取数据
+		event.dataTransfer.setData("te", event.target.innerText)
+		draging = event.target
+	}
+	node.ondragover = function(event) {
+		console.log("over:")
+		// 默认地，无法将数据/元素放置到其他元素中。如果需要设置允许放置，必须阻止对元素的默认处理方式
+		event.preventDefault()
+		var target = event.target
+		if (target.nodeName === "LI" && target !== draging) {
+			// 获取初始位置
+			var targetRect = target.getBoundingClientRect()
+			var dragingRect = draging.getBoundingClientRect()
+			if (target) {
+				// 判断是否动画元素
+				if (target.animated) {
+					return;
+				}
+			}
+			if (_index(draging) < _index(target)) {
+				// 目标比元素大，插到其后面
+				// extSibling下一个兄弟元素
+				target.parentNode.insertBefore(draging, target.nextSibling)
+			} else {
+				// 目标比元素小，插到其前面
+				target.parentNode.insertBefore(draging, target)
+			}
+			_animate(dragingRect, draging)
+			_animate(targetRect, target)
+            load_active_widgets()
+            upload_widgets_edit_order()
+		}
+	}
+
+})
 
 //Single
 function change_tab(id){
@@ -195,9 +219,113 @@ function change_tab(id){
     $("#Tab"+id).addClass("current")
     $('#'+now).fadeOut(100)
     $('#'+id).fadeIn(110)
+    smoothScroll("output-"+id);
 }
 
 //ajax Interface
+//edit
+function upload_widgets_edit_order(){
+    var ctn = true
+    var ele = document.getElementById("widgets_container")
+    var child = ele.firstElementChild
+    var last = ele.lastElementChild
+    for (i =1;child != last + 1;i++){
+        var value = child.id
+        $.ajax({
+            url: "/EditWidgetsOrder",
+            method: "POST",
+            data: {
+                id: value,
+                order: i,
+            },
+            success: function(response){
+                if (response.response){
+                    load_active_widgets()
+                }
+            }
+        })
+        child = child.nextElementSibling
+    }
+}
+
+function upload_widgets_edit(){
+    $.ajax({
+        url: "/edit_widgets",
+        method : "POST",
+        data : {
+            id: $("#widgets_id_edit").val(),
+            operation: "edit",
+            name: $("#widgets_name_edit").val(),
+            url: $("#widgets_url_edit").val(),
+            ava: $("#widgets_available_edit").val(),
+        },
+        success: function(response){
+            if (response.response){
+                alert(response.message,"success")
+            }
+            else{
+                alert(response.message,"danger")
+            }
+            load_active_widgets()
+            load_widgets()
+            $("#widgets_edit").fadeOut(100);
+        }
+    })
+}
+
+function upload_widgets_del(){
+    $.ajax({
+        url: "/edit_widgets",
+        method : "POST",
+        data : {
+            id: $("#widgets_id_edit").val(),
+            operation: "del",
+            name: $("#widgets_name_edit").val(),
+            url: $("#widgets_url_edit").val(),
+            ava: $("#widgets_avaliable_edit").val(),
+        },
+        success: function(response){
+            if (response.response){
+                alert(response.message,"success")
+            }
+            else{
+                alert(response.message,"danger")
+            }
+            load_active_widgets()
+            load_widgets()
+            $("#widgets_edit").fadeOut(100);
+        }
+    })
+}
+
+function upload_widgets_add(){
+    $.ajax({
+        url: "/edit_widgets",
+        method : "POST",
+        data : {
+            id: -1,
+            name: $("#widgets_name_add").val(),
+            url: $("#widgets_url_add").val(),
+            ava: $("#widgets_available_add").val(),
+        },
+        success: function(response){
+            if (response.response){
+                alert(response.message,"success")
+            }
+            else{
+                alert(response.message,"danger")
+            }
+            load_active_widgets()
+            load_widgets()
+            $("#widgets_add").fadeOut(100);
+            $("#widgets_name_add").val("");
+            $("#widgets_url_add").val("");
+            $("#widgets_available_add").val("False");
+            $("#widgets_available_add_Checkbox").prop("checked",false);
+        }
+    })
+}
+
 //prompt
 function GetPrompts(id){
     var text = $("#user-input-"+id).val();
@@ -210,18 +338,20 @@ function GetPrompts(id){
         },
         success: function(prompts) {
             $('#Prompt-'+source_id).empty()
+            e = 0
             for (i in prompts){
                 $('#Prompt-'+source_id).append("\
-                <button id='prompt"+ source_id +"' class='prompt' value='"+ prompts[i] + "' source_id= " + source_id +' onclick="prompts('+ source_id +')" >'+ i +'</button>')
+                <button id='prompt-single-"+ e +"' class='prompt' value='"+ prompts[i] + "' source_id= " + id +" onclick='prompts(`" + e + "`)' >"+ i +"</button>")
+                e++
             }
         }
     })
 }
 function prompts(id){
-    var value = $("#prompt"+id).val()
-    var source_id = $("#prompt"+id).attr("source_id");
+    var value = $("#prompt-single-"+id).val()
+    var source_id = $("#prompt-single-"+id).attr("source_id");
     $('#Prompt-'+source_id).empty()
-    $('#user-input-'+id).val(""+value)
+    $('#user-input-'+source_id).val(""+value)
 }
 
 function commit_model(id,operate){
@@ -243,6 +373,7 @@ function commit_model(id,operate){
         success: function(response) {
             if (response.response){
                 alert(response.message,"success")
+                Refresh_Tabs()
                 $("#loading").fadeOut(100)
                 $('#'+operate+id).removeAttr("disabled")
             }
@@ -256,35 +387,127 @@ function commit_model(id,operate){
     });
 }
 
-function SendInput(id) {
-    if ($('#user-input-' + id).val() != ""){
-        $("#loading").fadeIn(100);
-        $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-        var input = $('#user-input-' + id).val()
-        $('#user-input-' + id).val('');
-        $.ajax({
-            url: '/requestmodels',
-            type: 'POST',
-            data: {
-                userinput: input,
-                modelinput: $('#model-input-' + id).val(),
-            },
-            success: function(response) {
-                var chatGptResponse = response.response;
-                alert(chatGptResponse.message,"sucess")
-                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-                $("#loading").fadeOut(100)
-                let height = document.querySelector('.content').scrollHeight;
-                document.querySelector(".content").scrollTop = height;
-            }
-        });
-    }
-    else{
+// function SendInput(id) {
+//     if ($('#user-input-' + id).val() != ""){
+//         $("#loading").fadeIn(100);
+//         $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+//         smoothScroll("output-"+id);
+//         var input = $('#user-input-' + id).val()
+//         $('#user-input-' + id).val('');
+//         $.ajax({
+//             url: '/requestmodels',
+//             type: 'POST',
+//             data: {
+//                 userinput: input,
+//                 modelinput: $('#model-input-' + id).val(),
+//             },
+//             success: function(response) {
+//                 var chatGptResponse = response.response;
+//                 $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
+//                 $("#loading").fadeOut(100)
+//                 smoothScroll("output-"+id);
+//             }
+//         });
+//     }
+//     else{
+//         alert('内容不能为空',"warning");
+//     }
+// }
+
+function send_input_stream(id) {
+    if ($('#user-input-' + id).val() == ""){
         alert('内容不能为空',"warning");
+        return;
     }
+    $("#loading").fadeIn(100);
+    $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+    smoothScroll("output-"+id);
+    let form = new FormData();
+    form.append("userinput",$('#user-input-' + id).val())
+    form.append("modelinput",$('#model-input-' + id).val())
+    fetch("/request_models_stream", {
+        method: "POST",
+        body: form,
+    }).then(async (response) => {
+        const reader = response.body.getReader();
+        $("#loading").fadeOut(100)
+        $('#output-' + id).append('<div class="item item-left"><div class="avatar">\
+        <i class="fa fa-user-circle-o"></i></div>\
+        <div class="bubble bubble-left" id="streaming"></div></div>');
+        for await (const chunk of readChunks(reader)) {
+            document.getElementById("streaming").innerHTML = new TextDecoder('utf-8').decode(chunk);
+            smoothScroll("output-"+id);
+        }
+        $('#user-input-' + id).val("")
+        $("#streaming").removeAttr("id");
+    });
 }
 
-// function edit_settings()
+function readChunks(reader) {
+    return {
+        async *[Symbol.asyncIterator]() {
+            let readResult = await reader.read();
+            while (!readResult.done) {
+                yield readResult.value;
+                readResult = await reader.read();
+            }
+        },
+    };
+}
+
+$(document).ready(function() {
+//send request
+$("#add").on('click',function() {
+    $("#loading").fadeIn(100)
+    $('#add').attr("disabled",true)
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: 'add' ,
+            number: $('#id').val() ,
+            type: $('#Type-1').val() ,
+            comment: $('#Comment-1').val() ,
+            url: $('#Url-1').val() ,
+            APIkey: $('#APIkey-1').val() ,
+            LcCompiler: $('#LcCompiler-1').val() ,
+            LcUrl: $('#LcUrl-1').val() ,
+        },
+        success: function(response) {
+            if (response.response){
+                alert("添加成功","success")
+                $("#loading").fadeOut(100)
+                $('#add').removeAttr("disabled")
+            }
+            else{
+                alert("添加失败","danger")
+                $("#loading").fadeOut(100)
+                $('#add').removeAttr("disabled")
+            }
+            $('#Comment-1').val("")
+            $('#Url-1').val("")
+            $('#APIkey-1').val("")
+            $('#LcCompiler-1').val("")
+            $('#LcUrl-1').val("")
+            Refresh_ModelList()
+        }
+    });
+});
+})
+
+$(document).ready(function() {
+    $("#change-adjust").on("click",function(){
+        var now = $("body").attr("class")
+        if (now == "light"){
+            $("body").removeClass("light")
+            $("body").addClass("dark")
+        }
+        if (now == "dark"){
+            $("body").removeClass("dark")
+            $("body").addClass("light")
+        }
+    })
+})
 
 // Refresh Data
 function refresh_website(){
@@ -293,6 +516,41 @@ function refresh_website(){
     load_active_widgets();
     load_widgets();
     load_settings();
+}
+
+function setup_website(){
+    Refresh_ModelList();
+    Refresh_Tabs();
+    load_active_widgets();
+    load_widgets();
+    load_settings();
+}
+
+const smoothScroll = (id) => {
+    const element = $(`#${id}`);
+    element.stop().animate({
+        scrollTop: element.prop("scrollHeight")
+    }, 500);
+}
+
+function load_history(id) {
+    $.ajax({
+        url: "/GetHistory",
+        method: "POST",
+        data: {
+            id: id,
+        },
+        success: function(data){
+            $('#output-' + id).empty()
+            for (i in data){
+                $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + data[i].UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + data[i].response + '</div></div>');
+                smoothScroll("output-"+id);
+            }
+
+
+        }
+    })
 }
 
 function Refresh_ModelList(){
@@ -360,14 +618,15 @@ function Refresh_Tabs(){
                         <div class="content" id="output-'+ data[i].id +'"></div>\
                         <div class="prompt_container" id="Prompt-'+ data[i].id +'">\
                         </div>\
-                        <div class="input-area">\
+                        <div class="input-area" id="input-area-'+ data[i].id +'">\
                             </br>\
                             <div class="txtb">\
-                                <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +')"></textarea>\
+                                <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +');focus_input('+ data[i].id +')"\
+                                 onclick=""></textarea>\
                             </div>\
                             <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
                             <div class="button-area">\
-                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">发 送</button>\
+                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="send_input_stream(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
                             </div>\
                         </div>\
                     </div>')
@@ -396,7 +655,7 @@ function Refresh_Tabs(){
                                 </div>\
                                 <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
                                 <div class="button-area">\
-                                    <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">发 送</button>\
+                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="send_input_stream(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
                                 </div>\
                             </div>\
                         </div>')
@@ -408,6 +667,7 @@ function Refresh_Tabs(){
                         </div>')
                     }
                 }
+                load_history(data[i].id)
             }
             load_active_widgets()
         }
@@ -422,7 +682,7 @@ function load_active_widgets(){
             $("#widgets_container_live").empty()
             for (i in data){
                 $("#widgets_container_live").append('\
-                <div class="widgets_contentbox">\
+                <div class="widgets_contentbox medium">\
                     <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
                 </div>\
                 ')
@@ -439,9 +699,15 @@ function load_widgets(){
             $("#widgets_container").empty()
             for (i in data){
                 $("#widgets_container").append('\
-                <div class="widgets_contentbox">\
-                    <iframe src='+ data[i].widgets_url +' " frameborder=0></iframe>\
-                </div>\
+                <li class="ele" draggable="true" id="'+ data[i].id +'">\
+                    <div style="width: 70%;float:left;">\
+                        <span><div class="widgets_title">'+ data[i].widgets_name +'</div></span>\
+                        <span><div class="widgets_subtitle">'+ data[i].widgets_url +'</div></span>\
+                    </div>\
+                    <i class="fa fa-bars"></i>\
+                    <i class="fa fa-info" id="widgets_'+ data[i].id +'" widgets_name="'+ data[i].widgets_name +'"\
+                    widgets_url="'+ data[i].widgets_url +'" widgets_available="' + data[i].available + '" onclick="show_widgets_edit('+ data[i].id +')"></i>\
+                </li>\
                 ')
             }
         }
@@ -450,10 +716,10 @@ function load_widgets(){
 
 function switch_load(id){
     var now_value = $("#"+id).val()
-    if (now_value == "True"){
+    if (now_value == "True" || now_value == "true"){
         $("#"+id).val("False")
     }
-    if (now_value == "False"){
+    if (now_value == "False" || now_value == "false"){
         $("#"+id).val("True")
     }
 }
@@ -522,4 +788,65 @@ function load_settings(){
 function loading(){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
+}
+
+
+// 获取元素在父元素中的index
+function _index(el) {
+    var index = 0
+    if (!el || !el.parentNode) {
+        return -1
+    }
+    // previousElementSibling：上一个兄弟元素
+    while (el && (el = el.previousElementSibling)) {
+        index++
+    }
+    return index
+}
+// 触发动画
+function _animate(prevRect, target) {
+    var ms = 300
+    if (ms) {
+        var currentRect = target.getBoundingClientRect()
+        if (prevRect.nodeType === 1) {
+            prevRect = prevRect.getBoundingClientRect()
+        }
+        _css(target, 'transition', 'none')
+        _css(target, 'transform', 'translate3d(' +
+            (prevRect.left - currentRect.left) + 'px,' +
+            (prevRect.top - currentRect.top) + 'px,0)'
+        );
+
+        target.offsetWidth; // 触发重绘
+
+        _css(target, 'transition', 'all ' + ms + 'ms');
+        _css(target, 'transform', 'translate3d(0,0,0)');
+        // 事件到了之后把transition和transform清空
+        clearTimeout(target.animated);
+        target.animated = setTimeout(function() {
+            _css(target, 'transition', '');
+            _css(target, 'transform', '');
+            target.animated = false;
+        }, ms);
+    }
+}
+
+// 给元素添加style
+function _css(el, prop, val) {
+    var style = el && el.style
+    if (style) {
+        if (val === void 0) {
+            if (document.defaultView && document.defaultView.getComputedStyle) {
+                val = document.defaultView.getComputedStyle(el, '')
+            } else if (el.currentStyle) {
+                val = el.currentStyle
+            }
+            return prop === void 0 ? val : val[prop]
+        } else {
+            if (!(prop in style)) {
+                prop = '-webkit-' + prop;
+            }
+            style[prop] = val + (typeof val === 'string' ? '' : 'px')
+        }
+    }
 }

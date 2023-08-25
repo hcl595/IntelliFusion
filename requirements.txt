@@ -1,15 +1,16 @@
 flask
-flaskwebgui
+# flaskwebgui
+git+https://github.com/ClimenteA/flaskwebgui.git
 jieba
 loguru
 openai
 peewee
 pyautogui
-python-Levenshtein
 requests
 thefuzz
 validators
+mistune
 
 # dev
-auto-py-to-exe
-black
+# auto-py-to-exe
+# black

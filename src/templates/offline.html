@@ -2,7 +2,7 @@
 <head>
 {% block include %}
 {{ super() }}
-<title>Realizer v0.1.9 Beta</title>
+<title>Realizer v0.1.9 Gamma</title>
 {% endblock %}
 {% block body %}
 <body class="light">
@@ -10,6 +10,7 @@
     <div class="chat">
         <div id="contentwrap"  class="contentwrap">
             <ul class="tab" id="tabs">
+                <li draggable="true" class="li current" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>CURRENT</span></li>
                 <li draggable="true" class="li" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>OFFLINE</span></li>
             </ul>
             <div id="Contents">
@@ -23,6 +24,7 @@
                         </div>
                         <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />
                         <div class="button-area">
+                            <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">加载历史</button>
                             <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)">发 送</button>
                         </div>
                     </div>
@@ -121,10 +123,10 @@
                         <input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000">
                     </td>
                     <td>
-                        <input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none" />
+                        <input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none" /><!-- TODO:改文件输入框 -->
                     </td>
                     <td>
-                        <input type="text" class="url" id="LcCompiler-1" placeholder=".venv\scripts\python.exe">
+                        <input type="text" class="url" id="LcCompiler-1" placeholder=".venv\scripts\python.exe"><!-- TODO:改文件输入框 -->
                     </td>
                     <td>
                         <input type="text" class="url" id="LcUrl-1" placeholder=".\venv\launch.py">
@@ -145,23 +147,52 @@
 </div>
 
 <div class="widgets_box" id="widgets-box" style="display: none;">
-    <button class="btn_expand"><i class="fa fa-plus"></i></button>
+    <h3 style="margin: auto;">插件管理</h3>
     <div id="widgets_container" class="widgets_container">
-        <div class="widgets_contentbox">
-            <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
-        </div>
-        <div class="widgets_contentbox">
-            <iframe src='/widgets/Core_Percent' frameborder=0></iframe>
-        </div>
-        <ul id="drag" class="drag">
-            <li>Item 1</li>
-            <li>Item 2</li>
-            <li>Item 3</li>
-            <li>Item 4</li>
-            <li>Item 5</li>
+        <ul id="container">
+            <li class="ele" draggable="true">
+                <div style="width: 70%;float:left;">
+                    <span><h6>widgets_name</h6></span>
+                    <span><h6>widgets_url</h6></span>
+                </div>
+                <i class="fa fa-bars"></i>
+                <i class="fa fa-info" id="widgets_1" widgets_name="widgets_container" widgets_url="/widgets/RAM_Percent" onclick="show_widgets_edit(1)"></i>
+            </li>
+            <li class="ele" draggable="true">
+                widgets_name | widgets_url
+                <i class="fa fa-bars"></i>
+                <i class="fa fa-info" onclick="show_widgets_edit()"></i>
+            </li>
+            <li class="ele" draggable="true">
+                widgets_name | widgets_url
+                <i class="fa fa-bars"></i>
+                <i class="fa fa-info" onclick="show_widgets_edit()"></i>
+            </li>
+            <li class="ele" draggable="true">
+                widgets_name | widgets_url
+                <i class="fa fa-bars"></i>
+                <i class="fa fa-info" onclick="show_widgets_edit()"></i>
+            </li>
+            <li class="ele" draggable="true">
+                widgets_name | widgets_url
+                <i class="fa fa-bars"></i>
+                <i class="fa fa-info" onclick="show_widgets_edit()"></i>
+            </li>
         </ul>
+        <button class="btn_expand"><i class="fa fa-plus"></i></button>
     </div>
+    <div class="widgets_edit" id="widgets_edit" style="display: none;"><!-- TODO:优化界面，主要内容： 1，小组件名字：value ；2，小组件地址： value 3，需要一个提交按钮和一个删除按钮 4.优化排版 -->
+        <button class="btn" id="widgets_close"><i class="fa fa-close"></i></button>
+        <div class="widgets_contentbox">
+            <iframe id="widgets_preview" allow="autoplay *" src="/widgets/RAM_Percent"></iframe>
+        </div>
+        <br>
+        <input type="name" id="widgets_name" placeholder="小组件名称" />
+        <input type="url" id="widgets_url" placeholder="小组件调用地址" />
+        <button class="deny">del</button>
+        <button class="edit">edit</button>
     </div>
+</div>
 
 <div class="models" id="models-box" style="display: none;">
     <div class="card_container">
@@ -346,83 +377,9 @@
 </div>
 
 <div class="AlertPlaceholder" id="liveAlertPlaceholder">
-
 </div>
 
 </body>
-<script type="text/javascript">
-$("#change-adjust").on("click",function(){
-    var now = $("body").attr("class")
-    if (now == "light"){
-        $("body").removeClass("light")
-        $("body").addClass("dark")
-    }
-    if (now == "dark"){
-        $("body").removeClass("dark")
-        $("body").addClass("light")
-    }
-})
-
-//send request
-$("#add").on('click',function() {
-    $("#loading").fadeIn(100)
-    $('#add').attr("disabled",true)
-    $.ajax({
-        url: '/exchange',
-        type: 'POST',
-        data: {
-            state: 'add' ,
-            number: $('#id').val() ,
-            type: $('#Type-1').val() ,
-            comment: $('#Comment-1').val() ,
-            url: $('#Url-1').val() ,
-            APIkey: $('#APIkey-1').val() ,
-            LcCompiler: $('#LcCompiler-1').val() ,
-            LcUrl: $('#LcUrl-1').val() ,
-        },
-        success: function(response) {
-            if (response.response){
-                alert("添加成功","success")
-                $("#loading").fadeOut(100)
-                $('#add').removeAttr("disabled")
-            }
-            else{
-                alert("添加失败","danger")
-                $("#loading").fadeOut(100)
-                $('#add').removeAttr("disabled")
-            }
-            $('#Comment-1').val("")
-            $('#Url-1').val("")
-            $('#APIkey-1').val("")
-            $('#LcCompiler-1').val("")
-            $('#LcUrl-1').val("")
-            Refresh_ModelList()
-        }
-    });
-});
-
-//alert message
-const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
-
-const alert = (message, type) => {
-  const wrapper = document.createElement('div')
-  wrapper.innerHTML = [
-    `<div class="alert alert-${type} alert-dismissible" role="alert">`,
-    `   <div>${message}</div>`,
-    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
-    '</div>'
-  ].join('')
-  alertPlaceholder.append(wrapper)
-  setTimeout(function(){
-    wrapper.remove()
-  },5000)
-}
-
-var int = setInterval(function(){
-    refresh_website()
-  },1000000)
-
-</script>
 {% endblock %}
 {% block footer %}
 {% endblock %}

@@ -16,7 +16,7 @@
         url: '/widgets/Get_CPU_Percent',
         type: 'POST',
         success: function(response) {
-          var CPU_Data = response.data
+          var GPU_Data = response.data
           var dom = document.getElementById('widgets_cpu_percent_container');
           var myChart = echarts.init(dom, null, {
             renderer: 'canvas',
@@ -44,7 +44,7 @@
             },
             data: [
               {
-                value: CPU_Data,
+                value: GPU_Data,
                 name: 'CPU (%)'
               }
             ]

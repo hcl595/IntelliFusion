@@ -1,4 +1,4 @@
-# config.py | IntelliFusion Version 0.1.7(202307292000) Developer Alpha
+# config.py | IntelliFusion Version 0.1.9(202308242000) Pre_Release
 import json
 from pathlib import Path
 from typing import Any
@@ -28,8 +28,17 @@ class Prompt:
         with PROMPT_FILE.open(encoding="utf-8") as f:
             self.cfg = json.load(f)
     
+    def get_json(self):
+        jsons = PROM_DIR.glob("*.json")
+        language = Settings().read("BaseConfig","Language")
+        for j in jsons:
+            if j.stem == language:
+                return j
+        raise FileNotFoundError(f'{language}.json not found')
+
     def read_config(self):
-        PROMPT_FILE = (PROM_DIR / Settings().read("BaseConfig","Language")).with_suffix(".json")
-        with PROMPT_FILE.open(encoding="utf-8") as f:
+        # PROMPT_FILE = (PROM_DIR / Settings().read("BaseConfig","Language")).with_suffix(".json")
+        with self.get_json().open(encoding="utf-8") as f:
             self.cfg = json.load(f)
         return self.cfg
+    
