@@ -375,7 +375,7 @@ nav:hover .list li:nth-child(8) span {
   transition: .4s ease-in-out;
   box-shadow: 5px 5px 10px 0px rgb(165, 165, 165);
 }
-.input-area:hover{
+.input-area:hover,.focus {
   height: 70px;
   width: 100%;
   border-radius: 15px;
@@ -428,7 +428,7 @@ textarea{
   cursor: pointer;
   box-shadow: 5px 5px 10px 0px rgb(141, 196, 255);
 }
-.input-area:focus ~ .button-area button{
+.input-area textarea:focus .button-area button{
   width: 100px;
   height: 40px;
 }

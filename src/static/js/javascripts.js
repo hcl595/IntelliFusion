@@ -1,3 +1,7 @@
+function focus_input(id){
+    $("#input-area-"+id).addClass("focus")
+}
+
 function ChangeToMainA(){
     $("#main-box").fadeIn(200)
 }
@@ -609,10 +613,11 @@ function Refresh_Tabs(){
                         <div class="content" id="output-'+ data[i].id +'"></div>\
                         <div class="prompt_container" id="Prompt-'+ data[i].id +'">\
                         </div>\
-                        <div class="input-area">\
+                        <div class="input-area" id="input-area-'+ data[i].id +'">\
                             </br>\
                             <div class="txtb">\
-                                <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +')"></textarea>\
+                                <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +');focus_input('+ data[i].id +')"\
+                                 onclick=""></textarea>\
                             </div>\
                             <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
                             <div class="button-area">\
