@@ -1060,20 +1060,6 @@ pre {
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
   font-size: small;
 }
-pre > *{
-  margin-left: 10px;
-}
-.light pre {
-  background-color: rgb(64, 64, 64);
-  border-radius: 5px;
-  color: #ffffff;
-}
-.dark pre {
-  background-color: rgb(189, 189, 189);
-  border-radius: 15px;
-  color: #000;
-}
-
 .widgets_title {
   margin-top: -7px;
   font-size: medium;
