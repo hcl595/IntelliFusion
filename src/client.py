@@ -11,6 +11,7 @@ from typing import Literal, TypedDict
 from urllib.parse import urlparse
 import socketserver
 
+import mistune
 import jieba
 import openai
 import psutil
@@ -410,33 +411,13 @@ def ai(ModelID: str, question_in: str,method: str):
             if hasattr(chunk.choices[0].delta, "content"):
                 print(chunk.choices[0].delta.content, end="", flush=True)
                 response = response + chunk.choices[0].delta.content
-                response = str.replace(response,"\n","<br/>")
-                last_code_block_index: int = -1
-                is_code_block_start = True
-                while (last_code_block_index := response.find("```")) != -1:
-                    if is_code_block_start:
-                        response=response.replace("```", "<pre>", 1)
-                    else:
-                        response=response.replace("```", "</pre>", 1)
-                    last_code_block_index=-1
-                    is_code_block_start=not is_code_block_start
-                logger.info("{}", response)
+                response = mistune.html(response)
                 yield response
         else:
             if hasattr(chunk.choices[0].delta, "content"):
                 print(chunk.choices[0].delta.content, end="", flush=True)
                 response = response + chunk.choices[0].delta.content
-                response = str.replace(response,"\n","<br/>")
-                last_code_block_index: int = -1
-                is_code_block_start = True
-                while (last_code_block_index := response.find("```")) != -1:
-                    if is_code_block_start:
-                        response=response.replace("```", "<pre>", 1)
-                    else:
-                        response=response.replace("```", "</pre>", 1)
-                    last_code_block_index=-1
-                    is_code_block_start=not is_code_block_start
-                logger.info("{}", response)
+                response = mistune.html(response)
             return response
 
 def llm(ModelID: str, question: str):
