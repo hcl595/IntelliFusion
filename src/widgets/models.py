@@ -1,7 +1,6 @@
 import openai
 import requests
 import json
-import 
 from data import History, Models, Widgets
 from typing import Literal, TypedDict
 
@@ -32,7 +31,7 @@ def ai(ModelID: str, question_in: str,stream: bool):
         stream=True,
         temperature=0,
     ):
-        if method == "stream":
+        if stream == True:
             if hasattr(chunk.choices[0].delta, "content"):
                 print(chunk.choices[0].delta.content, end="", flush=True)
                 response = response + chunk.choices[0].delta.content
