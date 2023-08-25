@@ -1051,9 +1051,6 @@ a {
 .alert {
   transition: .5 ease-in-out;
 }
-.alert .remove {
-  transform: scaleY(100px);
-}
 
 pre {
   white-space: pre-wrap;       /* Since CSS 2.1 */
@@ -1063,6 +1060,31 @@ pre {
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
   font-size: small;
 }
+pre > *{
+  margin-left: 10px;
+}
+.light pre {
+  background-color: rgb(64, 64, 64);
+  border-radius: 5px;
+  color: #ffffff;
+}
+.dark pre {
+  background-color: rgb(189, 189, 189);
+  border-radius: 15px;
+  color: #000;
+}
+
+.widgets_title {
+  margin-top: -7px;
+  font-size: medium;
+  height: 13px;
+}
+.widgets_subtitle {
+  margin-top: 2px;
+  font-size: 5px;
+  height: 5px;
+}
+
 
 /* Dark */
 .dark{

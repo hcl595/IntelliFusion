@@ -248,26 +248,30 @@ def AddModel():
         except:
             return jsonify({"response": False,})
     elif InputState == "run":
-        launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LcUrl")
-        pool.submit(subprocess.run, launchCMD)
-        count = 0
-        while True:
-            for conn in psutil.net_connections():
-                if conn.laddr.port == port:
-                    return jsonify({"response": True,
-                                    "message":"运行成功",})
-            count += 1
-            time.sleep(1)
-            if count == cfg.read("BaseConfig", "TimeOut"):
-                logger.error(
-                    "Model: {} launch maybe failed,because of Time Out({}),LaunchCompilerPath: {},LaunchFile: {}",
-                    InputComment,
-                    cfg.read("BaseConfig", "TimeOut"),
-                    LaunchCompiler,
-                    LaunchPath,
-                )
-                return jsonify({"response": False,
-                                "message":"运行失败,原因:超时",})
+        if request.form.get("LcCompiler") == "/" or request.form.get("LcUrl") == "/":
+            return jsonify({"response": False,
+                            "message":"运行失败,原因:请输入正确的启动方式",})
+        else:
+            launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LcUrl")
+            pool.submit(subprocess.run, launchCMD)
+            count = 0
+            while True:
+                for conn in psutil.net_connections():
+                    if conn.laddr.port == port:
+                        return jsonify({"response": True,
+                                        "message":"运行成功",})
+                count += 1
+                time.sleep(1)
+                if count == cfg.read("BaseConfig", "TimeOut"):
+                    logger.error(
+                        "Model: {} launch maybe failed,because of Time Out({}),LaunchCompilerPath: {},LaunchFile: {}",
+                        InputComment,
+                        cfg.read("BaseConfig", "TimeOut"),
+                        LaunchCompiler,
+                        LaunchPath,
+                    )
+                    return jsonify({"response": False,
+                                    "message":"运行失败,原因:超时",})
     elif InputState == "stop":
         try:
             for conn in psutil.net_connections():

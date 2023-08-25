@@ -1,5 +1,10 @@
 function focus_input(id){
-    $("#input-area-"+id).addClass("focus")
+    if ($('#user-input-'+id).val() == ""){
+        $("#input-area-"+id).removeClass("focus")
+    } 
+    else{
+        $("#input-area-"+id).addClass("focus")
+    }
 }
 
 function ChangeToMainA(){
@@ -695,8 +700,10 @@ function load_widgets(){
             for (i in data){
                 $("#widgets_container").append('\
                 <li class="ele" draggable="true" id="'+ data[i].id +'">\
-                    '+ data[i].widgets_name +' | \
-                    '+ data[i].widgets_url +'\
+                    <div style="width: 70%;float:left;">\
+                        <span><div class="widgets_title">'+ data[i].widgets_name +'</div></span>\
+                        <span><div class="widgets_subtitle">'+ data[i].widgets_url +'</div></span>\
+                    </div>\
                     <i class="fa fa-bars"></i>\
                     <i class="fa fa-info" id="widgets_'+ data[i].id +'" widgets_name="'+ data[i].widgets_name +'"\
                     widgets_url="'+ data[i].widgets_url +'" widgets_available="' + data[i].available + '" onclick="show_widgets_edit('+ data[i].id +')"></i>\

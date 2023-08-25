@@ -18,10 +18,10 @@ class BaseModel(Model):
 
 class Models(BaseModel):
     # order = IntegerField(column_name="order")
-    api_key = IntegerField(column_name="APIkey", null=True)
-    display = CharField(column_name="Display", null=True)
-    launch_compiler = CharField(column_name="LaunchCompiler", null=True)
-    launch_path = CharField(column_name="LaunchPath", null=True)
+    api_key = IntegerField(column_name="APIkey", null=True, default="/")
+    display = CharField(column_name="Display", null=True, default="/")
+    launch_compiler = CharField(column_name="LaunchCompiler", null=True, default="/")
+    launch_path = CharField(column_name="LaunchPath", null=True, default="/")
     name = CharField()
     type = CharField()
     url = CharField()
@@ -30,9 +30,9 @@ class Models(BaseModel):
         table_name = 'models'
 
 class Widgets(BaseModel):
-    order = IntegerField(column_name="order",null=True)
-    available =  CharField(column_name="available",default="True")
-    size = CharField(null=True)
+    order = IntegerField(column_name="order", null=True)
+    available =  CharField(column_name="available", default="True")
+    size = CharField(null=True, default="medium")
     widgets_name = CharField(column_name="name",)
     widgets_url = CharField(column_name="URL",)
 
@@ -49,9 +49,9 @@ def SetupDatabase():
         type="OpenAI",
         name="gpt-3.5-turbo",
         url="https://ai.fakeopen.com/v1",
-        APIkey="sk-frdfhfdrghdsu5tt5sgyuyy",
-        LaunchCompiler="/",
-        LaunchUrl="/",
+        api_key="sk-frdfhfdrghdsu5tt5sgyuyy",
+        launch_compiler="/",
+        launch_path="/",
     )
     BaseModel.save()
     BaseWidgets = Widgets(
