@@ -948,7 +948,7 @@ textarea{
   min-height: 30vh;   
   z-index: 3;
   position:fixed;
-  margin-top: 80px;
+  margin-top: 150px;
   margin-left: calc((100% - 650px)/2);
 }
 

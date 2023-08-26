@@ -111,7 +111,7 @@ def GetActiveModels():
     logger.debug("{}", ActiveModels_ID)
     for i in ActiveModels_ID:
         try:
-            session = Sessions.select().where(Sessions.model_id == i)
+            session = Sessions.select().where(Sessions.model_id == i).order_by(Sessions.order)
             for s in session:
                 ActiveSessions.append(s)
         except:
@@ -153,7 +153,7 @@ def Request_Models():
 @app.post("/AddSession")
 def add_Session():
     model_id = request.form["model_id"]
-    logger.debug(model_id)
+    logger.debug(request.form["comment"])
     model_type = Models.get(Models.id == model_id).type
     mdoel_url = Models.get(Models.id == model_id).url
     Sessions.create(
@@ -162,6 +162,27 @@ def add_Session():
         model_url = mdoel_url,
         comment = request.form["comment"],
     )
+    return jsonify({"response": True,
+                    "message": "添加成功"})
+
+
+@app.post("/EditSessionOrder")
+def EditSessionOrder():
+    input_id = request.form["id"]
+    order = request.form["order"]
+    s = Sessions.update({
+        Sessions.order : order,
+    }).where(Sessions.id == input_id)
+    s.execute()
+    return jsonify({"response": True})
+
+
+@app.post("/CloseSession")
+def Close_Session():
+    model_id = request.form["model_id"]
+    logger.debug(request.form["model_id"])
+    u = Sessions.get(Sessions.id == model_id)
+    u.delete_instance()
     return jsonify({"response": True,
                     "message": "添加成功"})
 

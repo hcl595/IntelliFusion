@@ -151,10 +151,8 @@ function show_widgets_add() {
 }
 
 function show_session_add() {
-    var now = $(".current").val()
     $(".current").removeClass("current")
     $("#TabAdd").addClass("current")
-    $('#'+now).fadeOut(100)
     $('#session_add').fadeIn(110)
 }
 
@@ -175,6 +173,12 @@ $(document).ready(function(){
       });
     $("#widgets_close_add_1").click(function(){
         $("#widgets_add").fadeOut(100);
+    });
+    $("#session_close").click(function(){
+        $("#session_add").fadeOut(100);
+    });
+    $("#session_cancel").click(function(){
+        $("#session_add").fadeOut(100);
     });
 });
 
@@ -217,6 +221,43 @@ var node = document.querySelector("#widgets_container")
             upload_widgets_edit_order()
 		}
 	}
+var node_tabs = document.querySelector("#tabs")
+	var draging = null
+	node_tabs.ondragstart = function(event) {
+		console.log("start:")
+		// dataTransfer.setData把拖动对象的数据存入其中，可以用dataTransfer.getData来获取数据
+		event.dataTransfer.setData("te", event.target.innerText)
+		draging = event.target
+	}
+	node_tabs.ondragover = function(event) {
+		console.log("over:")
+		// 默认地，无法将数据/元素放置到其他元素中。如果需要设置允许放置，必须阻止对元素的默认处理方式
+		event.preventDefault()
+		var target = event.target
+		if (target.nodeName === "LI" && target !== draging) {
+			// 获取初始位置
+			var targetRect = target.getBoundingClientRect()
+			var dragingRect = draging.getBoundingClientRect()
+			if (target) {
+				// 判断是否动画元素
+				if (target.animated) {
+					return;
+				}
+			}
+			if (_index(draging) < _index(target)) {
+				// 目标比元素大，插到其后面
+				// extSibling下一个兄弟元素
+				target.parentNode.insertBefore(draging, target.nextSibling)
+			} else {
+				// 目标比元素小，插到其前面
+				target.parentNode.insertBefore(draging, target)
+			}
+			_animate(dragingRect, draging)
+			_animate(targetRect, target)
+            Refresh_Tabs()
+            upload_session_edit_order()
+		}
+	}
 
 })
 
@@ -232,12 +273,34 @@ function change_tab(id){
 
 //ajax Interface
 //edit
+function upload_session_edit_order(){
+    var ele = document.getElementById("tabs")
+    var child = ele.firstElementChild
+    var last = ele.lastElementChild
+    for (i = 1;child.nextElementSibling != last;i++){
+        var value = child.value
+        $.ajax({
+            url: "/EditSessionOrder",
+            method: "POST",
+            data: {
+                id: value,
+                order: i,
+            },
+            success: function(response){
+                if (response.response){
+                    Refresh_Tabs()
+                }
+            }
+        })
+        child = child.nextElementSibling
+    }
+}
+
 function upload_widgets_edit_order(){
-    var ctn = true
     var ele = document.getElementById("widgets_container")
     var child = ele.firstElementChild
     var last = ele.lastElementChild
-    for (i =1;child != last + 1;i++){
+    for (i =1;child.nextElementSibling != last ;i++){
         var value = child.id
         $.ajax({
             url: "/EditWidgetsOrder",
@@ -335,7 +398,6 @@ function upload_widgets_add(){
 }
 
 function Add_session() {
-    alert($("session_model").val(),"danger")
     $.ajax({
         url: "/AddSession",
         method: "POST",
@@ -347,6 +409,20 @@ function Add_session() {
             if (response.response){
                 alert(response.message,"success") ;
             }
+            Refresh_Tabs()
+        }
+    })
+}
+
+function Close_session(id) {
+    $.ajax({
+        url: "/CloseSession",
+        method: "POST",
+        data: {
+            model_id: id,
+        },
+        success : function(response){
+            Refresh_Tabs()
         }
     })
 }
@@ -547,10 +623,6 @@ function load_history(id) {
                 $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right" id="high_light_1">' + data[i].UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
                 $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left" id="high_light_2">' + data[i].response + '</div></div>');
                 smoothScroll("output-"+id);
-                // hljs.highlightBlock(document.getElementById("high_light_1"));
-                // hljs.highlightBlock(document.getElementById("high_light_2"));
-                // $("#high_light_1").removeAttr("id");
-                // $("#high_light_2").removeAttr("id");
                 hljs.highlightAll();
                 }
         }
@@ -605,8 +677,7 @@ function Refresh_ModelList(){
     })
 }
 
-
-function Refresh_Tabs(){ // TODO: Session
+function Refresh_Tabs(){ 
     $.ajax({
         url: "/GetActiveModels",
         method: "POST",
@@ -618,7 +689,7 @@ function Refresh_Tabs(){ // TODO: Session
                 if (count == 1){
                 $("#tabs").append('<li draggable="true" class="li current" id="Tab'+ data[i].id +'" value='+ data[i].id +'>\
                 <span onclick="change_tab('+ data[i].id +')">'+ data[i].comment +'</span>\
-                <i class="fa fa-close close" onclick="close('+ data[i].id +')"></i>\
+                <i class="fa fa-close close" onclick="Close_session('+ data[i].id +')"></i>\
                 </li>')
                 if (data[i].model_type == "OpenAI" || data[i].model_type == "API"){
                     $("#Contents").append('\
@@ -648,9 +719,10 @@ function Refresh_Tabs(){ // TODO: Session
                 count = 0
                 }
                 else{
-                    $("#tabs").append('\
-                    <li draggable="true" class="li" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>\
-                    ')
+                    $("#tabs").append('<li draggable="true" class="li" id="Tab'+ data[i].id +'" value='+ data[i].id +'>\
+                    <span onclick="change_tab('+ data[i].id +')">'+ data[i].comment +'</span>\
+                    <i class="fa fa-close close" onclick="Close_session('+ data[i].id +')"></i>\
+                    </li>')
                     if (data[i].model_type == "OpenAI" || data[i].model_type == "API"){
                         $("#Contents").append('\
                         <div class="dialogbox_container" id='+ data[i].id +' style="display: none;">\
@@ -676,11 +748,11 @@ function Refresh_Tabs(){ // TODO: Session
                         </div>')
                     }
                 }
-                $("#tabs").append('<li draggable="true" class="li" id="TabAdd" value='+ data[i].id +' onclick="show_session_add()">\
-                <i class="fa fa-plus close"></i>\
-                </li>')
                 load_history(data[i].id)
             }
+            $("#tabs").append('<li class="li" id="TabAdd" value="Add" onclick="show_session_add()">\
+            <i class="fa fa-plus close"></i>\
+            </li>')
             load_active_widgets()
         }
     })
@@ -814,7 +886,6 @@ function loading(){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
 }
-
 
 // 获取元素在父元素中的index
 function _index(el) {

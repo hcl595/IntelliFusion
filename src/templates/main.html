@@ -20,7 +20,9 @@
         </div>
     </div>
     <div class="session_add" id="session_add" style="display: none;">
-        <button class="btn" id="widgets_close"><i class="fa fa-close"></i></button>
+        <button class="btn" id="session_close"><i class="fa fa-close"></i></button>
+        <br>
+        <h4 style="margin-left: 30px;">添加标签页</h4>
         <br>
         <p class="p_widgets_bzdz">备注: <input type="name" class="widgets_name" id="session_comment" value="" /></p>
         <p class="p_widgets_bzdz">模型: 
@@ -30,7 +32,8 @@
         </p>
         <br>
         <input type="hidden" id="widgets_id_edit" value=""/>
-        <button id="widgets_commit_cmt" class="widgets_edit_commit edit"  onclick="Add_session()" value="">更新</button>
+        <button id="session_cancel" class="widgets_edit_commit deny" value="">取消</button>
+        <button id="session_cmt" class="widgets_edit_commit edit"  onclick="Add_session()" value="">更新</button>
     </div>
 </div>
 

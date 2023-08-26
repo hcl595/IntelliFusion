@@ -44,6 +44,7 @@ class History(BaseModel):
 
 class Sessions(BaseModel):
     #Session.id To History.session_id
+    order = IntegerField(null=True) #Ordered Sessions
     model_id = CharField() #From Models.id
     comment = CharField() #To Tab's Text
     model_url = CharField() #From Models.url
