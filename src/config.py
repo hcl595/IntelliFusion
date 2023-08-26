@@ -33,8 +33,18 @@ class Prompt:
         language = Settings().read("BaseConfig","Language")
         for j in jsons:
             if j.stem == language:
+                with j.open(encoding="utf-8") as f:
+                    self.cfg = json.load(f)
                 return j
         raise FileNotFoundError(f'{language}.json not found')
+
+    def get_json_list(self):
+        jsons = PROM_DIR.glob("*.json")
+        # output = {f""}
+        output = []
+        for j in jsons:
+            output.append(j.stem)
+        return output
 
     def read_config(self):
         # PROMPT_FILE = (PROM_DIR / Settings().read("BaseConfig","Language")).with_suffix(".json")

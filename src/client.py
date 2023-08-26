@@ -167,6 +167,7 @@ def GetSetting():
         "Host": cfg.read("RemoteConfig","Host"),
         "Port": cfg.read("RemoteConfig","Port"),
         "Develop": cfg.read("BaseConfig","Develop"),
+        "Languages": pmt.get_json_list(),
         })
 
 
@@ -382,7 +383,6 @@ class Message(TypedDict):
     role: Literal["admin"] | Literal["user"]
     content: str
 
-
 # functions
 def ai(ModelID: str, question_in: str,method: str):
     response = ""
@@ -453,6 +453,7 @@ if cfg.read("BaseConfig", "Develop") == "True":
 # launch
 if __name__ == "__main__":
     logger.info("Application(v0.1.9 ∆) Launched!")
+    pmt.get_json()
     if cfg.read("BaseConfig", "Develop") == "True":
         logger.level("DEBUG")
         logger.debug("run in debug mode")

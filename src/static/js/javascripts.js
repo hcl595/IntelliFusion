@@ -779,6 +779,19 @@ function load_settings(){
             else{
                 $("#Develop_Checkbox").removeAttr("checked")
             }
+            $("#Language").empty()
+            for (j in data.Languages){
+                if (data.Languages[j] == data.Language){
+                    $("#Language").append("\
+                    <option id="+ data.Languages[j] +" selected>"+ data.Languages[j] +"</option>\
+                    ")
+                }
+                else {
+                    $("#Language").append("\
+                    <option id="+ data.Languages[j] +">"+ data.Languages[j] +"</option>\
+                    ")
+                }
+            }
             $("#ActiveExamine").val(data.ActiveExamine)
             $("#Develop").val(data.Develop)
             $("#Timeout").val(data.Timeout)
