@@ -2,7 +2,6 @@
 from pathlib import Path
 from loguru import logger
 import json
-from data import SetupDatabase
 
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
@@ -36,6 +35,7 @@ def setup():
             with CONFIG_FILE.open("w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
             logger.info("config.json is created successfully")
+        from data import SetupDatabase
         from config import Settings
         setting = Settings()
         Version = setting.read("package","Version")
