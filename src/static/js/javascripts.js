@@ -613,6 +613,7 @@ function setup_website(){
     load_active_widgets();
     load_widgets();
     load_settings();
+    Get_Version();
     hljs.highlightAll();
 }
 
@@ -908,6 +909,19 @@ function load_settings(){
             $("Develop").val(data.Develop)
         }
     }
+    })
+}
+
+function Get_Version(){
+    $.ajax({
+        url: "/GetVersion",
+        method: "POST",
+        success : function(data){
+            $("#Version").empty();
+            $("#Version").text(data.version);
+            $("#IconBarVersion").empty();
+            $("#IconBarVersion").text("Version "+data.version);
+        }
     })
 }
 

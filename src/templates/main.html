@@ -2,7 +2,7 @@
 <head>
 {% block include %}
 {{ super() }}
-<title>Realizer v0.1.9 Beta</title>
+<title>IntelliFusion</title>
 {% endblock %}
 {% block body %}
 <body class="light" onload="setup_website()">
@@ -26,14 +26,13 @@
         <br>
         <p class="p_widgets_bzdz">备注: <input type="name" class="widgets_name" id="session_comment" value="" /></p>
         <p class="p_widgets_bzdz">模型: 
-            <select id="session_model">
-                <option value="1">GPT-3.5</option>
-            </select>
+        <select id="session_model">
+        </select>
         </p>
         <br>
         <input type="hidden" id="widgets_id_edit" value=""/>
         <button id="session_cancel" class="widgets_edit_commit deny" value="">取消</button>
-        <button id="session_cmt" class="widgets_edit_commit edit"  onclick="Add_session()" value="">更新</button>
+        <button id="session_cmt" class="widgets_edit_commit run"  onclick="Add_session()" value="">新建</button>
     </div>
 </div>
 
@@ -334,7 +333,7 @@
     <button class="btn"><i class="fa fa-close"></i></button>
     <div id="box">
         <img style="margin: 10px;width: 150px;height: 150px;" src="/static/res/icon-o.ico" alt="iF">
-        <h3 style="margin: 50px;">inteliFusi0n Version v0.1.9.5</h3>
+        <h3 style="margin: 50px;">inteliFusi0n Version <p id="Version"></p></h3>
         <h5 style="margin: 50px;width: 100px;">use bootstrap5 framework<br>use E charts</h4>
         <a style="width: 100px;height: 50px;" href="https://www.github.com/hcl595/intellifusion/">
             <button class="Hyperlink">learn more...</button>

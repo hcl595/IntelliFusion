@@ -412,6 +412,12 @@ def logout():
     close_application()
 
 
+@app.post("/GetVersion")
+def GetVersion():
+    version = cfg.read("package","Version")
+    return jsonify({"version":version})
+
+
 @app.errorhandler(404)
 def error404(error):
     return render_template("404.html"), 404

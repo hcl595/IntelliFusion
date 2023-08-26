@@ -369,6 +369,7 @@ nav:hover .list li:nth-child(8) span {
 .input-area{
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 3px;
   border-top:0.3px solid #e0e0e0;
   width: 90%;
   height: 50px;
@@ -969,7 +970,7 @@ textarea{
   margin-bottom: auto;
   margin-left: calc(100% - 150px);
   width: 130px;
-  background-color: rgba(45, 241, 255, 0.712);
+  background-color: rgba(45, 255, 115, 0.712);
   border: 1px solid rgba(5, 31, 0, 0.671);
   border-radius:20px;
 }
