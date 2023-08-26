@@ -538,7 +538,7 @@ if __name__ == "__main__":
         FlaskUI(
             app=app,
             server="flask",
-            port=cfg.read("RemoteConfig", "Port"),
+            port=port,
             width=1800,
             height=1000,
         ).run()
