@@ -150,6 +150,14 @@ function show_widgets_add() {
     $("#widgets_url").val("")
 }
 
+function show_session_add() {
+    var now = $(".current").val()
+    $(".current").removeClass("current")
+    $("#TabAdd").addClass("current")
+    $('#'+now).fadeOut(100)
+    $('#session_add').fadeIn(110)
+}
+
 //版本号
 $(document).ready(function(){
     $("button").click(function(){
@@ -326,6 +334,22 @@ function upload_widgets_add(){
     })
 }
 
+function Add_session() {
+    $.ajax({
+        url: "/AddSession",
+        method: "POST",
+        data: {
+            id: $("session_model").val(),
+            comment: $("session_comment").val(),
+        },
+        success : function(response){
+            if (response.response){
+                alert(response.message,"success") ;
+            }
+        }
+    })
+}
+
 //prompt
 function GetPrompts(id){
     var text = $("#user-input-"+id).val();
@@ -347,6 +371,7 @@ function GetPrompts(id){
         }
     })
 }
+
 function prompts(id){
     var value = $("#prompt-single-"+id).val()
     var source_id = $("#prompt-single-"+id).attr("source_id");
@@ -387,33 +412,6 @@ function commit_model(id,operate){
     });
 }
 
-// function SendInput(id) {
-//     if ($('#user-input-' + id).val() != ""){
-//         $("#loading").fadeIn(100);
-//         $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-//         smoothScroll("output-"+id);
-//         var input = $('#user-input-' + id).val()
-//         $('#user-input-' + id).val('');
-//         $.ajax({
-//             url: '/requestmodels',
-//             type: 'POST',
-//             data: {
-//                 userinput: input,
-//                 modelinput: $('#model-input-' + id).val(),
-//             },
-//             success: function(response) {
-//                 var chatGptResponse = response.response;
-//                 $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-//                 $("#loading").fadeOut(100)
-//                 smoothScroll("output-"+id);
-//             }
-//         });
-//     }
-//     else{
-//         alert('内容不能为空',"warning");
-//     }
-// }
-
 function send_input_stream(id) {
     if ($('#user-input-' + id).val() == ""){
         alert('内容不能为空',"warning");
@@ -443,7 +441,6 @@ function send_input_stream(id) {
         $("#streaming").removeAttr("id");
     });
 }
-
 function readChunks(reader) {
     return {
         async *[Symbol.asyncIterator]() {
@@ -608,17 +605,21 @@ function Refresh_ModelList(){
 }
 
 
-function Refresh_Tabs(){
+function Refresh_Tabs(){ // TODO: Session
     $.ajax({
         url: "/GetActiveModels",
         method: "POST",
         success(data){
             $("#tabs").empty()
             $("#Contents").empty()
+            var count = 1
             for (i in data){
-                if (data[i].id == 1){
-                $("#tabs").append('<li draggable="true" class="li current" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>')
-                if (data[i].type == "OpenAI" || data[i].type == "API"){
+                if (count == 1){
+                $("#tabs").append('<li draggable="true" class="li current" id="Tab'+ data[i].id +'" value='+ data[i].id +'>\
+                <span onclick="change_tab('+ data[i].id +')">'+ data[i].comment +'</span>\
+                <i class="fa fa-close close" onclick="close('+ data[i].id +')"></i>\
+                </li>')
+                if (data[i].model_type == "OpenAI" || data[i].model_type == "API"){
                     $("#Contents").append('\
                     <div class="dialogbox_container" id='+ data[i].id +'>\
                         <div class="content" id="output-'+ data[i].id +'"></div>\
@@ -630,25 +631,26 @@ function Refresh_Tabs(){
                                 <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +');focus_input('+ data[i].id +')"\
                                  onclick=""></textarea>\
                             </div>\
-                            <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
+                            <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].id +' />\
                             <div class="button-area">\
                                 <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="send_input_stream(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
                             </div>\
                         </div>\
                     </div>')
                 }
-                if (data[i].type == "WebUI"){
+                if (data[i].model_type == "WebUI"){
                     $("#Contents").append('\
                     <div id='+ data[i].id +'">\
-                        <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].url +'"></iframe>\
+                        <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].model_url +'"></iframe>\
                     </div>')
                 }
+                count = 0
                 }
                 else{
                     $("#tabs").append('\
                     <li draggable="true" class="li" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>\
                     ')
-                    if (data[i].type == "OpenAI" || data[i].type == "API"){
+                    if (data[i].model_type == "OpenAI" || data[i].model_type == "API"){
                         $("#Contents").append('\
                         <div class="dialogbox_container" id='+ data[i].id +' style="display: none;">\
                             <div class="content" id="output-'+ data[i].id +'"></div>\
@@ -666,13 +668,16 @@ function Refresh_Tabs(){
                             </div>\
                         </div>')
                     }
-                    if (data[i].type == "WebUI"){
+                    if (data[i].model_type == "WebUI"){
                         $("#Contents").append('\
                         <div id='+ data[i].id +' style="display: none;" class="iframe_container">\
-                            <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].url +'"></iframe>\
+                            <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].model_url +'"></iframe>\
                         </div>')
                     }
                 }
+                $("#tabs").append('<li draggable="true" class="li" id="TabAdd" value='+ data[i].id +' onclick="show_session_add()">\
+                <i class="fa fa-plus close"></i>\
+                </li>')
                 load_history(data[i].id)
             }
             load_active_widgets()

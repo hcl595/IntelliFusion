@@ -1,30 +1,31 @@
 # data.py | IntelliFusion Version 0.1.9(202308032000) Developer Alpha
 from pathlib import Path
 from peewee import *
+from config import Settings
+
+setting = Settings()
+
 
 # 基础类
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
-DATABASE_FILE = DATA_DIR / "data.020.sqlite"
+Version = setting.read("package","Version")
+DATABASE_FILE = DATA_DIR / f"data{Version}.sqlite"
 
 db = SqliteDatabase(DATABASE_FILE)
-
-class UnknownField(object):
-    def __init__(self, *_, **__): pass
 
 class BaseModel(Model):
     class Meta:
         database = db
 
 class Models(BaseModel):
-    # order = IntegerField(column_name="order")
-    api_key = IntegerField(column_name="APIkey", null=True, default="/")
-    display = CharField(column_name="Display", null=True, default="/")
-    launch_compiler = CharField(column_name="LaunchCompiler", null=True, default="/")
-    launch_path = CharField(column_name="LaunchPath", null=True, default="/")
-    name = CharField()
-    type = CharField()
-    url = CharField()
+    api_key = IntegerField(column_name="APIkey", null=True, default="/")#To request Model
+    # display = CharField(column_name="Display", null=True, default="/")
+    launch_compiler = CharField(column_name="LaunchCompiler", null=True, default="/")#To start model
+    launch_path = CharField(column_name="LaunchPath", null=True, default="/")#To start model
+    name = CharField()#Default Comment
+    type = CharField()#To request Model
+    url = CharField()#To request Model
 
     class Meta:
         table_name = 'models'
@@ -37,23 +38,36 @@ class Widgets(BaseModel):
     widgets_url = CharField(column_name="URL",)
 
 class History(BaseModel):
-    Model = CharField()
-    # session = CharField()
+    session_id = IntegerField()# From Session.id
     UserInput = CharField()
     response = CharField()
 
+class Sessions(BaseModel):
+    #Session.id To History.session_id
+    model_id = CharField() #From Models.id
+    comment = CharField() #To Tab's Text
+    model_url = CharField() #From Models.url
+    model_type = CharField() #From Models.type
+
 def SetupDatabase():
-    db.create_tables([Models,Widgets,History])
+    db.create_tables([Models,Widgets,History,Sessions])
     BaseModel = Models(
         order=1,
         type="OpenAI",
         name="gpt-3.5-turbo",
         url="https://ai.fakeopen.com/v1",
-        api_key="sk-frdfhfdrghdsu5tt5sgyuyy",
+        api_key="/",
         launch_compiler="/",
         launch_path="/",
     )
     BaseModel.save()
+    DefaultSession = Sessions(
+        model_id = 1,
+        comment = "DefaultSession",
+        model_url = "https://ai.fakeopen.com/v1",
+        model_type = "OpenAI",
+    )
+    DefaultSession.save()
     BaseWidgets = Widgets(
         order=1,
         widgets_name="内置核心小组件",
@@ -75,5 +89,4 @@ def SetupDatabase():
         widgets_url = "/widgets/GPU_Percent",
     )
     BaseWidgets.save()
-
 

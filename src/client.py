@@ -25,7 +25,7 @@ from thefuzz import fuzz, process
 from peewee import fn
 
 from config import Prompt, Settings
-from data import History, Models, Widgets
+from data import History, Models, Widgets, Sessions
 from setup import setup
 
 pool = ThreadPoolExecutor()
@@ -60,11 +60,6 @@ def root():
     return render_template("main.html")
 
 
-@app.get("/get_api_port")
-def get_api_port():
-    return api_port
-
-
 @app.post("/request_models_stream")
 @stream_with_context
 def request_models_stream():
@@ -75,12 +70,56 @@ def request_models_stream():
         for r in Model_response:
             yield r
         History.create(
-            Model=InputModel,
+            session_id=InputModel,
             UserInput = InputInfo,
             response=r,
         )
     except openai.error.AuthenticationError:
         yield "Check Your API Key"
+
+
+@app.post("/GetModelList")
+def GetModelList():
+    try:
+        ModelList = Models.select()
+    except:
+        ModelList = {}
+    ModelList_json = [model_to_dict(Model) for Model in ModelList]
+    logger.info("{}", ModelList_json)
+    return jsonify(ModelList_json)
+
+
+@app.post("/GetActiveModels")
+def GetActiveModels():
+    ModelList = Models.select()
+    ActiveModels_ID = []
+    ActiveSessions = []
+    if cfg.read("BaseConfig","ActiveExamine") == "True":
+        for i in ModelList:
+            if validators.url(i.url):
+                host = urlparse(i.url).hostname
+                logger.info("{}",host)
+                try:
+                    ipaddress.ip_address(host)
+                except:
+                    ActiveModels_ID.append(i.id)
+        model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
+        for conn in psutil.net_connections():
+            port = conn.laddr.port
+            if port in model_ports:
+                ActiveModels_ID.append(model_ports[port].id)
+    logger.debug("{}", ActiveModels_ID)
+    for i in ActiveModels_ID:
+        try:
+            session = Sessions.select().where(Sessions.model_id == i)
+            for s in session:
+                ActiveSessions.append(s)
+        except:
+            pass
+        
+    ActiveModelList_json = [model_to_dict(Model) for Model in ActiveSessions]
+    logger.info("{}", ActiveModelList_json)
+    return jsonify(ActiveModelList_json)
 
 
 @app.post("/requestmodels")
@@ -91,7 +130,7 @@ def Request_Models():
         try:
             Model_response = ai(InputModel, InputInfo, "normal")
             History.create(
-                Model=InputModel,
+                session_id=InputModel,
                 UserInput = InputInfo,
                 response=Model_response,
             )
@@ -111,103 +150,20 @@ def Request_Models():
     return jsonify({"response": Model_response})
 
 
-@app.post("/GetHistory")
-def GetHistorys():
-    h_id = request.form.get("id")
-    model = Models.get(Models.id == h_id).name
-    history = History.select().where(History.Model == model)
-    history_json = [model_to_dict(h) for h in history]
-    return jsonify(history_json)
-
-
-@app.post("/GetActiveWidgets")
-def GetActiveWidgets():
-    ActiveWidgets = Widgets.select().order_by(Widgets.order).where(Widgets.available == "True")
-    ActiveWidgets_json = [model_to_dict(Model) for Model in ActiveWidgets]
-    return jsonify(ActiveWidgets_json)
-
-
-@app.post("/GetWidgets")
-def GetWidgets():
-    ActiveWidgets = Widgets.select().order_by(Widgets.order)
-    ActiveWidgets_json = [model_to_dict(Model) for Model in ActiveWidgets]
-    logger.debug(ActiveWidgets_json)
-    return jsonify(ActiveWidgets_json)
-
-
-@app.post("/EditWidgetsOrder")
-def EditWidgetsOrder():
-    Temp = Widgets.update({
-        Widgets.order : request.form.get("order")
-    }).where(Widgets.id == request.form.get("id"))
-    Temp.execute()
-    return jsonify({"response":True,})
-
-
-@app.post("/EditSetting")  # 编辑设置
-def EditSetting():
-    cfg.write("BaseConfig","Theme", request.form.get("Theme"))
-    cfg.write("BaseConfig","Language", request.form.get("Language"))
-    cfg.write("BaseConfig","Timeout", request.form.get("Timeout"))
-    cfg.write("BaseConfig","ActiveExamine", request.form.get("ActiveExamine"))
-    cfg.write("BaseConfig", "Develop", request.form.get("Develop"))
-    cfg.write("RemoteConfig", "Host", request.form.get("Host"))
-    cfg.write("RemoteConfig", "Port", request.form.get("Port"))
-    return jsonify({"response": True,})
-
-
-@app.post("/GetSetting")
-def GetSetting():
-    return jsonify({
-        "response": "true",
-        "Theme": cfg.read("BaseConfig","Theme"),
-        "Language": cfg.read("BaseConfig","Language"),
-        "ActiveExamine": cfg.read("BaseConfig","ActiveExamine"),
-        "Timeout": cfg.read("BaseConfig","Timeout"),
-        "Host": cfg.read("RemoteConfig","Host"),
-        "Port": cfg.read("RemoteConfig","Port"),
-        "Develop": cfg.read("BaseConfig","Develop"),
-        "Languages": pmt.get_json_list(),
-        })
-
-
-@app.post("/edit_widgets")
-def edit_widgets():
-    widgets_id = request.form.get("id")
-    widgets_name = request.form.get("name")
-    widgets_url = request.form.get("url")
-    available = request.form.get("ava")
-    if widgets_id == "-1":
-        try:
-            w = Widgets(
-                order =  Widgets.select(fn.MAX(Widgets.order)).get().order + 1,
-                widgets_name = widgets_name,
-                widgets_url = widgets_url,
-                available = available,
-            )
-            w.save()
-            return jsonify({"response": True, "message": "添加成功"})
-        except:
-            return jsonify({"response": False, "message": "添加失败"})
-    else:
-        if request.form.get("operation") == "edit":
-            try:
-                u = Widgets.update({
-                    Widgets.widgets_name: widgets_name,
-                    Widgets.widgets_url: widgets_url,
-                    Widgets.available: available,
-                }).where(Widgets.id == widgets_id)
-                u.execute()
-                return jsonify({"response": True, "message": "更改成功"})
-            except:
-                return jsonify({"response": False, "message": "更改失败"})
-        elif request.form.get("operation") == "del":
-            try:
-                w = Widgets.get(Widgets.id == widgets_id)
-                w.delete_instance()
-                return jsonify({"response": True, "message": "更改成功"})
-            except:
-                return jsonify({"response": False, "message": "更改失败"})
+@app.post("/AddSession")
+def add_Session():
+    model_id = request.form["id"]
+    logger.debug(model_id)
+    model_type = Models.get(Models.id == model_id).type
+    mdoel_url = Models.get(Models.id == model_id).url
+    Sessions.create(
+        model_id = model_id,
+        model_type = model_type,
+        model_url = mdoel_url,
+        comment = request.form["comment"],
+    )
+    return jsonify({"response": True,
+                    "message": "添加成功"})
 
 
 @app.post("/exchange")
@@ -304,10 +260,102 @@ def AddModel():
                             "message": "添加失败"})
 
 
-@app.get("/close")  # 关闭
-def logout():
-    logger.info("Application Closed")
-    close_application()
+@app.post("/GetHistory")
+def GetHistorys():
+    session = request.form.get("id")
+    history = History.select().where(History.session_id == session)
+    history_json = [model_to_dict(h) for h in history]
+    return jsonify(history_json)
+
+
+@app.post("/GetActiveWidgets")
+def GetActiveWidgets():
+    ActiveWidgets = Widgets.select().order_by(Widgets.order).where(Widgets.available == "True")
+    ActiveWidgets_json = [model_to_dict(Model) for Model in ActiveWidgets]
+    return jsonify(ActiveWidgets_json)
+
+
+@app.post("/GetWidgets")
+def GetWidgets():
+    ActiveWidgets = Widgets.select().order_by(Widgets.order)
+    ActiveWidgets_json = [model_to_dict(Model) for Model in ActiveWidgets]
+    logger.debug(ActiveWidgets_json)
+    return jsonify(ActiveWidgets_json)
+
+
+@app.post("/edit_widgets")
+def edit_widgets():
+    widgets_id = request.form.get("id")
+    widgets_name = request.form.get("name")
+    widgets_url = request.form.get("url")
+    available = request.form.get("ava")
+    if widgets_id == "-1":
+        try:
+            w = Widgets(
+                order =  Widgets.select(fn.MAX(Widgets.order)).get().order + 1,
+                widgets_name = widgets_name,
+                widgets_url = widgets_url,
+                available = available,
+            )
+            w.save()
+            return jsonify({"response": True, "message": "添加成功"})
+        except:
+            return jsonify({"response": False, "message": "添加失败"})
+    else:
+        if request.form.get("operation") == "edit":
+            try:
+                u = Widgets.update({
+                    Widgets.widgets_name: widgets_name,
+                    Widgets.widgets_url: widgets_url,
+                    Widgets.available: available,
+                }).where(Widgets.id == widgets_id)
+                u.execute()
+                return jsonify({"response": True, "message": "更改成功"})
+            except:
+                return jsonify({"response": False, "message": "更改失败"})
+        elif request.form.get("operation") == "del":
+            try:
+                w = Widgets.get(Widgets.id == widgets_id)
+                w.delete_instance()
+                return jsonify({"response": True, "message": "更改成功"})
+            except:
+                return jsonify({"response": False, "message": "更改失败"})
+
+
+@app.post("/EditWidgetsOrder")
+def EditWidgetsOrder():
+    Temp = Widgets.update({
+        Widgets.order : request.form.get("order")
+    }).where(Widgets.id == request.form.get("id"))
+    Temp.execute()
+    return jsonify({"response":True,})
+
+
+@app.post("/EditSetting")  # 编辑设置
+def EditSetting():
+    cfg.write("BaseConfig","Theme", request.form.get("Theme"))
+    cfg.write("BaseConfig","Language", request.form.get("Language"))
+    cfg.write("BaseConfig","Timeout", request.form.get("Timeout"))
+    cfg.write("BaseConfig","ActiveExamine", request.form.get("ActiveExamine"))
+    cfg.write("BaseConfig", "Develop", request.form.get("Develop"))
+    cfg.write("RemoteConfig", "Host", request.form.get("Host"))
+    cfg.write("RemoteConfig", "Port", request.form.get("Port"))
+    return jsonify({"response": True,})
+
+
+@app.post("/GetSetting")
+def GetSetting():
+    return jsonify({
+        "response": "true",
+        "Theme": cfg.read("BaseConfig","Theme"),
+        "Language": cfg.read("BaseConfig","Language"),
+        "ActiveExamine": cfg.read("BaseConfig","ActiveExamine"),
+        "Timeout": cfg.read("BaseConfig","Timeout"),
+        "Host": cfg.read("RemoteConfig","Host"),
+        "Port": cfg.read("RemoteConfig","Port"),
+        "Develop": cfg.read("BaseConfig","Develop"),
+        "Languages": pmt.get_json_list(),
+        })
 
 
 @app.post("/prompts")
@@ -328,43 +376,10 @@ def Prompts():
     return jsonify(result)
 
 
-@app.post("/GetModelList")
-def GetModelList():
-    try:
-        ModelList = Models.select()
-    except:
-        ModelList = {}
-    ModelList_json = [model_to_dict(Model) for Model in ModelList]
-    logger.info("{}", ModelList_json)
-    return jsonify(ModelList_json)
-
-
-@app.post("/GetActiveModels")
-def GetActiveModels():
-    try:
-        ModelList = Models.select()
-    except:
-        ModelList = {}
-    ActiveModels = []
-    if cfg.read("BaseConfig","ActiveExamine") == "True":
-        for i in ModelList:
-            if validators.url(i.url):
-                host = urlparse(i.url).hostname
-                logger.info("{}",host)
-                try:
-                    ipaddress.ip_address(host)
-                except:
-                    ActiveModels.append(i)
-        model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
-        for conn in psutil.net_connections():
-            port = conn.laddr.port
-            if port in model_ports:
-                ActiveModels.append(model_ports[port])
-    else:
-        ActiveModels = ModelList
-    ActiveModelList_json = [model_to_dict(Model) for Model in ActiveModels]
-    logger.info("{}", ActiveModelList_json)
-    return jsonify(ActiveModelList_json)
+@app.get("/close")  # 关闭
+def logout():
+    logger.info("Application Closed")
+    close_application()
 
 
 @app.errorhandler(404)
@@ -384,11 +399,12 @@ class Message(TypedDict):
     content: str
 
 # functions
-def ai(ModelID: str, question_in: str,method: str):
+def ai(SessionID: str, question_in: str,method: str):
     response = ""
-    openai.api_base = (Models.get(Models.name == ModelID).url)
+    Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID))
+    openai.api_base = (Model_ID.url)
     messages = []
-    for r in History.select().where(History.Model == ModelID):
+    for r in History.select().where(History.session_id == SessionID):
         r: History
         assert isinstance(r.UserInput, str)
         assert isinstance(r.response, str)
@@ -399,10 +415,10 @@ def ai(ModelID: str, question_in: str,method: str):
     question: Message = {"role": "user", "content": question_in}
     messages.append(question)
     openai.api_key = (
-        Models.get(Models.name == ModelID).api_key
+        Model_ID.api_key
     )
     for chunk in openai.ChatCompletion.create(
-        model=ModelID,
+        model=Model_ID.name,
         messages=messages,
         stream=True,
         temperature=0,
@@ -421,9 +437,10 @@ def ai(ModelID: str, question_in: str,method: str):
                 response = mistune.html(response)
             return response
 
-def llm(ModelID: str, question: str):
+def llm(SessionID: str, question: str):
+    Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID)).id
     response = requests.post(
-        url=Models.get(Models.name == ModelID).url,
+        url=Models.get(Models.name == Model_ID).url,
         data=json.dumps({"prompt": question, "history": []}),
         headers={"Content-Type": "application/json"},
     )

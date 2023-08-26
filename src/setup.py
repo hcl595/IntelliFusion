@@ -7,7 +7,6 @@ from data import SetupDatabase
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
 CONFIG_FILE = DATA_DIR / "config.json"
-DATABASE_FILE = DATA_DIR / "data.020.sqlite"
 LOG_FILE = DATA_DIR / "models.log"
 
 def setup():
@@ -16,12 +15,13 @@ def setup():
         if not LOG_FILE.exists():
             logger.add(LOG_FILE)
             logger.info('models.log is created successfully')
-        if not DATABASE_FILE.exists():
-            SetupDatabase()
         if not CONFIG_FILE.exists():
             logger.info("config.json doesn't exist")
             logger.info("create config.json")
             data = {
+                "package": {
+                    "Version" : "0.2.0",
+                },
                 "BaseConfig": {
                     "Theme": "light",
                     "Develop": "False",
@@ -36,6 +36,13 @@ def setup():
             with CONFIG_FILE.open("w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
             logger.info("config.json is created successfully")
+        from config import Settings
+        setting = Settings()
+        Version = setting.read("package","Version")
+        DATABASE_FILE = DATA_DIR / f"data{Version}.sqlite"
+        if not DATABASE_FILE.exists():
+            SetupDatabase()
+            logger.info("Database is created successfully!")
 
 
 if __name__ == '__main__':
