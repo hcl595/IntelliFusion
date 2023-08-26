@@ -1,5 +1,8 @@
 # main.py | Intellifusion Version 0.2.0(2023082412000) Developer Alpha
 # headers
+from setup import setup
+setup()
+
 import ctypes
 import ipaddress
 import json
@@ -26,7 +29,6 @@ from peewee import fn
 
 from config import Prompt, Settings
 from data import History, Models, Widgets, Sessions
-from setup import setup
 
 pool = ThreadPoolExecutor()
 
@@ -39,7 +41,6 @@ DICT_DIR = APP_DIR / "dicts" / "dict.txt"
 LOG_FILE = DATA_DIR / "models.log"
 
 # setup
-setup()
 jieba.set_dictionary(DICT_DIR)
 jieba.initialize()
 logger.add(LOG_FILE)
