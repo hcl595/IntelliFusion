@@ -452,23 +452,20 @@ if cfg.read("BaseConfig", "Develop") == "True":
 
 # launch
 if __name__ == "__main__":
-    logger.info("Application(v0.1.9 ∆) Launched!")
+    logger.info("Application(v0.2.0 ∂) Launched!")
     pmt.get_json()
+    if cfg.read("RemoteConfig", "Port") == "0":
+        port=get_free_port()
+    else:
+        port=cfg.read("RemoteConfig", "Port")
     if cfg.read("BaseConfig", "Develop") == "True":
         logger.level("DEBUG")
-        logger.debug("run in debug mode")
-        if cfg.read("RemoteConfig", "Port") == "0":
-            app.run(
-                debug=cfg.read("BaseConfig", "Develop"),
-                port=get_free_port(),
-                host=cfg.read("RemoteConfig", "Host"),
-            )
-        else:
-            app.run(
-                debug=cfg.read("BaseConfig", "Develop"),
-                port=cfg.read("RemoteConfig", "Port"),
-                host=cfg.read("RemoteConfig", "Host"),
-            )
+        logger.debug("running in debug mode")
+        app.run(
+            debug=cfg.read("BaseConfig", "Develop"),
+            port=port,
+            host=cfg.read("RemoteConfig", "Host"),
+        )
     elif cfg.read("BaseConfig", "Develop") == "False" or cfg.read("BaseConfig", "Develop") == False:
         logger.debug("run in GUI mode")
         print(cfg.read("BaseConfig", "Develop"))
