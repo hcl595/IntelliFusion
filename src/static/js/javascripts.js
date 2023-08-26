@@ -151,8 +151,6 @@ function show_widgets_add() {
 }
 
 function show_session_add() {
-    $(".current").removeClass("current")
-    $("#TabAdd").addClass("current")
     $('#session_add').fadeIn(110)
 }
 
@@ -398,12 +396,18 @@ function upload_widgets_add(){
 }
 
 function Add_session() {
+    if ($("#session_comment").val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
+    comment = $("#session_comment").val()
+    $("#session_comment").val("")
     $.ajax({
         url: "/AddSession",
         method: "POST",
         data: {
             model_id: $("#session_model").val(),
-            comment: $("#session_comment").val(),
+            comment: comment,
         },
         success : function(response){
             if (response.response){
@@ -457,6 +461,10 @@ function prompts(id){
 }
 
 function commit_model(id,operate){
+    if ($('#Url'+id).val() == "" || $('#Comment'+id).val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
     $("#loading").fadeIn(100)
     $('#'+operate+id).attr("disabled",true)
     $.ajax({
@@ -495,10 +503,12 @@ function send_input_stream(id) {
         return;
     }
     $("#loading").fadeIn(100);
-    $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+    UserInput = $('#user-input-' + id).val()
+    $('#user-input-' + id).val("")
+    $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
     smoothScroll("output-"+id);
     let form = new FormData();
-    form.append("userinput",$('#user-input-' + id).val())
+    form.append("userinput",UserInput)
     form.append("modelinput",$('#model-input-' + id).val())
     fetch("/request_models_stream", {
         method: "POST",
@@ -514,7 +524,6 @@ function send_input_stream(id) {
             smoothScroll("output-"+id);
         }
         hljs.highlightAll();
-        $('#user-input-' + id).val("")
         $("#streaming").removeAttr("id");
     });
 }
@@ -533,6 +542,10 @@ function readChunks(reader) {
 $(document).ready(function() {
 //send request
 $("#add").on('click',function() {
+    if ($('#Url-1').val() == "" || $('#Comment-1').val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
     $("#loading").fadeIn(100)
     $('#add').attr("disabled",true)
     $.ajax({
@@ -687,8 +700,8 @@ function Refresh_Tabs(){
             var count = 1
             for (i in data){
                 if (count == 1){
-                $("#tabs").append('<li draggable="true" class="li current" id="Tab'+ data[i].id +'" value='+ data[i].id +'>\
-                <span onclick="change_tab('+ data[i].id +')">'+ data[i].comment +'</span>\
+                $("#tabs").append('<li draggable="true" class="li current" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')">\
+                <span>'+ data[i].comment +'</span>\
                 <i class="fa fa-close close" onclick="Close_session('+ data[i].id +')"></i>\
                 </li>')
                 if (data[i].model_type == "OpenAI" || data[i].model_type == "API"){
@@ -719,8 +732,8 @@ function Refresh_Tabs(){
                 count = 0
                 }
                 else{
-                    $("#tabs").append('<li draggable="true" class="li" id="Tab'+ data[i].id +'" value='+ data[i].id +'>\
-                    <span onclick="change_tab('+ data[i].id +')">'+ data[i].comment +'</span>\
+                    $("#tabs").append('<li draggable="true" class="li" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')">\
+                    <span>'+ data[i].comment +'</span>\
                     <i class="fa fa-close close" onclick="Close_session('+ data[i].id +')"></i>\
                     </li>')
                     if (data[i].model_type == "OpenAI" || data[i].model_type == "API"){
@@ -729,12 +742,12 @@ function Refresh_Tabs(){
                             <div class="content" id="output-'+ data[i].id +'"></div>\
                             <div class="prompt_container" id="Prompt-'+ data[i].id +'">\
                             </div>\
-                            <div class="input-area">\
+                            <div class="input-area" id="input-area-'+ data[i].id +'">\
                                 </br>\
                                 <div class="txtb">\
-                                    <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +')"></textarea>\
+                                    <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +');focus_input('+ data[i].id +')"></textarea>\
                                 </div>\
-                                <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
+                                <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].id +' />\
                                 <div class="button-area">\
                                 <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="send_input_stream(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
                                 </div>\
@@ -750,6 +763,23 @@ function Refresh_Tabs(){
                 }
                 load_history(data[i].id)
             }
+            $("#session_model").empty()
+            $.ajax({
+                url: "/GetModelForSession",
+                method: "POST",
+                success: function(data){
+                    var count = 1
+                    for (i in data.ModelList) {
+                        if (count == 1){
+                            $("#session_model").append("<option selected value="+ data.ModelDict[i] +">"+ data.ModelList[i]+"</option>")
+                            count = 0
+                        }
+                        else{
+                            $("#session_model").append("<option value="+ data.ModelDict[i] +">"+ data.ModelList[i]+"</option>")
+                        }
+                    }
+                }
+            })
             $("#tabs").append('<li class="li" id="TabAdd" value="Add" onclick="show_session_add()">\
             <i class="fa fa-plus close"></i>\
             </li>')

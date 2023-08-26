@@ -47,12 +47,6 @@ cfg = Settings()
 pmt = Prompt()
 login_error = ""
 
-def get_free_port():
-    with socketserver.TCPServer(("localhost", 0), None) as s:
-        free_port = s.server_address[1]
-    return free_port
-
-api_port = get_free_port()
 
 # main
 @app.route("/")  # 根目录
@@ -65,6 +59,7 @@ def root():
 def request_models_stream():
     InputInfo = request.form.get("userinput")
     InputModel = request.form["modelinput"]
+    logger.info(InputModel)
     try:
         Model_response = ai(InputModel, InputInfo, "stream")
         for r in Model_response:
@@ -148,6 +143,20 @@ def Request_Models():
                 response=Model_response,
             )
     return jsonify({"response": Model_response})
+
+
+@app.post("/GetModelForSession")
+def GetModelForSession():
+    Model = Models.select()
+    ModelList = []
+    ModelDict = []
+    for m in Model:
+        ModelList.append(m.name)
+    for i in Model:
+        ModelDict.append(i.id)
+    logger.info("{},{}",ModelDict,ModelList)
+    return jsonify({"ModelList": ModelList,
+                    "ModelDict": ModelDict})
 
 
 @app.post("/AddSession")
@@ -422,7 +431,8 @@ class Message(TypedDict):
 # functions
 def ai(SessionID: str, question_in: str,method: str):
     response = ""
-    Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID))
+    logger.info("{}",SessionID)
+    Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID).model_id)
     openai.api_base = (Model_ID.url)
     messages = []
     for r in History.select().where(History.session_id == SessionID):
@@ -467,6 +477,11 @@ def llm(SessionID: str, question: str):
     )
     response = mistune.html(response.json()["history"][0][1])
     return response
+
+def get_free_port():
+    with socketserver.TCPServer(("localhost", 0), None) as s:
+        free_port = s.server_address[1]
+    return free_port
 
 if cfg.read("BaseConfig", "Develop") == "True":
     try:

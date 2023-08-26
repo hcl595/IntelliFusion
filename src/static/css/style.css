@@ -1102,6 +1102,7 @@ pre {
   border: none;
   color: #6c6c6c;
   transition: ease-in-out;
+  z-index: 3;
 }
 .light .close:hover {
   color: #000000;
