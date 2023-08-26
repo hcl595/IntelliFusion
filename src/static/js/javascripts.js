@@ -335,12 +335,13 @@ function upload_widgets_add(){
 }
 
 function Add_session() {
+    alert($("session_model").val(),"danger")
     $.ajax({
         url: "/AddSession",
         method: "POST",
         data: {
-            id: $("session_model").val(),
-            comment: $("session_comment").val(),
+            model_id: $("#session_model").val(),
+            comment: $("#session_comment").val(),
         },
         success : function(response){
             if (response.response){

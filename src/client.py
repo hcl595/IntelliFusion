@@ -152,7 +152,7 @@ def Request_Models():
 
 @app.post("/AddSession")
 def add_Session():
-    model_id = request.form["id"]
+    model_id = request.form["model_id"]
     logger.debug(model_id)
     model_type = Models.get(Models.id == model_id).type
     mdoel_url = Models.get(Models.id == model_id).url
