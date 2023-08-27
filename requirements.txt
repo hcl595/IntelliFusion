@@ -9,6 +9,7 @@ pyautogui
 requests
 thefuzz
 validators
+mistune
 
 # dev
 # auto-py-to-exe

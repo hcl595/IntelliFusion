@@ -1,7 +1,12 @@
 from widgets import widgets_blue
 import psutil
-from flask import Flask, render_template, jsonify
+from flask import render_template, jsonify
 
+# //////////// Put Your Wigets Here //////////////////
+
+
+
+# //////////// Put Your Wigets Here //////////////////
 
 @widgets_blue.route("/test")
 def test_widgets():

@@ -2,11 +2,10 @@
 <head>
 {% block include %}
 {{ super() }}
-<title>Realizer v0.1.9 Beta</title>
+<title>IntelliFusion</title>
 {% endblock %}
 {% block body %}
 <body class="light" onload="setup_website()">
-<iframe src="/" name="commit" style="display: none;"></iframe>
 <div class="main" id="main-box">
     <div class="chat">
         <div id="contentwrap"  class="contentwrap">
@@ -18,8 +17,22 @@
     </div>
     <div class="expand">
         <div id="widgets_container_live" class="widgets_container">
-            
         </div>
+    </div>
+    <div class="session_add" id="session_add" style="display: none;">
+        <button class="btn" id="session_close"><i class="fa fa-close"></i></button>
+        <br>
+        <h4 style="margin-left: 30px;">添加标签页</h4>
+        <br>
+        <p class="p_widgets_bzdz">备注: <input type="name" class="widgets_name" id="session_comment" value="" /></p>
+        <p class="p_widgets_bzdz">模型: 
+        <select id="session_model">
+        </select>
+        </p>
+        <br>
+        <input type="hidden" id="widgets_id_edit" value=""/>
+        <button id="session_cancel" class="widgets_edit_commit deny" value="">取消</button>
+        <button id="session_cmt" class="widgets_edit_commit run"  onclick="Add_session()" value="">新建</button>
     </div>
 </div>
 
@@ -87,10 +100,12 @@
                         <input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none" />
                     </td>
                     <td>
-                        <input type="text" class="url" id="LcCompiler-1" placeholder=".\venv\scripts\python.exe">
+                        <input type="text" class="url" id="LcCompiler-1" placeholder="Choose A File">
+                        <button class="edit" onclick="ReadFile('LcCompiler-1')"><i class="fa fa-folder-open-o"></i></button>
                     </td>
                     <td>
-                        <input type="text" class="url" id="LcUrl-1" placeholder=".\venv\launch.py">
+                        <input type="text" class="url" id="LcUrl-1" placeholder="Choose A File">
+                        <button class="edit" onclick="ReadFile('LcUrl-1')"><i class="fa fa-folder-open-o"></i></button>
                     </td>
                     <td>
                         <button type="submit" class="add" id="add" value="-1"><i class="fa fa-plus"></i></button>
@@ -117,44 +132,44 @@
     <div class="widgets_edit" id="widgets_edit" style="display: none;">
         <button class="btn" id="widgets_close"><i class="fa fa-close"></i></button>
         <br>
-        <div class="widgets_contentbox">
+        <div class="widgets_contentbox_pre">
             <iframe id="widgets_preview" allow="autoplay *"></iframe>
         </div>
-        <p class="p_widgets_bzdz">备注: <input type="name" class="widgets_name" id="widgets_name" value="" /></p>
-        <p class="p_widgets_bzdz">地址: <input type="url" class="widgets_url" id="widgets_url" value="" /></p>
+        <p class="p_widgets_bzdz">备注: <input type="name" class="widgets_name" id="widgets_name_edit" value="" /></p>
+        <p class="p_widgets_bzdz">地址: <input type="url" class="widgets_url" id="widgets_url_edit" value="" /></p>
         <p class="p_widgets_bzdz" style="display: inline-block">是否启用:</p>
         <div class="switch-container" style="display: inline-block">
-            <input id="Available" type="hidden" value="False">
-            <input id="Available_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('Available')">
+            <input id="widgets_available_edit" type="hidden" value="False">
+            <input id="widgets_available_edit_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('widgets_available_edit')">
             <span class="switch-area"></span>
             <span class="switch-toggle"></span>
         </div>
         <br>
-        <button id="widgets_commit_del" class="widgets_edit_commit deny" onclick="widgets_commit('delete')" value="">删除</button>
-        <button id="widgets_commit_cmt" class="widgets_edit_commit edit"  onclick="widgets_commit('update')" value="">更新</button>
+        <input type="hidden" id="widgets_id_edit" value=""/>
+        <button id="widgets_commit_del" class="widgets_edit_commit deny" onclick="upload_widgets_del()" value="">删除</button>
+        <button id="widgets_commit_cmt" class="widgets_edit_commit edit"  onclick="upload_widgets_edit()" value="">更新</button>
     </div>
 
     <div class="widgets_edit" id="widgets_add" style="display: none;">
         <button class="btn" id="widgets_close_add"><i class="fa fa-close"></i></button>
         <br>
-        <div class="widgets_contentbox">
+        <div class="widgets_contentbox_pre">
             <iframe id="widgets_preview" allow="autoplay *"></iframe>
         </div>
         <p class="p_widgets_bzdz">备注: <input type="name" class="widgets_name" id="widgets_name_add" value="" /></p>
         <p class="p_widgets_bzdz">地址: <input type="url" class="widgets_url" id="widgets_url_add" value="" placeholder="/widgets/your_widgets"/></p>
         <p class="p_widgets_bzdz" style="display: inline-block">是否启用:</p>
         <div class="switch-container" style="display: inline-block">
-            <input id="Available_add" type="hidden" value="False">
-            <input id="Available_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('Available_add')">
+            <input id="widgets_available_add" type="hidden" value="True">
+            <input id="widgets_available_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('widgets_available_add')">
             <span class="switch-area"></span>
             <span class="switch-toggle"></span>
         </div>
         <br>
         <button id="widgets_close_add_1" class="widgets_edit_commit deny">取消</button>
-        <button id="widgets_edit" class="widgets_edit_commit run" onclick="widgets_commit('add')">提交</button>
+        <button id="widgets_edit" class="widgets_edit_commit run" onclick="upload_widgets_add()">提交</button>
     </div>
 </div>
-
 
 <div class="models" id="models-box" style="display: none;">
     <div class="card_container">
@@ -320,7 +335,7 @@
     <button class="btn"><i class="fa fa-close"></i></button>
     <div id="box">
         <img style="margin: 10px;width: 150px;height: 150px;" src="/static/res/icon-o.ico" alt="iF">
-        <h3 style="margin: 50px;">inteliFusi0n Version v0.1.9.5</h3>
+        <h3 style="margin: 50px;">inteliFusi0n Version <p id="Version"></p></h3>
         <h5 style="margin: 50px;width: 100px;">use bootstrap5 framework<br>use E charts</h4>
         <a style="width: 100px;height: 50px;" href="https://www.github.com/hcl595/intellifusion/">
             <button class="Hyperlink">learn more...</button>

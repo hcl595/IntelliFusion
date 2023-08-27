@@ -1,13 +1,14 @@
-# intelliFusion
+# IntelliFusion Preview
 
 ## 介绍
  
 intelliFusion是一个开源的、高自由度、支持多种模型库的AI模型库的使用平台。为方便不通用库的使用，我们拥有用户可自行导入不同的模型库。
-intelliFusion 运用flask形成webui处理前端。使用Ajax，异步获取数据，使用echarts进行了数据可视化，使用户可以根据自己电脑的硬件使用率，试试检测电脑使用状况，自行规划使用率。
+intelliFusion 运用flask形成webui处理前端。使用Ajax，异步获取数据，使用echarts进行了数据可视化，使用户可以根据自己电脑的硬件使用率，实时检测电脑使用状况，自行规划使用率。
+IntelliFusion的Preview版本为单文件，因此部分功能会因为无法导入文件而无法使用，所以推荐安装IntelliFusion Release版本。
 
 ## 支持模型
 
-**通过webui调用的语言模型**
+**通过webui调用的所有模型**
 - 支持所有带有原生界面的模型
 
 **通过api调用的语言模型**
@@ -45,7 +46,5 @@ intelliFusion 运用flask形成webui处理前端。使用Ajax，异步获取数�
 **[2023/06/23]** 发布[intelliFusion](https://github.com/hcl595/IntelliFusion)
 
 ## 了解更多
-
-
 
 - [想反馈问题？]开发者邮箱：3545742020@qq.com

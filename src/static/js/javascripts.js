@@ -1,3 +1,12 @@
+function focus_input(id){
+    if ($('#user-input-'+id).val() == ""){
+        $("#input-area-"+id).removeClass("focus")
+    } 
+    else{
+        $("#input-area-"+id).addClass("focus")
+    }
+}
+
 function ChangeToMainA(){
     $("#main-box").fadeIn(200)
 }
@@ -120,10 +129,18 @@ function show_widgets_edit(id) {
     $("#widgets_edit").fadeIn(100)
     var name = $("#widgets_"+id).attr("widgets_name")
     var url = $("#widgets_"+id).attr("widgets_url")
+    var ava = $("#widgets_"+id).attr("widgets_available")
+    if (ava == "True"){
+        $("#widgets_available_edit_Checkbox").attr("checked",true)
+    }
+    if (ava == "False"){
+        $("#widgets_available_edit_Checkbox").prop("checked",false)
+    }
     $("#widgets_preview").attr("src", url)
-    $("#widgets_id").val(id)
-    $("#widgets_name").val(name)
-    $("#widgets_url").val(url)
+    $("#widgets_id_edit").val(id)
+    $("#widgets_name_edit").val(name)
+    $("#widgets_url_edit").val(url)
+    $("#widgets_available_edit").val(ava)
 }
 
 function show_widgets_add() {
@@ -131,6 +148,10 @@ function show_widgets_add() {
     $("#widgets_add").fadeIn(100)
     $("#widgets_name").val("")
     $("#widgets_url").val("")
+}
+
+function show_session_add() {
+    $('#session_add').fadeIn(110)
 }
 
 //版本号
@@ -150,6 +171,12 @@ $(document).ready(function(){
       });
     $("#widgets_close_add_1").click(function(){
         $("#widgets_add").fadeOut(100);
+    });
+    $("#session_close").click(function(){
+        $("#session_add").fadeOut(100);
+    });
+    $("#session_cancel").click(function(){
+        $("#session_add").fadeOut(100);
     });
 });
 
@@ -192,6 +219,43 @@ var node = document.querySelector("#widgets_container")
             upload_widgets_edit_order()
 		}
 	}
+var node_tabs = document.querySelector("#tabs")
+	var draging = null
+	node_tabs.ondragstart = function(event) {
+		console.log("start:")
+		// dataTransfer.setData把拖动对象的数据存入其中，可以用dataTransfer.getData来获取数据
+		event.dataTransfer.setData("te", event.target.innerText)
+		draging = event.target
+	}
+	node_tabs.ondragover = function(event) {
+		console.log("over:")
+		// 默认地，无法将数据/元素放置到其他元素中。如果需要设置允许放置，必须阻止对元素的默认处理方式
+		event.preventDefault()
+		var target = event.target
+		if (target.nodeName === "LI" && target !== draging) {
+			// 获取初始位置
+			var targetRect = target.getBoundingClientRect()
+			var dragingRect = draging.getBoundingClientRect()
+			if (target) {
+				// 判断是否动画元素
+				if (target.animated) {
+					return;
+				}
+			}
+			if (_index(draging) < _index(target)) {
+				// 目标比元素大，插到其后面
+				// extSibling下一个兄弟元素
+				target.parentNode.insertBefore(draging, target.nextSibling)
+			} else {
+				// 目标比元素小，插到其前面
+				target.parentNode.insertBefore(draging, target)
+			}
+			_animate(dragingRect, draging)
+			_animate(targetRect, target)
+            Refresh_Tabs()
+            upload_session_edit_order()
+		}
+	}
 
 })
 
@@ -205,14 +269,46 @@ function change_tab(id){
     smoothScroll("output-"+id);
 }
 
+function ReadFile(id){
+    $.ajax({
+        url: "/ReadFile",
+        method: "POST",
+        success: function(data){
+            $("#"+id).val(data)
+        }
+    })
+}
+
 //ajax Interface
 //edit
+function upload_session_edit_order(){
+    var ele = document.getElementById("tabs")
+    var child = ele.firstElementChild
+    var last = ele.lastElementChild
+    for (i = 1;child.nextElementSibling != last;i++){
+        var value = child.value
+        $.ajax({
+            url: "/EditSessionOrder",
+            method: "POST",
+            data: {
+                id: value,
+                order: i,
+            },
+            success: function(response){
+                if (response.response){
+                    Refresh_Tabs()
+                }
+            }
+        })
+        child = child.nextElementSibling
+    }
+}
+
 function upload_widgets_edit_order(){
-    var ctn = true
     var ele = document.getElementById("widgets_container")
     var child = ele.firstElementChild
     var last = ele.lastElementChild
-    for (i =1;child != last + 1;i++){
+    for (i =1;child.nextElementSibling != last ;i++){
         var value = child.id
         $.ajax({
             url: "/EditWidgetsOrder",
@@ -229,6 +325,120 @@ function upload_widgets_edit_order(){
         })
         child = child.nextElementSibling
     }
+}
+
+function upload_widgets_edit(){
+    $.ajax({
+        url: "/edit_widgets",
+        method : "POST",
+        data : {
+            id: $("#widgets_id_edit").val(),
+            operation: "edit",
+            name: $("#widgets_name_edit").val(),
+            url: $("#widgets_url_edit").val(),
+            ava: $("#widgets_available_edit").val(),
+        },
+        success: function(response){
+            if (response.response){
+                alert(response.message,"success")
+            }
+            else{
+                alert(response.message,"danger")
+            }
+            load_active_widgets()
+            load_widgets()
+            $("#widgets_edit").fadeOut(100);
+        }
+    })
+}
+
+function upload_widgets_del(){
+    $.ajax({
+        url: "/edit_widgets",
+        method : "POST",
+        data : {
+            id: $("#widgets_id_edit").val(),
+            operation: "del",
+            name: $("#widgets_name_edit").val(),
+            url: $("#widgets_url_edit").val(),
+            ava: $("#widgets_avaliable_edit").val(),
+        },
+        success: function(response){
+            if (response.response){
+                alert(response.message,"success")
+            }
+            else{
+                alert(response.message,"danger")
+            }
+            load_active_widgets()
+            load_widgets()
+            $("#widgets_edit").fadeOut(100);
+        }
+    })
+}
+
+function upload_widgets_add(){
+    $.ajax({
+        url: "/edit_widgets",
+        method : "POST",
+        data : {
+            id: -1,
+            name: $("#widgets_name_add").val(),
+            url: $("#widgets_url_add").val(),
+            ava: $("#widgets_available_add").val(),
+        },
+        success: function(response){
+            if (response.response){
+                alert(response.message,"success")
+            }
+            else{
+                alert(response.message,"danger")
+            }
+            load_active_widgets()
+            load_widgets()
+            $("#widgets_add").fadeOut(100);
+            $("#widgets_name_add").val("");
+            $("#widgets_url_add").val("");
+            $("#widgets_available_add").val("False");
+            $("#widgets_available_add_Checkbox").prop("checked",false);
+        }
+    })
+}
+
+function Add_session() {
+    if ($("#session_comment").val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
+    comment = $("#session_comment").val()
+    $("#session_comment").val("")
+    $.ajax({
+        url: "/AddSession",
+        method: "POST",
+        data: {
+            model_id: $("#session_model").val(),
+            comment: comment,
+        },
+        success : function(response){
+            if (response.response){
+                alert(response.message,"success") ;
+            }
+            Refresh_Tabs()
+        }
+    })
+}
+
+function Close_session(id) {
+    $.ajax({
+        url: "/CloseSession",
+        method: "POST",
+        data: {
+            model_id: id,
+        },
+        success : function(response){
+            Refresh_Tabs()
+        }
+    })
 }
 
 //prompt
@@ -252,6 +462,7 @@ function GetPrompts(id){
         }
     })
 }
+
 function prompts(id){
     var value = $("#prompt-single-"+id).val()
     var source_id = $("#prompt-single-"+id).attr("source_id");
@@ -260,6 +471,10 @@ function prompts(id){
 }
 
 function commit_model(id,operate){
+    if ($('#Url'+id).val() == "" || $('#Comment'+id).val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
     $("#loading").fadeIn(100)
     $('#'+operate+id).attr("disabled",true)
     $.ajax({
@@ -292,37 +507,55 @@ function commit_model(id,operate){
     });
 }
 
-function SendInput(id) {
-    if ($('#user-input-' + id).val() != ""){
-        $("#loading").fadeIn(100);
-        $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + $('#user-input-' + id).val() + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-        smoothScroll("output-"+id);
-        var input = $('#user-input-' + id).val()
-        $('#user-input-' + id).val('');
-        $.ajax({
-            url: '/requestmodels',
-            type: 'POST',
-            data: {
-                userinput: input,
-                modelinput: $('#model-input-' + id).val(),
-            },
-            success: function(response) {
-                var chatGptResponse = response.response;
-                alert(chatGptResponse.message,"sucess")
-                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + chatGptResponse + '</div></div>');
-                $("#loading").fadeOut(100)
-                smoothScroll("output-"+id);
-            }
-        });
-    }
-    else{
+function send_input_stream(id) {
+    if ($('#user-input-' + id).val() == ""){
         alert('内容不能为空',"warning");
+        return;
     }
+    $("#loading").fadeIn(100);
+    UserInput = $('#user-input-' + id).val()
+    $('#user-input-' + id).val("")
+    $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+    smoothScroll("output-"+id);
+    let form = new FormData();
+    form.append("userinput",UserInput)
+    form.append("modelinput",$('#model-input-' + id).val())
+    fetch("/request_models_stream", {
+        method: "POST",
+        body: form,
+    }).then(async (response) => {
+        const reader = response.body.getReader();
+        $("#loading").fadeOut(100)
+        $('#output-' + id).append('<div class="item item-left"><div class="avatar">\
+        <i class="fa fa-user-circle-o"></i></div>\
+        <div class="bubble bubble-left" id="streaming"></div></div>');
+        for await (const chunk of readChunks(reader)) {
+            document.getElementById("streaming").innerHTML = new TextDecoder('utf-8').decode(chunk);
+            smoothScroll("output-"+id);
+        }
+        hljs.highlightAll();
+        $("#streaming").removeAttr("id");
+    });
+}
+function readChunks(reader) {
+    return {
+        async *[Symbol.asyncIterator]() {
+            let readResult = await reader.read();
+            while (!readResult.done) {
+                yield readResult.value;
+                readResult = await reader.read();
+            }
+        },
+    };
 }
 
 $(document).ready(function() {
 //send request
 $("#add").on('click',function() {
+    if ($('#Url-1').val() == "" || $('#Comment-1').val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
     $("#loading").fadeIn(100)
     $('#add').attr("disabled",true)
     $.ajax({
@@ -381,6 +614,7 @@ function refresh_website(){
     load_active_widgets();
     load_widgets();
     load_settings();
+    hljs.highlightAll();
 }
 
 function setup_website(){
@@ -389,6 +623,8 @@ function setup_website(){
     load_active_widgets();
     load_widgets();
     load_settings();
+    Get_Version();
+    hljs.highlightAll();
 }
 
 const smoothScroll = (id) => {
@@ -408,12 +644,11 @@ function load_history(id) {
         success: function(data){
             $('#output-' + id).empty()
             for (i in data){
-                $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right">' + data[i].UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left">' + data[i].response + '</div></div>');
+                $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right" id="high_light_1">' + data[i].UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
+                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left" id="high_light_2">' + data[i].response + '</div></div>');
                 smoothScroll("output-"+id);
-            }
-
-
+                hljs.highlightAll();
+                }
         }
     })
 }
@@ -447,10 +682,12 @@ function Refresh_ModelList(){
                     </td>\
                     <td>\
                         <input type="text" class="url" id="LcCompiler'+ data[i].id +'" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value='+ data[i].launch_compiler +'>\
+                        <button class="edit" onclick="ReadFile(`LcCompiler' + data[i].id + '`)"><i class="fa fa-folder-open-o"></i></button>\
                     </td>\
                     <td>\
-                        <input type="text" class="url" id="LcUrl'+ data[i].id +'" name="LCurl" placeholder=".\ChatGLM\launch.py" value='+ data[i].launch_path +'>\
-                    </td>\
+                        <input type="text" class="url" id="LcUrl'+ data[i].id +'" name="LCurl" placeholder="Browse File" value='+ data[i].launch_path +'>\
+                        <button class="edit" onclick="ReadFile(`LcUrl' + data[i].id + '`)"><i class="fa fa-folder-open-o"></i></button>\
+                        </td>\
                     <td>\
                         <button class="run" id="run-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`run`)"><i class="fa fa-play"></i></button>\
                         <button class="stop" id="stop-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`stop`)"><i class="fa fa-stop"></i></button>\
@@ -466,73 +703,99 @@ function Refresh_ModelList(){
     })
 }
 
-
-function Refresh_Tabs(){
+function Refresh_Tabs(){ 
     $.ajax({
         url: "/GetActiveModels",
         method: "POST",
         success(data){
             $("#tabs").empty()
             $("#Contents").empty()
+            var count = 1
             for (i in data){
-                if (data[i].id == 1){
-                $("#tabs").append('<li draggable="true" class="li current" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>')
-                if (data[i].type == "OpenAI" || data[i].type == "API"){
+                if (count == 1){
+                $("#tabs").append('<li draggable="true" class="li current" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')">\
+                <span>'+ data[i].comment +'</span>\
+                <i class="fa fa-close close" onclick="Close_session('+ data[i].id +')"></i>\
+                </li>')
+                if (data[i].model_type == "OpenAI" || data[i].model_type == "API"){
                     $("#Contents").append('\
                     <div class="dialogbox_container" id='+ data[i].id +'>\
                         <div class="content" id="output-'+ data[i].id +'"></div>\
                         <div class="prompt_container" id="Prompt-'+ data[i].id +'">\
                         </div>\
-                        <div class="input-area">\
+                        <div class="input-area" id="input-area-'+ data[i].id +'">\
                             </br>\
                             <div class="txtb">\
-                                <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +')"></textarea>\
+                                <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +');focus_input('+ data[i].id +')"\
+                                 onclick=""></textarea>\
                             </div>\
-                            <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
+                            <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].id +' />\
                             <div class="button-area">\
-                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
+                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="send_input_stream(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
                             </div>\
                         </div>\
                     </div>')
                 }
-                if (data[i].type == "WebUI"){
+                if (data[i].model_type == "WebUI"){
                     $("#Contents").append('\
                     <div id='+ data[i].id +'">\
-                        <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].url +'"></iframe>\
+                        <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].model_url +'"></iframe>\
                     </div>')
                 }
+                count = 0
                 }
                 else{
-                    $("#tabs").append('\
-                    <li draggable="true" class="li" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')"><span>'+ data[i].name +'</span></li>\
-                    ')
-                    if (data[i].type == "OpenAI" || data[i].type == "API"){
+                    $("#tabs").append('<li draggable="true" class="li" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')">\
+                    <span>'+ data[i].comment +'</span>\
+                    <i class="fa fa-close close" onclick="Close_session('+ data[i].id +')"></i>\
+                    </li>')
+                    if (data[i].model_type == "OpenAI" || data[i].model_type == "API"){
                         $("#Contents").append('\
                         <div class="dialogbox_container" id='+ data[i].id +' style="display: none;">\
                             <div class="content" id="output-'+ data[i].id +'"></div>\
                             <div class="prompt_container" id="Prompt-'+ data[i].id +'">\
                             </div>\
-                            <div class="input-area">\
+                            <div class="input-area" id="input-area-'+ data[i].id +'">\
                                 </br>\
                                 <div class="txtb">\
-                                    <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +')"></textarea>\
+                                    <textarea class="userInputArea" placeholder="输入内容" id="user-input-'+ data[i].id +'" source_id="'+ data[i].id +'" onInput="GetPrompts('+ data[i].id +');focus_input('+ data[i].id +')"></textarea>\
                                 </div>\
-                                <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].name +' />\
+                                <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].id +' />\
                                 <div class="button-area">\
-                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="SendInput(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
+                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="send_input_stream(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
                                 </div>\
                             </div>\
                         </div>')
                     }
-                    if (data[i].type == "WebUI"){
+                    if (data[i].model_type == "WebUI"){
                         $("#Contents").append('\
                         <div id='+ data[i].id +' style="display: none;" class="iframe_container">\
-                            <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].url +'"></iframe>\
+                            <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].model_url +'"></iframe>\
                         </div>')
                     }
                 }
                 load_history(data[i].id)
             }
+            $("#session_model").empty()
+            $.ajax({
+                url: "/GetModelForSession",
+                method: "POST",
+                success: function(data){
+                    var count = 1
+                    for (i in data.ModelList) {
+                        if (count == 1){
+                            $("#session_model").append("<option selected value="+ data.ModelDict[i] +">"+ data.ModelList[i]+"</option>")
+                            count = 0
+                        }
+                        else{
+                            $("#session_model").append("<option value="+ data.ModelDict[i] +">"+ data.ModelList[i]+"</option>")
+                        }
+                    }
+                }
+            })
+            $("#tabs").append('<li class="li" id="TabAdd" value="Add" onclick="show_session_add()">\
+            <i class="fa fa-plus close"></i>\
+            </li>')
             load_active_widgets()
         }
     })
@@ -564,11 +827,13 @@ function load_widgets(){
             for (i in data){
                 $("#widgets_container").append('\
                 <li class="ele" draggable="true" id="'+ data[i].id +'">\
-                    '+ data[i].widgets_name +' | \
-                    '+ data[i].widgets_url +'\
+                    <div style="width: 70%;float:left;">\
+                        <span><div class="widgets_title">'+ data[i].widgets_name +'</div></span>\
+                        <span><div class="widgets_subtitle">'+ data[i].widgets_url +'</div></span>\
+                    </div>\
                     <i class="fa fa-bars"></i>\
                     <i class="fa fa-info" id="widgets_'+ data[i].id +'" widgets_name="'+ data[i].widgets_name +'"\
-                    widgets_url="'+ data[i].widgets_url +'" onclick="show_widgets_edit('+ data[i].id +')"></i>\
+                    widgets_url="'+ data[i].widgets_url +'" widgets_available="' + data[i].available + '" onclick="show_widgets_edit('+ data[i].id +')"></i>\
                 </li>\
                 ')
             }
@@ -578,10 +843,10 @@ function load_widgets(){
 
 function switch_load(id){
     var now_value = $("#"+id).val()
-    if (now_value == "True"){
+    if (now_value == "True" || now_value == "true"){
         $("#"+id).val("False")
     }
-    if (now_value == "False"){
+    if (now_value == "False" || now_value == "false"){
         $("#"+id).val("True")
     }
 }
@@ -635,6 +900,19 @@ function load_settings(){
             else{
                 $("#Develop_Checkbox").removeAttr("checked")
             }
+            $("#Language").empty()
+            for (j in data.Languages){
+                if (data.Languages[j] == data.Language){
+                    $("#Language").append("\
+                    <option id="+ data.Languages[j] +" selected>"+ data.Languages[j] +"</option>\
+                    ")
+                }
+                else {
+                    $("#Language").append("\
+                    <option id="+ data.Languages[j] +">"+ data.Languages[j] +"</option>\
+                    ")
+                }
+            }
             $("#ActiveExamine").val(data.ActiveExamine)
             $("#Develop").val(data.Develop)
             $("#Timeout").val(data.Timeout)
@@ -646,12 +924,24 @@ function load_settings(){
     })
 }
 
+function Get_Version(){
+    $.ajax({
+        url: "/GetVersion",
+        method: "POST",
+        success : function(data){
+            $("#Version").empty();
+            $("#Version").text(data.version);
+            $("#IconBarVersion").empty();
+            $("#IconBarVersion").text("Version "+data.version);
+        }
+    })
+}
+
 //CommitModel
 function loading(){
     $("#loading").fadeIn(100)
     setTimeout(function(){ $("#loading").fadeOut(100) },1000)
 }
-
 
 // 获取元素在父元素中的index
 function _index(el) {
