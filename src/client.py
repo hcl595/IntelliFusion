@@ -49,7 +49,6 @@ jieba.initialize()
 logger.add(LOG_FILE)
 cfg = Settings()
 pmt = Prompt()
-login_error = ""
 
 
 # main
@@ -163,16 +162,7 @@ def GetModelForSession():
 
 @app.post("/AddSession")
 def add_Session():
-    model_id = request.form["model_id"]
-    logger.debug(request.form["comment"])
-    model_type = Models.get(Models.id == model_id).type
-    mdoel_url = Models.get(Models.id == model_id).url
-    Sessions.create(
-        model_id = model_id,
-        model_type = model_type,
-        model_url = mdoel_url,
-        comment = request.form["comment"],
-    )
+    create_session(comment= request.form["comment"],model_id= request.form["model_id"])
     return jsonify({"response": True,
                     "message": "添加成功"})
 
