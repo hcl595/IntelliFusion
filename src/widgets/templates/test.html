@@ -53,7 +53,6 @@
   <div class="translate-container">
     <p class="translate_title">翻译</p>
     <textarea class="input-text" id="input-text" placeholder="请输入要翻译的文本"></textarea>
-    <textarea class="translation-result" id="translation-result" placeholder="这里是翻译后的内容"></textarea>
     <select class="translate_model">
       <option selected hidden disabled value="">请选择使用模型</option>
       <option value="option1">GPT-3.5</option>
@@ -68,6 +67,7 @@
       <option value="option4">赛博坦语</option>
     </select>
     <button class="translate-button" id="translate-button">翻译</button>
+    <textarea class="translation-result" id="translation-result" placeholder="这里是翻译后的内容"></textarea>
   <script>
     $(document).ready(function() {
       $('#translate-button').click(function() {
