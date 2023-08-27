@@ -196,7 +196,7 @@ def Close_Session():
     u = Sessions.get(Sessions.id == model_id)
     u.delete_instance()
     return jsonify({"response": True,
-                    "message": "添加成功"})
+                    "message": "关闭成功"})
 
 
 @app.post("/exchange")
@@ -409,10 +409,7 @@ def Prompts():
     return jsonify(result)
 
 
-@app.get("/close")  # 关闭
-def logout():
-    logger.info("Application Closed")
-    close_application()
+
 
 
 @app.post("/GetVersion")

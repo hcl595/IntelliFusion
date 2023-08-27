@@ -2,22 +2,11 @@ from widgets import widgets_blue
 import psutil
 from flask import render_template, jsonify
 
+# //////////// Put Your Wigets Here //////////////////
 
-@widgets_blue.post("/file")
-def getfile():
-    from tkinter import Tk
-    from tkinter.filedialog import askopenfilename
 
-    # 创建一个Tkinter根窗口
-    root = Tk()
-    root.withdraw()  # 隐藏根窗口
 
-    # 弹出文件选择对话框
-    file_path = askopenfilename()
-
-    # 打印文件路径
-    print("文件路径：", file_path)
-    return jsonify(file_path)
+# //////////// Put Your Wigets Here //////////////////
 
 @widgets_blue.route("/test")
 def test_widgets():
