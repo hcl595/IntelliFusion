@@ -269,6 +269,16 @@ function change_tab(id){
     smoothScroll("output-"+id);
 }
 
+function ReadFile(id){
+    $.ajax({
+        url: "/ReadFile",
+        method: "POST",
+        success: function(data){
+            $("#"+id).val(data)
+        }
+    })
+}
+
 //ajax Interface
 //edit
 function upload_session_edit_order(){
@@ -672,10 +682,12 @@ function Refresh_ModelList(){
                     </td>\
                     <td>\
                         <input type="text" class="url" id="LcCompiler'+ data[i].id +'" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value='+ data[i].launch_compiler +'>\
+                        <button class="edit" onclick="ReadFile(`LcCompiler' + data[i].id + '`)"><i class="fa fa-folder-open-o"></i></button>\
                     </td>\
                     <td>\
-                        <input type="text" class="url" id="LcUrl'+ data[i].id +'" name="LCurl" placeholder=".\ChatGLM\launch.py" value='+ data[i].launch_path +'>\
-                    </td>\
+                        <input type="text" class="url" id="LcUrl'+ data[i].id +'" name="LCurl" placeholder="Browse File" value='+ data[i].launch_path +'>\
+                        <button class="edit" onclick="ReadFile(`LcUrl' + data[i].id + '`)"><i class="fa fa-folder-open-o"></i></button>\
+                        </td>\
                     <td>\
                         <button class="run" id="run-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`run`)"><i class="fa fa-play"></i></button>\
                         <button class="stop" id="stop-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`stop`)"><i class="fa fa-stop"></i></button>\

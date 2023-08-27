@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Literal, TypedDict
 from urllib.parse import urlparse
 import socketserver
-from tkinter import Tk
+from concurrent.futures import ProcessPoolExecutor
 from tkinter.filedialog import askopenfilename
 
 import mistune
@@ -43,7 +43,6 @@ DICT_DIR = APP_DIR / "dicts" / "dict.txt"
 LOG_FILE = DATA_DIR / "models.log"
 
 # setup
-root = Tk()
 jieba.set_dictionary(DICT_DIR)
 jieba.initialize()
 logger.add(LOG_FILE)
@@ -422,6 +421,12 @@ def GetVersion():
     return jsonify({"version":version})
 
 
+@app.post("/ReadFile")
+def ReadFile():
+    out = getfile()
+    return jsonify(out)
+
+
 @app.errorhandler(404)
 def error404(error):
     return render_template("404.html"), 404
@@ -494,15 +499,10 @@ def get_free_port():
     return free_port
 
 def getfile():
-
-    root.withdraw()  # 隐藏根窗口
-
-    # 弹出文件选择对话框
-    file_path = askopenfilename()
-
-    # 打印文件路径
-    print("文件路径：", file_path)
-    return file_path
+    with ProcessPoolExecutor() as p:
+        r = p.submit(askopenfilename)
+    str(r)
+    return r.result()
 
 if cfg.read("BaseConfig", "Develop") == "True":
     try:
@@ -518,9 +518,9 @@ if cfg.read("BaseConfig", "Develop") == "True":
     
     @app.route("/test")
     def getfile_test():
-        file_path = getfile()
-        logger.info("{}", file_path)
-        return render_template("test.html",file_path = file_path)
+        out = getfile()
+        logger.debug("{}", out)
+        return render_template("./test.html")
     
     @app.route("/offline")
     def offline():
