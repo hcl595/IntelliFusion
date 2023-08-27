@@ -13,6 +13,8 @@ from pathlib import Path
 from typing import Literal, TypedDict
 from urllib.parse import urlparse
 import socketserver
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
 
 import mistune
 import jieba
@@ -41,6 +43,7 @@ DICT_DIR = APP_DIR / "dicts" / "dict.txt"
 LOG_FILE = DATA_DIR / "models.log"
 
 # setup
+root = Tk()
 jieba.set_dictionary(DICT_DIR)
 jieba.initialize()
 logger.add(LOG_FILE)
@@ -490,6 +493,17 @@ def get_free_port():
         free_port = s.server_address[1]
     return free_port
 
+def getfile():
+
+    root.withdraw()  # 隐藏根窗口
+
+    # 弹出文件选择对话框
+    file_path = askopenfilename()
+
+    # 打印文件路径
+    print("文件路径：", file_path)
+    return file_path
+
 if cfg.read("BaseConfig", "Develop") == "True":
     try:
         id = Widgets.get(Widgets.widgets_name == "test").id
@@ -503,8 +517,10 @@ if cfg.read("BaseConfig", "Develop") == "True":
         w.save()
     
     @app.route("/test")
-    def DevTest():
-        return render_template("test.html")
+    def getfile_test():
+        file_path = getfile()
+        logger.info("{}", file_path)
+        return render_template("test.html",file_path = file_path)
     
     @app.route("/offline")
     def offline():
