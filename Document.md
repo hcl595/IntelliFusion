@@ -28,14 +28,48 @@
 ## 开发教程
 
 ### 小组件开发
+- 内置函数
+  1. `Create_Session()`
+    - 需要参数:
+      1. `comment`  类型 `string`
+      2. `model_id` 类型 `int`
+    - 先要调用`Create_Session()`函数,需要填入两个参数，分别是`comment`和`model_id`，
+    - 返回值:
+      1. `SessionID` 类型 `int`
+    - **注意**:当你在编写时，你需要获取其返回值，将这个值填入`request_OpenAI()`&`request_Json()`的第一个参数`Session_ID`中.
+  2. `request_OpenAI()`
+    - 需要参数:
+      1. `Session_ID` 类型 `int`
+      2. `Userinput`  类型 `string`
+      3. `stream`     类型 `bool`
+    - 输入`Userinput`,`stream`,当`stream`为`True`时，需要使用下列代码返回HTML:
+      ```python
+      result = request_OpenAI(SessionID=,Userinput=,stream=True)
+      for r in result:
+        yield r
+      ```
+      但当`stream`为`False`时，你只需要
+      ```python
+      result = request_OpenAI(SessionID=,Userinput=,stream=True)
+      return result
+      ```
+    - 返回值:
+      1. `response` 类型 `string`
+  3. `request_Json`
+    - 需要参数:
+      1. `Session_ID` 类型 `int`
+      2. `Userinput`  类型 `string`
+    - 返回值:
+      1. `response` 类型 `string`
+
 - 编写小组件:
-  1. 使用html/js/css/python flask蓝图编写微应用
+  1. 使用`html`/`js`/`css`/`python flask`蓝图编写微应用
   2. 替换内容
-    1. html文件存放在./widgets/templates/下
-    2. css文件存放在./widgets/static/css/下
-    3. javascripts脚本存放在./widgets/static/js/下
-    4. 打开./widgets/views.py，按照下列格式添加内容(添加路由):
-    ```
+    1. `html`文件存放在`./widgets/templates/`下
+    2. `css`文件存放在`./widgets/static/css/`下
+    3. `javascripts`脚本存放在`./widgets/static/js/`下
+    4. 打开`./widgets/views.py`，按照下列格式添加内容(添加路由):
+    ```python
     @app.route('/your_widgets_url')
     def your_widgets_name():
         return render_templates("your_html_file.html")
