@@ -15,7 +15,7 @@ def create_session(comment:str, model_id:int):
     comment是输入时的备注 用于给会话命名
     model_id是输入会话所使用的模型在数据库中的ID
     '''
-    if not comment or model_id:
+    if comment is None or model_id is None:
         raise ValueError
     try:
         # 创建会话
@@ -41,7 +41,7 @@ def request_OpenAI(SessionID: int, Userinput: str,stream: bool = True):
     Userinput 用户输入的内容
     stream    是否需要流式传输
     '''
-    if not SessionID or not Userinput:
+    if SessionID is None or Userinput is None:
         raise ValueError
     response = ""
     try:
@@ -88,7 +88,7 @@ def request_OpenAI(SessionID: int, Userinput: str,stream: bool = True):
     )
 
 def request_Json(SessionID: int, Userinput: str):
-    if not SessionID or not Userinput:
+    if SessionID is None or Userinput is None:
         raise ValueError
     try:
         Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID)).id
