@@ -73,6 +73,13 @@
         var inputText = $('#input-text').val();
         // 发送翻译请求，并将结果显示在 translation-result 元素中
         $('#translation-result').text('翻译结果：' + inputText);
+        $.ajax({
+          url: "/widgets/file",
+          method: "POST",
+          success: function(data){
+            alert(data)
+          }
+        })
       });
     });
   </script>
