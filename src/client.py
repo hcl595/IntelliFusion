@@ -13,6 +13,8 @@ from pathlib import Path
 from typing import Literal, TypedDict
 from urllib.parse import urlparse
 import socketserver
+from concurrent.futures import ProcessPoolExecutor
+from tkinter.filedialog import askopenfilename
 
 import mistune
 import jieba
@@ -194,7 +196,7 @@ def Close_Session():
     u = Sessions.get(Sessions.id == model_id)
     u.delete_instance()
     return jsonify({"response": True,
-                    "message": "添加成功"})
+                    "message": "关闭成功"})
 
 
 @app.post("/exchange")
@@ -407,16 +409,19 @@ def Prompts():
     return jsonify(result)
 
 
-@app.get("/close")  # 关闭
-def logout():
-    logger.info("Application Closed")
-    close_application()
+
 
 
 @app.post("/GetVersion")
 def GetVersion():
     version = cfg.read("package","Version")
     return jsonify({"version":version})
+
+
+@app.post("/ReadFile")
+def ReadFile():
+    out = getfile()
+    return jsonify(out)
 
 
 @app.errorhandler(404)
@@ -490,6 +495,12 @@ def get_free_port():
         free_port = s.server_address[1]
     return free_port
 
+def getfile():
+    with ProcessPoolExecutor() as p:
+        r = p.submit(askopenfilename)
+    str(r)
+    return r.result()
+
 if cfg.read("BaseConfig", "Develop") == "True":
     try:
         id = Widgets.get(Widgets.widgets_name == "test").id
@@ -503,8 +514,10 @@ if cfg.read("BaseConfig", "Develop") == "True":
         w.save()
     
     @app.route("/test")
-    def DevTest():
-        return render_template("test.html")
+    def getfile_test():
+        out = getfile()
+        logger.debug("{}", out)
+        return render_template("./test.html")
     
     @app.route("/offline")
     def offline():
