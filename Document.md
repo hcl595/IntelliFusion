@@ -61,6 +61,60 @@
       2. `Userinput`  类型 `string`
     - 返回值:
       1. `response` 类型 `string`
+  - 内置接口
+    1.  `/GetModelList`
+      - 输入值: ` `
+      - 输出值：
+        ```python
+          [{
+            'id': 1,
+            'api_key': 'api_key',
+            'launch_compiler': '/',
+            'launch_path': '/',
+            'name': 'gpt-3.5-turbo',
+            'type': 'OpenAI',
+            'url': 'https://api.example.com/v1'
+            }]
+        ```
+    2. `/GetActiveModel`
+      - 输入值: ` `
+      - 输出值: 
+        ```python
+          [{
+            'id': 1,
+            'api_key': 'api_key',
+            'launch_compiler': '/',
+            'launch_path': '/',
+            'name': 'gpt-3.5-turbo',
+            'type': 'OpenAI',
+            'url': 'https://api.example.com/v1'
+            }]
+        ```
+      - **注意**: 当用户开启`ActiveExamin`时，`/GetActiveModel`将返回所以模型数据。
+    3. `/GetHistory`
+      - 输入值: `session_id`
+      - 输出值: 
+        ```python
+          [{
+            'id': 1,
+            'session_id': '1',
+            'Userinput': '/',
+            'response': '/'
+            },
+            {
+            'id': 1,
+            'session_id': '1',
+            'Userinput': '/',
+            'response': '/'
+            },
+            {
+            'id': 1,
+            'session_id': '1',
+            'Userinput': '/',
+            'response': '/'
+            },]
+        ```
+    4. 
 
 - 编写小组件:
   1. 使用`html`/`js`/`css`/`python flask`蓝图编写微应用

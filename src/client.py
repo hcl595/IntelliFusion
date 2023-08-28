@@ -118,34 +118,6 @@ def GetActiveModels():
     return jsonify(ActiveModelList_json)
 
 
-# @app.post("/requestmodels")
-# def Request_Models():
-#     InputInfo = request.form["userinput"]
-#     InputModel = request.form["modelinput"]
-#     if Models.get(Models.name == InputModel).type == "OpenAI":
-#         try:
-#             Model_response = ai(InputModel, InputInfo, "normal")
-#             History.create(
-#                 session_id=InputModel,
-#                 UserInput = InputInfo,
-#                 response=Model_response,
-#             )
-#         except openai.error.AuthenticationError:
-#             Model_response = "Check Your API Key"
-#         except UnboundLocalError:
-#             Model_response = "DataBase Error,get support from Developer!"
-#         # except IntegrityError:
-#     elif Models.get(Models.name == InputModel).type == "API":
-#             Model_response = llm(InputModel, InputInfo)
-#             # response = html.escape(response)
-#             History.create(
-#                 Model=InputModel,
-#                 UserInput = InputInfo,
-#                 response=Model_response,
-#             )
-#     return jsonify({"response": Model_response})
-
-
 @app.post("/GetModelForSession")
 def GetModelForSession():
     Model = Models.select()
@@ -180,9 +152,9 @@ def EditSessionOrder():
 
 @app.post("/CloseSession")
 def Close_Session():
-    model_id = request.form["model_id"]
+    session_id = request.form["model_id"]
     logger.debug(request.form["model_id"])
-    u = Sessions.get(Sessions.id == model_id)
+    u = Sessions.get(Sessions.id ==  session_id)
     u.delete_instance()
     return jsonify({"response": True,
                     "message": "关闭成功"})
