@@ -731,7 +731,7 @@ function Refresh_Tabs(){
                             </div>\
                             <input id="model-input-'+ data[i].id +'" type="hidden" value='+ data[i].id +' />\
                             <div class="button-area">\
-                                <button type="submit" id="SendInput" value="'+ data[i].id +'" onclick="send_input_stream(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
+                                <button type="submit" class="SendInput" id="SendInput" value="'+ data[i].id +'" onclick="send_input_stream(`'+ data[i].id +'`)"><i class="fa fa-send"></i></button>\
                             </div>\
                         </div>\
                     </div>')

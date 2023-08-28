@@ -23,7 +23,7 @@ import psutil
 import requests
 import validators
 from flask import Flask, stream_with_context, json, jsonify, render_template, request
-from flaskwebgui import FlaskUI, close_application
+from flaskwebgui import FlaskUI
 from loguru import logger
 from playhouse.shortcuts import model_to_dict
 from thefuzz import fuzz, process
@@ -31,6 +31,7 @@ from peewee import fn
 
 from config import Prompt, Settings
 from data import History, Models, Widgets, Sessions
+from models import *
 
 pool = ThreadPoolExecutor()
 
@@ -48,7 +49,6 @@ jieba.initialize()
 logger.add(LOG_FILE)
 cfg = Settings()
 pmt = Prompt()
-login_error = ""
 
 
 # main
@@ -62,18 +62,16 @@ def root():
 def request_models_stream():
     InputInfo = request.form.get("userinput")
     InputModel = request.form["modelinput"]
-    logger.info(InputModel)
-    try:
-        Model_response = ai(InputModel, InputInfo, "stream")
-        for r in Model_response:
-            yield r
-        History.create(
-            session_id=InputModel,
-            UserInput = InputInfo,
-            response=r,
-        )
-    except openai.error.AuthenticationError:
-        yield "Check Your API Key"
+    if Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).type == "OpenAI":
+        try:
+            Model_response = request_OpenAI(SessionID=InputModel, Userinput=InputInfo, stream=True)
+            for r in Model_response:
+                yield r
+        except openai.error.AuthenticationError:
+            yield "Check Your API Key"
+    else:
+        r = request_Json(SessionID=InputModel, Userinput=InputInfo,)
+        yield r
 
 
 @app.post("/GetModelList")
@@ -120,34 +118,6 @@ def GetActiveModels():
     return jsonify(ActiveModelList_json)
 
 
-@app.post("/requestmodels")
-def Request_Models():
-    InputInfo = request.form["userinput"]
-    InputModel = request.form["modelinput"]
-    if Models.get(Models.name == InputModel).type == "OpenAI":
-        try:
-            Model_response = ai(InputModel, InputInfo, "normal")
-            History.create(
-                session_id=InputModel,
-                UserInput = InputInfo,
-                response=Model_response,
-            )
-        except openai.error.AuthenticationError:
-            Model_response = "Check Your API Key"
-        except UnboundLocalError:
-            Model_response = "DataBase Error,get support from Developer!"
-        # except IntegrityError:
-    elif Models.get(Models.name == InputModel).type == "API":
-            Model_response = llm(InputModel, InputInfo)
-            # response = html.escape(response)
-            History.create(
-                Model=InputModel,
-                UserInput = InputInfo,
-                response=Model_response,
-            )
-    return jsonify({"response": Model_response})
-
-
 @app.post("/GetModelForSession")
 def GetModelForSession():
     Model = Models.select()
@@ -164,16 +134,7 @@ def GetModelForSession():
 
 @app.post("/AddSession")
 def add_Session():
-    model_id = request.form["model_id"]
-    logger.debug(request.form["comment"])
-    model_type = Models.get(Models.id == model_id).type
-    mdoel_url = Models.get(Models.id == model_id).url
-    Sessions.create(
-        model_id = model_id,
-        model_type = model_type,
-        model_url = mdoel_url,
-        comment = request.form["comment"],
-    )
+    create_session(comment= request.form["comment"],model_id= request.form["model_id"])
     return jsonify({"response": True,
                     "message": "添加成功"})
 
@@ -191,9 +152,9 @@ def EditSessionOrder():
 
 @app.post("/CloseSession")
 def Close_Session():
-    model_id = request.form["model_id"]
+    session_id = request.form["model_id"]
     logger.debug(request.form["model_id"])
-    u = Sessions.get(Sessions.id == model_id)
+    u = Sessions.get(Sessions.id ==  session_id)
     u.delete_instance()
     return jsonify({"response": True,
                     "message": "关闭成功"})
@@ -441,55 +402,6 @@ class Message(TypedDict):
     content: str
 
 # functions
-def ai(SessionID: str, question_in: str,method: str):
-    response = ""
-    logger.info("{}",SessionID)
-    Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID).model_id)
-    openai.api_base = (Model_ID.url)
-    messages = []
-    for r in History.select().where(History.session_id == SessionID):
-        r: History
-        assert isinstance(r.UserInput, str)
-        assert isinstance(r.response, str)
-        question: Message = {"role": "user", "content": r.UserInput}
-        response_model: Message = {"role": "assistant", "content": r.response}
-        messages.append(question)
-        messages.append(response_model)
-    question: Message = {"role": "user", "content": question_in}
-    messages.append(question)
-    openai.api_key = (
-        Model_ID.api_key
-    )
-    for chunk in openai.ChatCompletion.create(
-        model=Model_ID.name,
-        messages=messages,
-        stream=True,
-        temperature=0,
-    ):
-        if method == "stream":
-            if hasattr(chunk.choices[0].delta, "content"):
-                print(chunk.choices[0].delta.content, end="", flush=True)
-                response = response + chunk.choices[0].delta.content
-                response_out = mistune.html(response)
-                logger.info("{}", response_out)
-                yield response_out
-        else:
-            if hasattr(chunk.choices[0].delta, "content"):
-                print(chunk.choices[0].delta.content, end="", flush=True)
-                response = response + chunk.choices[0].delta.content
-                response = mistune.html(response)
-            return response
-
-def llm(SessionID: str, question: str):
-    Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID)).id
-    response = requests.post(
-        url=Models.get(Models.name == Model_ID).url,
-        data=json.dumps({"prompt": question, "history": []}),
-        headers={"Content-Type": "application/json"},
-    )
-    response = mistune.html(response.json()["history"][0][1])
-    return response
-
 def get_free_port():
     with socketserver.TCPServer(("localhost", 0), None) as s:
         free_port = s.server_address[1]
