@@ -114,7 +114,19 @@
             'response': '/'
             },]
         ```
-    4. 
+    4. `/prompts`
+    - 输入值: `text`
+    - 输出值: 
+      ```python
+      {
+      '充当 Excel 工作表': 'example', 
+      '充当 Solr 搜索引擎': "example", 
+      '充当 StackOverflow 帖子': 'example', 
+      '充当 SQL 终端': 'example',
+      '充当 PHP 解释器': "example"
+      }
+      ```
+    - **注意**:输入值为用户输入的文本，返回值会根据用户选择的语言进行更改，它将返回模糊搜索中所有符合条件的提示词。
 
 - 编写小组件:
   1. 使用`html`/`js`/`css`/`python flask`蓝图编写微应用

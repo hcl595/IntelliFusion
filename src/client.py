@@ -366,11 +366,7 @@ def Prompts():
         result = {t:prompt[t] for (t,_) in result}
     else:
         result = {}
-    logger.info("{}",result)
     return jsonify(result)
-
-
-
 
 
 @app.post("/GetVersion")
