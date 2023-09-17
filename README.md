@@ -1,7 +1,10 @@
 # IntelliFusion Preview
 
+[![Fork me on Gitee](https://gitee.com/argonserver/IntelliFusion/widgets/widget_6.svg?color=00d4d4)](https://gitee.com/argonserver/IntelliFusion)
+
+[![star](https://gitee.com/argonserver/IntelliFusion/badge/star.svg?theme=gray)](https://gitee.com/argonserver/IntelliFusion/stargazers)
+
 ## 介绍
- 
 intelliFusion是一个开源的、高自由度、支持多种模型库的AI模型库的使用平台。为方便不通用库的使用，我们拥有用户可自行导入不同的模型库。
 intelliFusion 运用flask形成webui处理前端。使用Ajax，异步获取数据，使用echarts进行了数据可视化，使用户可以根据自己电脑的硬件使用率，实时检测电脑使用状况，自行规划使用率。
 IntelliFusion的Preview版本为单文件，因此部分功能会因为无法导入文件而无法使用，所以推荐安装IntelliFusion Release版本。
