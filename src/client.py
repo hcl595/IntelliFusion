@@ -5,7 +5,6 @@ setup()
 
 import ctypes
 import ipaddress
-import json
 import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -16,11 +15,9 @@ import socketserver
 from concurrent.futures import ProcessPoolExecutor
 from tkinter.filedialog import askopenfilename
 
-import mistune
 import jieba
 import openai
 import psutil
-import requests
 import validators
 from flask import Flask, stream_with_context, json, jsonify, render_template, request
 from flaskwebgui import FlaskUI
