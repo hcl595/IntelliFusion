@@ -1,4 +1,6 @@
-# IntelliFusion Stable
+# IntelliFusion
+
+![IntelliFusionicon](res/IntelliFusion_icon_Sketch_20230923f_small.png)
 
 [![Fork me on Gitee](https://gitee.com/argonserver/IntelliFusion/widgets/widget_6.svg?color=00d4d4)](https://gitee.com/argonserver/IntelliFusion)
 [![star](https://gitee.com/argonserver/IntelliFusion/badge/star.svg?theme=gray)](https://gitee.com/argonserver/IntelliFusion/stargazers)
