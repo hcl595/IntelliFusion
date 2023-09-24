@@ -143,6 +143,24 @@ function show_widgets_edit(id) {
     $("#widgets_available_edit").val(ava)
 }
 
+function show_model_edit(id) {
+    $("#model_add").fadeOut(100)
+    $("#model_edit").fadeIn(100)
+    var name = $("#model_"+id).attr("model_name")
+    var url = $("#model_"+id).attr("model_url")
+    // var ava = $("#model_"+id).attr("widgets_available")
+    if (ava == "True"){
+        $("#model_available_edit_Checkbox").attr("checked",true)
+    }
+    if (ava == "False"){
+        $("#model_available_edit_Checkbox").prop("checked",false)
+    }
+    // $("#widgets_preview").attr("src", url)
+    $("#model_id_edit").val(id)
+    $("#model_name_edit").val(name)
+    $("#model_url_edit").val(url)
+    // $("#widgets_available_edit").val(ava)
+}
 function show_widgets_add() {
     $("#widgets_edit").fadeOut(100)
     $("#widgets_add").fadeIn(100)

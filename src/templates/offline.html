@@ -64,124 +64,40 @@
 
 <div class="account" id="account-box" style="display: none;">
     <div style="margin-left:20px">
-        <table>
-            <thead>
-                <tr>
-                    <td>
-                        <h3>模型</h3>                           
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>模型类型</p>
-                    </td>
-                    <td>
-                        <p>模型名称</p>
-                    </td>
-                    <td>
-                        <p>调用地址</p>
-                    </td>
-                    <td>
-                        <p>访问密钥</p>
-                    </td>
-                    <td>
-                        <p>编译地址</p>
-                    </td>
-                    <td>
-                        <p>启动地址</p>
-                    </td>
-                    <td>
-                        <p>运行/暂停</p>
-                    </td>
-                    <td>
-                        <p>删除</p>
-                    </td>
-                    <td>
-                        <p>启动</p>
-                    </td>
-                </tr>
-            </thead>
-            <tbody id="ModelTable">
-            </tbody>
-            <tfoot>
-                <input type="hidden" id="id-1" value="-1">
-                <tr id="AddTr">
-                    <td>
-                        <select id="Type-1" name="type">
-                            <option selected>OpenAI</option>
-                            <option>WebUI</option>
-                            <option>API</option>
-                        </select>
-                    </td>
-                    <td> 
-                        <input type="text" id="Comment-1" placeholder="ChatGLM">
-                    </td>
-                    <td>
-                        <input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000">
-                    </td>
-                    <td>
-                        <input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none" /><!-- TODO:改文件输入框 -->
-                    </td>
-                    <td>
-                        <input type="text" class="url" id="LcCompiler-1" placeholder=".venv\scripts\python.exe"><!-- TODO:改文件输入框 -->
-                    </td>
-                    <td>
-                        <input type="text" class="url" id="LcUrl-1" placeholder=".\venv\launch.py">
-                    </td>
-                    <td>
-                        <button type="submit" class="add" id="add" value="-1"><i class="fa fa-plus"></i></button>
-                    </td>
-                    <td>
-                        <button disabled class="edit"><i class="fa fa-ban"></i></button>
-                    </td>
-                    <td>
-                        <button disabled class="deny"><i class="fa fa-ban"></i></button>
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
+    <div id="model_container" class="model_container">
+        <ul id="container">
+            <li class="ele" draggable="true" id="'+ data[i].id +'">
+                <div style="width: 70%;float:left;">
+                    <span><div class="widgets_title">'+ data[i].model_name +'</div></span>
+                    <span><div class="widgets_subtitle">'+ data[i].model_url +'</div></span>
+                </div>
+                <i class="fa fa-bars"></i>
+                <i class="fa fa-info" id="model_'+ data[i].id +'" model_name="'+ data[i].model_name +'"
+                model_url="'+ data[i].model_url +'" model_available="' + data[i].available + '" onclick="show_model_edit('+ data[i].id +')"></i>
+            </li>
+        </ul>
+        <button class="btn_expand"><i class="fa fa-plus"></i></button>
     </div>
+</div>
 </div>
 
 <div class="widgets_box" id="widgets-box" style="display: none;">
     <h3 style="margin: auto;">插件管理</h3>
     <div id="widgets_container" class="widgets_container">
         <ul id="container">
-            <li class="ele" draggable="true">
+            <li class="ele" draggable="true" id="'+ data[i].id +'">
                 <div style="width: 70%;float:left;">
-                    <span><h6>widgets_name</h6></span>
-                    <span><h6>widgets_url</h6></span>
+                    <span><div class="widgets_title">'+ data[i].widgets_name +'</div></span>
+                    <span><div class="widgets_subtitle">'+ data[i].widgets_url +'</div></span>
                 </div>
                 <i class="fa fa-bars"></i>
-                <i class="fa fa-info" id="widgets_1" widgets_name="widgets_container" widgets_url="/widgets/RAM_Percent" onclick="show_widgets_edit(1)"></i>
-            </li>
-            <li class="ele" draggable="true">
-                widgets_name | widgets_url
-                <i class="fa fa-bars"></i>
-                <i class="fa fa-info" onclick="show_widgets_edit()"></i>
-            </li>
-            <li class="ele" draggable="true">
-                widgets_name | widgets_url
-                <i class="fa fa-bars"></i>
-                <i class="fa fa-info" onclick="show_widgets_edit()"></i>
-            </li>
-            <li class="ele" draggable="true">
-                widgets_name | widgets_url
-                <i class="fa fa-bars"></i>
-                <i class="fa fa-info" onclick="show_widgets_edit()"></i>
-            </li>
-            <li class="ele" draggable="true">
-                widgets_name | widgets_url
-                <i class="fa fa-bars"></i>
-                <i class="fa fa-info" onclick="show_widgets_edit()"></i>
+                <i class="fa fa-info" id="widgets_'+ data[i].id +'" widgets_name="'+ data[i].widgets_name +'"
+                widgets_url="'+ data[i].widgets_url +'" widgets_available="' + data[i].available + '" onclick="show_widgets_edit('+ data[i].id +')"></i>
             </li>
         </ul>
         <button class="btn_expand"><i class="fa fa-plus"></i></button>
     </div>
-    <div class="widgets_edit" id="widgets_edit" style="display: none;"><!-- TODO:优化界面，主要内容： 1，小组件名字：value ；2，小组件地址： value 3，需要一个提交按钮和一个删除按钮 4.优化排版 -->
+    <div class="widgets_edit" id="widgets_edit" style="display: none;">
         <button class="btn" id="widgets_close"><i class="fa fa-close"></i></button>
         <div class="widgets_contentbox">
             <iframe id="widgets_preview" allow="autoplay *" src="/widgets/RAM_Percent"></iframe>
