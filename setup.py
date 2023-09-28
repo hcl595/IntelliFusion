@@ -9,7 +9,7 @@ from setuptools import setup
 
 APP = ['./src/client.py']
 # APP = []
-DATA_FILES = ['/src/templates/','/src/static:static/','/src/config.py','/src/data.py','/src/setup.py','/src/widgets/','/src/prompt/','/src/dicts']
+DATA_FILES = ['./src/templates/','./src/static/','./src/config.py','./src/data.py','./src/setup.py','./src/widgets/','./src/prompt/','./src/dicts','./src/data/']
 # DATA_FILES = []
 OPTIONS = {
         'iconfile':'./res/intellifusion_sketch_1.icns',
@@ -18,7 +18,7 @@ OPTIONS = {
                     'CFBundleDisplayName': 'IntelliFusion', # 应用显示名
                     'CFBundleVersion': '0.2.1',      # 应用版本号
                     'CFBundleIdentifier' : 'IntelliFusion', # 应用包名、唯一标识
-                    'NSHumanReadableCopyright': 'Copyright © 2023 HCL. All rights reserved.', # 可读版权
+                    'NSHumanReadableCopyright': 'Copyright © 2023 Argon.Inc. All rights reserved.', # 可读版权
             'includes': ['flask','flaskwebgui','jieba','loguru',
                         'openai','peewee','requests',
                         'thefuzz','validators','mistune']
