@@ -7,9 +7,9 @@ Usage:
 
 from setuptools import setup
 
-APP = ['./src/client.py']
+APP = ['./src_macOS/client.py']
 # APP = []
-DATA_FILES = ['./src/templates/','./src/static/','./src/config.py','./src/data.py','./src/setup.py','./src/widgets/','./src/prompt/','./src/dicts','./src/data/']
+DATA_FILES = ['./src_macOS/templates/','./src_macOS/static/','./src_macOS/config.py','./src_macOS/data.py','./src_macOS/setup.py','./src_macOS/widgets/','./src_macOS/prompt/','./src_macOS/dicts']
 # DATA_FILES = []
 OPTIONS = {
         'iconfile':'./res/intellifusion_sketch_1.icns',
@@ -20,7 +20,7 @@ OPTIONS = {
                     'CFBundleIdentifier' : 'IntelliFusion', # 应用包名、唯一标识
                     'NSHumanReadableCopyright': 'Copyright © 2023 Argon.Inc. All rights reserved.', # 可读版权
             'includes': ['flask','flaskwebgui','jieba','loguru',
-                        'openai','peewee','requests',
+                        'openai','peewee','requests','uuid',
                         'thefuzz','validators','mistune']
                         },
              }
