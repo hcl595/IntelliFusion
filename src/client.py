@@ -5,7 +5,6 @@ setup()
 
 import ctypes
 import ipaddress
-import json
 import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -16,11 +15,9 @@ import socketserver
 from concurrent.futures import ProcessPoolExecutor
 from tkinter.filedialog import askopenfilename
 
-import mistune
 import jieba
 import openai
 import psutil
-import requests
 import validators
 from flask import Flask, stream_with_context, json, jsonify, render_template, request
 from flaskwebgui import FlaskUI
@@ -38,7 +35,7 @@ pool = ThreadPoolExecutor()
 # configs
 app = Flask(__name__)
 app.config.from_object(__name__)
-APP_DIR = Path(__file__).parent
+from setup import APP_DIR
 DATA_DIR = APP_DIR / "data"
 DICT_DIR = APP_DIR / "dicts" / "dict.txt"
 LOG_FILE = DATA_DIR / "models.log"
@@ -100,22 +97,33 @@ def GetActiveModels():
                 except:
                     ActiveModels_ID.append(i.id)
         model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
-        for conn in psutil.net_connections():
-            port = conn.laddr.port
-            if port in model_ports:
-                ActiveModels_ID.append(model_ports[port].id)
-    logger.debug("{}", ActiveModels_ID)
-    for i in ActiveModels_ID:
         try:
-            session = Sessions.select().where(Sessions.model_id == i).order_by(Sessions.order)
-            for s in session:
-                ActiveSessions.append(s)
-        except:
+            for conn in psutil.net_connections():
+                port = conn.laddr.port
+                if port in model_ports:
+                    ActiveModels_ID.append(model_ports[port].id)
+        except psutil.AccessDenied:
             pass
-        
-    ActiveModelList_json = [model_to_dict(Model) for Model in ActiveSessions]
-    logger.info("{}", ActiveModelList_json)
-    return jsonify(ActiveModelList_json)
+        logger.debug("{}", ActiveModels_ID)
+        for i in ActiveModels_ID:
+            try:
+                session = Sessions.select().where(Sessions.model_id == i).order_by(Sessions.order)
+                for s in session:
+                    ActiveSessions.append(s)
+            except:
+                pass
+        ActiveSessionList_json = [model_to_dict(Model) for Model in ActiveSessions]
+        logger.info("{}", ActiveSessionList_json)
+        return jsonify(ActiveSessionList_json)
+    else:
+        try:
+            ModelList = Sessions.select().order_by(Sessions.order)
+        except:
+            ModelList = {}
+        ModelList_json = [model_to_dict(Model) for Model in ModelList]
+        logger.info("{}", ModelList_json)
+        return jsonify(ModelList_json)
+
 
 
 @app.post("/GetModelForSession")
@@ -366,11 +374,7 @@ def Prompts():
         result = {t:prompt[t] for (t,_) in result}
     else:
         result = {}
-    logger.info("{}",result)
     return jsonify(result)
-
-
-
 
 
 @app.post("/GetVersion")
