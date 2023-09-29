@@ -35,7 +35,7 @@ pool = ThreadPoolExecutor()
 # configs
 app = Flask(__name__)
 app.config.from_object(__name__)
-APP_DIR = Path(__file__).parent
+from setup import APP_DIR
 DATA_DIR = APP_DIR / "data"
 DICT_DIR = APP_DIR / "dicts" / "dict.txt"
 LOG_FILE = DATA_DIR / "models.log"

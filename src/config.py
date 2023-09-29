@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-APP_DIR = Path(__file__).parent
+from setup import APP_DIR
 DATA_DIR = APP_DIR / "data"
 PROM_DIR = APP_DIR / "prompt"
 CONFIG_FILE = DATA_DIR / "config.json"
