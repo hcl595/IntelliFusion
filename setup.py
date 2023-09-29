@@ -20,8 +20,8 @@ OPTIONS = {
                     'CFBundleIdentifier' : 'IntelliFusion', # 应用包名、唯一标识
                     'NSHumanReadableCopyright': 'Copyright © 2023 Argon.Inc. All rights reserved.', # 可读版权
             'includes': ['flask','flaskwebgui','jieba','loguru',
-                        'openai','peewee','requests','uuid',
-                        'thefuzz','validators','mistune'],
+                        'openai','peewee','requests','*',
+                        'thefuzz','validators','mistune','cchardet'],
                         },
              }
 
