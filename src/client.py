@@ -104,17 +104,26 @@ def GetActiveModels():
                     ActiveModels_ID.append(model_ports[port].id)
         except psutil.AccessDenied:
             pass
-    logger.debug("{}", ActiveModels_ID)
-    for i in ActiveModels_ID:
+        logger.debug("{}", ActiveModels_ID)
+        for i in ActiveModels_ID:
+            try:
+                session = Sessions.select().where(Sessions.model_id == i).order_by(Sessions.order)
+                for s in session:
+                    ActiveSessions.append(s)
+            except:
+                pass
+        ActiveSessionList_json = [model_to_dict(Model) for Model in ActiveSessions]
+        logger.info("{}", ActiveSessionList_json)
+        return jsonify(ActiveSessionList_json)
+    else:
         try:
-            session = Sessions.select().where(Sessions.model_id == i).order_by(Sessions.order)
-            for s in session:
-                ActiveSessions.append(s)
+            ModelList = Sessions.select().order_by(Sessions.order)
         except:
-            pass
-    ActiveModelList_json = [model_to_dict(Model) for Model in ActiveSessions]
-    logger.info("{}", ActiveModelList_json)
-    return jsonify(ActiveModelList_json)
+            ModelList = {}
+        ModelList_json = [model_to_dict(Model) for Model in ModelList]
+        logger.info("{}", ModelList_json)
+        return jsonify(ModelList_json)
+
 
 
 @app.post("/GetModelForSession")
