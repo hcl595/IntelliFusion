@@ -97,10 +97,13 @@ def GetActiveModels():
                 except:
                     ActiveModels_ID.append(i.id)
         model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
-        for conn in psutil.net_connections():
-            port = conn.laddr.port
-            if port in model_ports:
-                ActiveModels_ID.append(model_ports[port].id)
+        try:
+            for conn in psutil.net_connections():
+                port = conn.laddr.port
+                if port in model_ports:
+                    ActiveModels_ID.append(model_ports[port].id)
+        except psutil.AccessDenied:
+            pass
     logger.debug("{}", ActiveModels_ID)
     for i in ActiveModels_ID:
         try:
@@ -109,7 +112,6 @@ def GetActiveModels():
                 ActiveSessions.append(s)
         except:
             pass
-        
     ActiveModelList_json = [model_to_dict(Model) for Model in ActiveSessions]
     logger.info("{}", ActiveModelList_json)
     return jsonify(ActiveModelList_json)

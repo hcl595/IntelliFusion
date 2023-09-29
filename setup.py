@@ -21,7 +21,7 @@ OPTIONS = {
                     'NSHumanReadableCopyright': 'Copyright © 2023 Argon.Inc. All rights reserved.', # 可读版权
             'includes': ['flask','flaskwebgui','jieba','loguru',
                         'openai','peewee','requests','uuid',
-                        'thefuzz','validators','mistune']
+                        'thefuzz','validators','mistune'],
                         },
              }
 
