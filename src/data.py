@@ -10,7 +10,7 @@ setting = Settings()
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
 Version = setting.read("package","Version")
-DATABASE_FILE = DATA_DIR / f"data{Version}.sqlite"
+DATABASE_FILE = DATA_DIR / f"data.{Version}.sqlite"
 
 db = SqliteDatabase(DATABASE_FILE)
 

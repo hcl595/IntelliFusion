@@ -146,35 +146,27 @@ nav:hover .brand p {
     animation: fadeIn .4s ease-out forwards;
     animation-delay: .4s;
 }
-
 nav:hover .list span {
     animation: fadeIn .4s ease-out forwards;
 }
-
 nav:hover .list li:nth-child(1) span {
     animation-delay: .3s;
 }
-
 nav:hover .list li:nth-child(2) span {
     animation-delay: .35s;
 }
-
 nav:hover .list li:nth-child(3) span {
     animation-delay: .4s;
 }
-
 nav:hover .list li:nth-child(4) span {
     animation-delay: .45s;
 }
-
 nav:hover .list li:nth-child(5) span {
     animation-delay: .3s;
 }
-
 nav:hover .list a li:nth-child(1) span {
     animation-delay: 0.3s;
 }
-
 nav:hover .list li:nth-child(8) span {
     animation-delay: 0.6s;
 }
@@ -507,6 +499,141 @@ textarea{
   animation-delay:0.8s;
 }
 
+/* Model */
+
+.model_title {
+  margin-top: -7px;
+  font-size: medium;
+  height: 13px;
+}
+.model_subtitle {
+  margin-top: 2px;
+  font-size: 11px;
+  height: 10px;
+}
+
+.model_container {
+  max-width: 100%;
+  max-height: 95vh;
+  min-height: 90vh;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  overflow: auto;
+  float: right;
+}
+.model_container:first-child{
+  margin-top: 30px;
+}
+.model_container:last-child {
+  margin-bottom: 30px;
+}
+
+.model_edit {
+  background: #ffffff70;
+  backdrop-filter: blur(500px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
+  overflow: hidden;
+  width: 600px;
+  min-height: 30vh;   
+  z-index: 3;
+  position:fixed;
+  margin-top: 80px;
+  margin-left: calc((100% - 650px)/2);
+}
+
+.light .models {
+  height: 100vh;
+  min-width: 60%;
+  max-width: 100%;
+  overflow: hidden;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  background: rgba(230, 235, 240, .3);
+  border: 2px solid rgba(230, 235, 240, .3);
+  box-shadow: 0 0 30px rgba(0, 0, 0, .05);
+  border-radius: 12px;
+}
+
+.light .model {
+  height: 100vh;
+  min-width: 60%;
+  max-width: 100%;
+  display: flex;
+  overflow: hidden;
+  flex-flow: column;
+}
+.light .model_box {
+  height: 100vh;
+  min-width: 60%;
+  max-width: 100%;
+  display: flex;
+  overflow: hidden;
+  flex-flow: column;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  background: rgba(230, 235, 240, .3);
+  border: 2px solid rgba(230, 235, 240, .3);
+  box-shadow: 0 0 30px rgba(0, 0, 0, .05);
+  border-radius: 12px;
+}
+/* 拖拽 */
+.light .model_container ul {
+  border-radius: 15px;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
+  width: 80%;
+}
+.light .model_container li {
+  height: 50px;
+  line-height: 50px;
+  border: 1px solid #aaaaaa;
+  border-radius: 15px;
+  width: 100%;
+  padding: 0 10px;
+}
+.light .model_container li i {
+  float: right;
+  margin-top: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 30px;
+}
+
+/* Light */
+
+.light .model_container ul {
+  border-radius: 15px;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
+  width: calc(80vw - 40px);
+}
+.light .model_container li {
+  height: 50px;
+  line-height: 50px;
+  border: 1px solid #aaaaaa;
+  border-radius: 15px;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.light .model_container li i {
+  float: right;
+  margin-top: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 30px;
+}
+
+
 /* Widgets */
 
 .widgets_container {
@@ -582,6 +709,168 @@ textarea{
 .widgets_edit .widgets_contentbox {
   left: 150px;
 }
+.widgets_name{
+  margin-left: 10px;
+  border-radius: 5px;
+  width: 500px;
+  border: none;
+  background-color: #738a8a1f;
+}
+.widgets_url{
+  margin-left: 10px;
+  border-radius: 5px;
+  width: 500px;
+  border: none;
+  background-color: #738a8a1f;
+}
+.widgets_title {
+  margin-top: -7px;
+  font-size: medium;
+  height: 13px;
+}
+.widgets_subtitle {
+  margin-top: 2px;
+  font-size: 11px;
+  height: 10px;
+}
+.widgets_edit {
+  background: #ffffff70;
+  backdrop-filter: blur(500px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
+  overflow: hidden;
+  width: 600px;
+  min-height: 30vh;   
+  z-index: 3;
+  position:fixed;
+  margin-top: 80px;
+  margin-left: calc((100% - 650px)/2);
+}
+
+.p_widgets_bzdz{
+  margin-left: 10px;
+}
+
+/* Light */
+.light .widgets {
+  height: 100vh;
+  min-width: 60%;
+  max-width: 100%;
+  display: flex;
+  overflow: hidden;
+  flex-flow: column;
+}
+.light .widgets_box {
+  height: 100vh;
+  min-width: 60%;
+  max-width: 100%;
+  display: flex;
+  overflow: hidden;
+  flex-flow: column;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  background: rgba(230, 235, 240, .3);
+  border: 2px solid rgba(230, 235, 240, .3);
+  box-shadow: 0 0 30px rgba(0, 0, 0, .05);
+  border-radius: 12px;
+}
+/* 拖拽 */
+.light .widgets_container ul {
+  border-radius: 15px;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
+  width: 80%;
+}
+.light .widgets_container li {
+  height: 50px;
+  line-height: 50px;
+  border: 1px solid #aaaaaa;
+  border-radius: 15px;
+  width: 100%;
+  padding: 0 10px;
+}
+.light .widgets_container li i {
+  float: right;
+  margin-top: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 30px;
+}
+.light .widgets_edit_commit{
+  width: 250px;
+  margin-left: 30px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #88d5ffd8;
+}
+
+/* Dark */
+.dark .widgets {
+  height: 100vh;
+  min-width: 60%;
+  max-width: 100%;
+  display: flex;
+  overflow: hidden;
+  flex-flow: column;
+}
+
+.dark .widgets_box {
+  height: 100vh;
+  min-width: 60%;
+  max-width: 100%;
+  display: flex;
+  overflow: hidden;
+  flex-flow: column;
+  backdrop-filter: blur(18px);
+  border: 2px solid rgba(230, 235, 240, .3);
+  box-shadow: 0 0 30px rgba(0, 0, 0, .05);
+  border-radius: 12px;
+}
+/* 拖拽 */
+.dark .widgets_container ul {
+  border-radius: 15px;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
+  width: 80%;
+}
+.dark .widgets_container li {
+  height: 50px;
+  line-height: 50px;
+  border: 1px solid rgba(230, 235, 240, .3);
+  color: #ffffff;
+  border-radius: 15px;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.dark .widgets_container li i {
+  float: right;
+  margin-top: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 30px;
+}
+
+.dark .widgets_edit_commit {
+  width: 560px;
+  margin-left: 20px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  background-color: rgba(89, 147, 255, 0);
+  border: none;
+  border-radius:20px;
+  border: 3px solid #d4d4d4;
+  color: #d4d4d4;
+}
+
 /* Cards */
 
 .card_container {
@@ -645,139 +934,11 @@ textarea{
   flex:2;
 }
 
-.light .account {
-  height: 100vh;
-  min-width: 60%;
-  max-width: 100%;
-  display: flex;
-  overflow: hidden;
-  flex-flow: column;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  background: rgba(230, 235, 240, .3);
-  border: 2px solid rgba(230, 235, 240, .3);
-  box-shadow: 0 0 30px rgba(0, 0, 0, .05);
-  border-radius: 12px;
-}
-.light .account table{
-  margin: 20px;
-  flex: none;
-  overflow-x: auto;
-}
-.light .account table select{
-  border-radius: 20px;
-  background-color: rgba(0, 0, 0, .05);
-  border-color: rgba(0, 0, 0, .05);
-  transition: .6s cubic-bezier(.8, .3, .3, .8);
-}
-.light .account table input{
-  border-radius: 20px;
-  background-color: rgba(0, 0, 0, .05);
-  border-color: rgba(0, 0, 0, .05);
-  transition: .6s cubic-bezier(.8, .3, .3, .8);
-}
-.light .account table input:hover{
-  border-radius: 5px;
-  background-color: rgba(170, 255, 136, 0.05);
-  box-shadow: #000;
-  border-color: rgba(0, 0, 0, 0.05);
-}
-.light .account table .url{
-  width: 100px;
-}
-.light .account table .url:hover{
-  width: 300px;
-}
 
-.light .models {
-  height: 100vh;
-  min-width: 60%;
-  max-width: 100%;
-  overflow: hidden;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  background: rgba(230, 235, 240, .3);
-  border: 2px solid rgba(230, 235, 240, .3);
-  box-shadow: 0 0 30px rgba(0, 0, 0, .05);
-  border-radius: 12px;
-}
 
-.light .widgets {
-  height: 100vh;
-  min-width: 60%;
-  max-width: 100%;
-  display: flex;
-  overflow: hidden;
-  flex-flow: column;
-}
 
-.light .widgets_box {
-  height: 100vh;
-  min-width: 60%;
-  max-width: 100%;
-  display: flex;
-  overflow: hidden;
-  flex-flow: column;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  background: rgba(230, 235, 240, .3);
-  border: 2px solid rgba(230, 235, 240, .3);
-  box-shadow: 0 0 30px rgba(0, 0, 0, .05);
-  border-radius: 12px;
-}
 
-/* 拖拽 */
-.light .widgets_container ul {
-  border-radius: 15px;
-  margin-block-start: 0;
-  margin-block-end: 0;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-  padding-inline-start: 0;
-  width: 80%;
-}
-.light .widgets_container li {
-  height: 50px;
-  line-height: 50px;
-  border: 1px solid #aaaaaa;
-  border-radius: 15px;
-  width: 100%;
-  padding: 0 10px;
-}
 
-.light .widgets_container li i {
-  float: right;
-  margin-top: 5px;
-  margin-left: 10px;
-  margin-right: 10px;
-  font-size: 30px;
-}
-
-.light .model_container ul {
-  border-radius: 15px;
-  margin-block-start: 0;
-  margin-block-end: 0;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-  padding-inline-start: 0;
-  width: calc(80vw - 40px);
-}
-.light .model_container li {
-  height: 50px;
-  line-height: 50px;
-  border: 1px solid #aaaaaa;
-  border-radius: 15px;
-  width: 100%;
-  padding: 0 10px;
-}
-
-.light .model_container li i {
-  float: right;
-  margin-top: 5px;
-  margin-left: 10px;
-  margin-right: 10px;
-  font-size: 30px;
-}
 .light .settings {
   height: 100vh;
   min-width: 40vw;
@@ -848,20 +1009,6 @@ textarea{
 }
 .copyright p{
   word-break: break-all;
-}
-.widgets_edit {
-  background: #ffffff70;
-  backdrop-filter: blur(500px);
-  -webkit-backdrop-filter: blur(18px);
-  border-radius: 10px;
-  box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
-  overflow: hidden;
-  width: 600px;
-  min-height: 30vh;   
-  z-index: 3;
-  position:fixed;
-  margin-top: 80px;
-  margin-left: calc((100% - 650px)/2);
 }
 .btn_expand_case{
   background: #ffffff70;
@@ -934,31 +1081,6 @@ textarea{
   border-radius: 5px;
   border: none;
   background-color: #88d5ffd8;
-}
-.widgets_name{
-  margin-left: 10px;
-  border-radius: 5px;
-  width: 500px;
-  border: none;
-  background-color: #738a8a1f;
-}
-.widgets_url{
-  margin-left: 10px;
-  border-radius: 5px;
-  width: 500px;
-  border: none;
-  background-color: #738a8a1f;
-}
-.light .widgets_edit_commit{
-  width: 250px;
-  margin-left: 30px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  border: none;
-  background-color: #88d5ffd8;
-}
-.p_widgets_bzdz{
-  margin-left: 10px;
 }
 .AlertPlaceholder {
   position: fixed;
@@ -1115,16 +1237,7 @@ pre {
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
   font-size: small;
 }
-.widgets_title {
-  margin-top: -7px;
-  font-size: medium;
-  height: 13px;
-}
-.widgets_subtitle {
-  margin-top: 2px;
-  font-size: 11px;
-  height: 10px;
-}
+
 
 .close {
   border: none;
@@ -1383,53 +1496,6 @@ pre {
   display: flex;
 }
 
-.dark .account {
-  height: 100vh;
-  min-width: 60%;
-  max-width: 100%;
-  display: flex;
-  overflow: hidden;
-  flex-flow: column;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  background: rgba(230, 235, 240, .3);
-  border: 2px solid rgba(230, 235, 240, .3);
-  box-shadow: 0 0 30px rgba(0, 0, 0, .05);
-  border-radius: 12px;
-}
-.dark .account table{
-  margin: 20px;
-  flex: none;
-  overflow-x: auto;
-}
-.dark .account table select{
-  border-radius: 20px;
-  border-color: rgba(0, 0, 0, .05);
-  transition: .6s cubic-bezier(.8, .3, .3, .8);
-}
-.dark .account table input{
-  border-radius: 20px;
-  border-color: rgba(0, 0, 0, .05);
-  background-color: rgba(255, 255, 255, 0.137);
-  transition: .6s cubic-bezier(.8, .3, .3, .8);
-  color: #d8d8d8;
-}
-.dark .account table input:hover{
-  border-radius: 5px;
-  box-shadow: #000;
-  border-color: rgba(0, 0, 0, 0.05);
-  background-color: rgba(255, 255, 255, 0.137);
-  color: #d8d8d8;
-}
-.dark .account table .url{
-  width: 100px;
-  color: #d8d8d8;
-}
-.dark .account table .url:hover{
-  width: 300px;
-  color: #d8d8d8;
-}
-
 .dark .models {
   height: 100vh;
   min-width: 60%;
@@ -1441,7 +1507,7 @@ pre {
   border-radius: 12px;
 }
 
-.dark .widgets {
+.dark .model {
   height: 100vh;
   min-width: 60%;
   max-width: 100%;
@@ -1450,7 +1516,7 @@ pre {
   flex-flow: column;
 }
 
-.dark .widgets_box {
+.dark .model_box {
   height: 100vh;
   min-width: 60%;
   max-width: 100%;
@@ -1462,9 +1528,8 @@ pre {
   box-shadow: 0 0 30px rgba(0, 0, 0, .05);
   border-radius: 12px;
 }
-
 /* 拖拽 */
-.dark .widgets_container ul {
+.dark .model_container ul {
   border-radius: 15px;
   margin-block-start: 0;
   margin-block-end: 0;
@@ -1473,7 +1538,7 @@ pre {
   padding-inline-start: 0;
   width: 80%;
 }
-.dark .widgets_container li {
+.dark .model_container li {
   height: 50px;
   line-height: 50px;
   border: 1px solid rgba(230, 235, 240, .3);
@@ -1483,7 +1548,7 @@ pre {
   padding: 0 10px;
 }
 
-.dark .widgets_container li i {
+.dark .model_container li i {
   float: right;
   margin-top: 5px;
   margin-left: 10px;
@@ -1516,17 +1581,6 @@ pre {
   margin-left: 10px;
   margin-right: 10px;
   font-size: 30px;
-}
-.dark .widgets_edit_commit {
-  width: 560px;
-  margin-left: 20px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  background-color: rgba(89, 147, 255, 0);
-  border: none;
-  border-radius:20px;
-  border: 3px solid #d4d4d4;
-  color: #d4d4d4;
 }
 
 .dark .settings {

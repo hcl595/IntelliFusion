@@ -161,6 +161,13 @@ function show_model_edit(id) {
     $("#model_url_edit").val(url)
     // $("#widgets_available_edit").val(ava)
 }
+function show_model_add() {
+    $("#model_edit").fadeOut(100)
+    $("#model_add").fadeIn(100)
+    $("#model_name").val("")
+    $("#model_url").val("")
+}
+
 function show_widgets_add() {
     $("#widgets_edit").fadeOut(100)
     $("#widgets_add").fadeIn(100)
@@ -187,9 +194,12 @@ $(document).ready(function(){
     $("#widgets_close_add").click(function(){
         $("#widgets_add").fadeOut(100);
       });
-    $("#widgets_close_add_1").click(function(){
-        $("#widgets_add").fadeOut(100);
+    $("#model_close").click(function(){
+        $("#model_edit").fadeOut(100);
     });
+    $("#model_close_add").click(function(){
+        $("#model_add").fadeOut(100);
+      });
     $("#session_close").click(function(){
         $("#session_add").fadeOut(100);
     });
@@ -678,44 +688,25 @@ function Refresh_ModelList(){
         success: function(data){
             $('#ModelTable').empty()
             for (i in data){
-                $('#ModelTable').append('<input type="hidden" id="id'+ data[i].id +'" value='+ data[i].id +'>')
-                $('#ModelTable').append('\
-                <tr id="ModelTr">\
-                    <td>\
-                    <select name="type" id="Type'+ data[i].id +'">\
-                        <option>'+ data[i].type +'</option>\
-                        <option>OpenAI</option>\
-                        <option>WebUI</option>\
-                        <option>API</option>\
-                    </select>\
-                    </td>\
-                    <td> \
-                        <input type="text" name="comment" id="Comment'+ data[i].id +'" placeholder="ChatGLM" value='+ data[i].name +'>\
-                    </td>\
-                    <td>\
-                        <input type="text" class="url" id="Url'+ data[i].id +'" name="url" placeholder="127.0.0.1:8000" value='+ data[i].url +'>\
-                    </td>\
-                    <td>\
-                        <input type="text" class="url" id="APIkey'+ data[i].id +'" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value='+ data[i].api_key +'>\
-                    </td>\
-                    <td>\
-                        <input type="text" class="url" id="LcCompiler'+ data[i].id +'" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value='+ data[i].launch_compiler +'>\
-                        <button class="edit" onclick="ReadFile(`LcCompiler' + data[i].id + '`)"><i class="fa fa-folder-open-o"></i></button>\
-                    </td>\
-                    <td>\
-                        <input type="text" class="url" id="LcUrl'+ data[i].id +'" name="LCurl" placeholder="Browse File" value='+ data[i].launch_path +'>\
-                        <button class="edit" onclick="ReadFile(`LcUrl' + data[i].id + '`)"><i class="fa fa-folder-open-o"></i></button>\
-                        </td>\
-                    <td>\
-                        <button class="run" id="run-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`run`)"><i class="fa fa-play"></i></button>\
-                        <button class="stop" id="stop-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`stop`)"><i class="fa fa-stop"></i></button>\
-                    </td>\
-                    <td>\
-                        <button class="edit" id="edit-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`edit`)"><i class="fa fa-edit"></i></button>\
-                    </td>\
-                    <td><button class="deny" id="del-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`del`)"><i class="fa fa-trash"></i></button>\
-                    </td>\
-                </tr>')
+                $('#model_container_table').append(
+                '<li class="ele" draggable="true" id="'+ data[i].id +'">\
+                <div style="width: 70%;float:left;">\
+                    <span><div class="model_title">'+ data[i].name +'</div></span>\
+                    <span><div class="model_subtitle">'+ data[i].url +'</div></span>\
+                </div>\
+                <i class="fa fa-bars"></i>\
+                <i class="fa fa-info"\
+                id="model_'+ data[i].id +'" \
+                model_type="'+ data[i].type +'"  \
+                model_name="'+ data[i].name +'" \
+                model_url="'+ data[i].url +'" \
+                model_key="'+ data[i].api_key + '"\
+                model_launch_comp="'+ data[i].launch_compiler +'"\
+                model_launch_path="'+ data[i].launch_path +'"\
+                model_available="' + data[i].available + '" \
+                onclick="show_model_edit('+ data[i].id +')"></i>\
+            </li>'
+                )
             }
         }
     })
@@ -888,6 +879,7 @@ function save_settings(){
             alert("部分更改将在重启程序后生效","warning")
             load_settings()
         }
+        setup_website()
     }
     })
 }

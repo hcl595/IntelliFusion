@@ -39,7 +39,7 @@ def setup():
         from config import Settings
         setting = Settings()
         Version = setting.read("package","Version")
-        DATABASE_FILE = DATA_DIR / f"data{Version}.sqlite"
+        DATABASE_FILE = DATA_DIR / f"data.{Version}.sqlite"
         if not DATABASE_FILE.exists():
             SetupDatabase()
             logger.info("Database is created successfully!")

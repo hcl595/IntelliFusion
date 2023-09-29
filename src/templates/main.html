@@ -36,90 +36,51 @@
     </div>
 </div>
 
-<div class="account" id="account-box" style="display: none;">
-    <div style="margin-left:20px">
-        <table>
-            <thead>
-                <tr>
-                    <td>
-                        <h3>模型</h3>                           
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>模型类型</p>
-                    </td>
-                    <td>
-                        <p>模型名称</p>
-                    </td>
-                    <td>
-                        <p>调用地址</p>
-                    </td>
-                    <td>
-                        <p>访问密钥</p>
-                    </td>
-                    <td>
-                        <p>编译地址</p>
-                    </td>
-                    <td>
-                        <p>启动地址</p>
-                    </td>
-                    <td>
-                        <p>运行 暂停</p>
-                    </td>
-                    <td>
-                        <p>编辑</p>
-                    </td>
-                    <td>
-                        <p>删除</p>
-                    </td>
-                </tr>
-            </thead>
-            <tbody id="ModelTable">
-            </tbody>
-            <tfoot>
-                <input type="hidden" id="id-1" value="-1">
-                <tr id="AddTr">
-                    <td>
-                        <select id="Type-1" name="type">
-                            <option selected>OpenAI</option>
-                            <option>WebUI</option>
-                            <option>API</option>
-                        </select>
-                    </td>
-                    <td> 
-                        <input type="text" id="Comment-1" placeholder="ChatGLM">
-                    </td>
-                    <td>
-                        <input type="text" class="url" id="Url-1" placeholder="127.0.0.1:8000">
-                    </td>
-                    <td>
-                        <input type="text" class="url" id="APIkey-1" placeholder="sk-ahsjfidajfuahfhla & none" />
-                    </td>
-                    <td>
-                        <input type="text" class="url" id="LcCompiler-1" placeholder="Choose A File">
-                        <button class="edit" onclick="ReadFile('LcCompiler-1')"><i class="fa fa-folder-open-o"></i></button>
-                    </td>
-                    <td>
-                        <input type="text" class="url" id="LcUrl-1" placeholder="Choose A File">
-                        <button class="edit" onclick="ReadFile('LcUrl-1')"><i class="fa fa-folder-open-o"></i></button>
-                    </td>
-                    <td>
-                        <button type="submit" class="add" id="add" value="-1"><i class="fa fa-plus"></i></button>
-                    </td>
-                    <td>
-                        <button disabled class="edit"><i class="fa fa-ban"></i></button>
-                    </td>
-                    <td>
-                        <button disabled class="deny"><i class="fa fa-ban"></i></button>
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
+<div class="model_box" id="account-box" style="display: none;">
+    <h3 style="margin: auto;">模型管理</h3>
+    <!-- TODO: Finish Here -->
+    <div id="model_container" class="model_container">
+        <ul id="model_container_table">
+        </ul>
+        <button class="btn_expand" onclick="show_model_add()"><i class="fa fa-plus"></i></button>
     </div>
+
+    <div class="model_edit" id="model_edit" style="display: none;">
+        <button class="btn" id="model_close"><i class="fa fa-close"></i></button>
+        <br>
+        <input type="name" id="model_name" placeholder="名称" />
+        <br>
+        <input type="url" id="model_url" placeholder="调用地址" />
+        <br>
+        <h5>高级设置 √</h5>
+        <br>
+        <input type="url" id="launch_path" placeholder="调用地址" />
+        <button class="edit" onclick="ReadFile(`launch_path`)"><i class="fa fa-folder-open-o"></i></button>
+        <br>
+        <input type="url" id="launch_path2" placeholder="调用地址" />
+        <button class="edit" onclick="ReadFile(`launch_path_2`)"><i class="fa fa-folder-open-o"></i></button>
+        <br>
+        <button class="deny">del</button>
+        <button class="edit">edit</button>
+    </div>
+
+    <div class="model_edit" id="model_add" style="display: none;">
+        <button class="btn" id="model_close_add"><i class="fa fa-close"></i></button>
+        <br>
+        <p class="p_model_bzdz">备注: <input type="name" class="model_name" id="model_name_add" value="" /></p>
+        <p class="p_model_bzdz">地址: <input type="url" class="model_url" id="model_url_add" value="" placeholder="/model/your_model"/></p>
+        <p class="p_model_bzdz" style="display: inline-block">是否启用:</p>
+        <div class="switch-container" style="display: inline-block">
+            <input id="model_available_add" type="hidden" value="True">
+            <input id="model_available_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('model_available_add')">
+            <span class="switch-area"></span>
+            <span class="switch-toggle"></span>
+        </div>
+        <br>
+        <button id="model_close_add_1" class="model_edit_commit deny">取消</button>
+        <button id="model_edit" class="model_edit_commit run" onclick="upload_model_add()">提交</button>
+    </div>
+    <!-- TODO: Finish Here -->
 </div>
 
 <div class="widgets_box" id="widgets-box" style="display: none;">
