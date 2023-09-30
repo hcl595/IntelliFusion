@@ -47,38 +47,58 @@
 
     <div class="model_edit" id="model_edit" style="display: none;">
         <button class="btn" id="model_close"><i class="fa fa-close"></i></button>
+        <input type="hidden" id="model_id_edit" value="-1" />
         <br>
-        <input type="name" id="model_name" placeholder="名称" />
+        <input type="name" id="model_name_edit" placeholder="名称" />
         <br>
-        <input type="url" id="model_url" placeholder="调用地址" />
+        <input type="url" id="model_url_edit" placeholder="调用地址" />
         <br>
-        <h5>高级设置 √</h5>
+        <select id="model_type_edit" name="type">
+            <option selected>OpenAI</option>
+            <option>WebUI</option>
+            <option>API</option>
+        </select>
         <br>
-        <input type="url" id="launch_path" placeholder="调用地址" />
-        <button class="edit" onclick="ReadFile(`launch_path`)"><i class="fa fa-folder-open-o"></i></button>
+        <input type="url" id="model_key_edit" placeholder="密钥" />
         <br>
-        <input type="url" id="launch_path2" placeholder="调用地址" />
-        <button class="edit" onclick="ReadFile(`launch_path_2`)"><i class="fa fa-folder-open-o"></i></button>
+        <p>高级设置<i class="fa fa-caret-square-o-down" id="model_details_button"></i></p>
+        <div id="model_details" class="" status="off" style="display: none;">
+        <input type="url" id="launch_comp_edit" placeholder="调用地址" />
+        <button class="edit" onclick="ReadFile(`launch_comp_edit`)"><i class="fa fa-folder-open-o"></i></button>
         <br>
-        <button class="deny">del</button>
-        <button class="edit">edit</button>
+        <input type="url" id="launch_path_edit" placeholder="调用地址" />
+        <button class="edit" onclick="ReadFile(`launch_path_edit`)"><i class="fa fa-folder-open-o"></i></button>
+        </div>
+        <button class="deny" onclick="commit_model('del')">del</button>
+        <button class="edit" onclick="commit_model('edit')">edit</button>
     </div>
 
     <div class="model_edit" id="model_add" style="display: none;">
-        <button class="btn" id="model_close_add"><i class="fa fa-close"></i></button>
+        <button class="btn" id="model_close"><i class="fa fa-close"></i></button>
+        <input type="hidden" id="model_id_add" value="-1" />
         <br>
-        <p class="p_model_bzdz">备注: <input type="name" class="model_name" id="model_name_add" value="" /></p>
-        <p class="p_model_bzdz">地址: <input type="url" class="model_url" id="model_url_add" value="" placeholder="/model/your_model"/></p>
-        <p class="p_model_bzdz" style="display: inline-block">是否启用:</p>
-        <div class="switch-container" style="display: inline-block">
-            <input id="model_available_add" type="hidden" value="True">
-            <input id="model_available_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('model_available_add')">
-            <span class="switch-area"></span>
-            <span class="switch-toggle"></span>
+        <input type="name" id="model_name_add" placeholder="名称" />
+        <br>
+        <input type="url" id="model_url_add" placeholder="调用地址" />
+        <br>
+        <select id="model_type_add" name="type">
+            <option selected>OpenAI</option>
+            <option>WebUI</option>
+            <option>API</option>
+        </select>
+        <br>
+        <input type="url" id="model_key_add" placeholder="密钥" />
+        <br>
+        <p>高级设置<i class="fa fa-caret-square-o-down" id="model_details_button"></i></p>
+        <div id="model_details" class="" status="off" style="display: none;">
+        <input type="url" id="launch_comp_add" placeholder="调用地址" />
+        <button class="add" onclick="ReadFile(`launch_comp_add`)"><i class="fa fa-folder-open-o"></i></button>
+        <br>
+        <input type="url" id="launch_path_add" placeholder="调用地址" />
+        <button class="add" onclick="ReadFile(`launch_path_add`)"><i class="fa fa-folder-open-o"></i></button>
         </div>
-        <br>
-        <button id="model_close_add_1" class="model_edit_commit deny">取消</button>
-        <button id="model_edit" class="model_edit_commit run" onclick="upload_model_add()">提交</button>
+        <button class="deny" onclick="">cancel</button>
+        <button class="add" onclick="upload_model_add()">add</button>
     </div>
     <!-- TODO: Finish Here -->
 </div>

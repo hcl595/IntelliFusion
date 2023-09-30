@@ -1,11 +1,11 @@
-# config.py | IntelliFusion Version 0.2.0(202308242000) Developer Alpha
+# config.py | IntelliFusion Version 0.2.2(2023092000) Developer Alpha
 from pathlib import Path
 from loguru import logger
 import json
 
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
-CONFIG_FILE = DATA_DIR / "config.json"
+CONFIG_FILE = DATA_DIR / "config.0.2.2.beta.json"
 LOG_FILE = DATA_DIR / "models.log"
 
 def setup():
@@ -19,7 +19,7 @@ def setup():
             logger.info("create config.json")
             data = {
                 "package": {
-                    "Version" : "0.2.1",
+                    "Version" : "0.2.2.beta",
                 },
                 "BaseConfig": {
                     "Theme": "light",
