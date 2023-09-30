@@ -8,7 +8,7 @@
 ## 介绍
 intelliFusion是一个开源的、高自由度、支持多种模型库的AI模型库的使用平台。为方便不通用库的使用，我们拥有用户可自行导入不同的模型库。
 intelliFusion 运用flask形成webui处理前端。使用Ajax，异步获取数据，使用echarts进行了数据可视化，使用户可以根据自己电脑的硬件使用率，实时检测电脑使用状况，自行规划使用率。
-IntelliFusion的Preview版本为单文件，因此部分功能会因为无法导入文件而无法使用附加功能，如自行添加提示词，自行更改代码高亮文件等功能，所以推荐安装IntelliFusion Release版本。
+IntelliFusion的Preview版本为单文件，因此部分功能会因为无法导入文件而无法使用附加功能，如自行添加提示词，自行更改代码高亮文件等功能，所以推荐安装IntelliFusion Release版本。若您需要使用服务于macos的软件版本，您可下载文件名含macos版本软件。
 
 ## 支持模型
 
@@ -23,7 +23,22 @@ IntelliFusion的Preview版本为单文件，因此部分功能会因为无法导
 - [ChatGLM](https://github.com/THUDM/ChatGLM-6B) ([ChatGLM2](https://github.com/THUDM/ChatGLM2-6B))
 
 ## 更新信息
+**[2023/08/27]** 发布[intelliFusion](https://github.com/hcl595/IntelliFusion),intelliFusion 的升级版本，在保留了之前带有的功能的基础之上，intelliFusion 引入了如下新特性：
 
+1. **更好的体验**：修复已知bug
+2. **更美观的UI**：更新模型修改界面的UI
+3. **新支持**：开发macos版本的Alpha测试版
+
+----
+**[2023/08/26]** 发布[intelliFusion](https://github.com/hcl595/IntelliFusion),intelliFusion 的升级版本，在保留了之前带有的功能的基础之上，intelliFusion 引入了如下新特性：
+
+1. **更好的体验**：修复已知的bug
+2. **更真实的输出模式**：新增流式传输和流式响应，更符合人体思考的输出方式
+3. **更便捷的会话**：新增会话历史记录，可便使用者查询
+4. **更方便的输入**：去除上一版本的提示词更换，改为使用者可自行新建提示词，我们提供了少部分的基础提示词，分为中英双文
+5. **更便捷的修改**：对于开发者编写了开发文档助于开发，添加了内置函数库
+
+----
 **[2023/08/05]** 发布[intelliFusion](https://github.com/hcl595/IntelliFusion),intelliFusion 的升级版本，在保留了之前带有的功能的基础之上，intelliFusion 引入了如下新特性：
 
 1. **更好的体验**：修复了已知的bug
