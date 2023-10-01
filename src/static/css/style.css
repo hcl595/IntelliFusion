@@ -537,6 +537,7 @@ textarea{
   box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
   overflow: hidden;
   width: 600px;
+  height: 300px;
   min-height: 30vh;   
   z-index: 3;
   position:fixed;
@@ -1126,12 +1127,25 @@ textarea{
 .light .stop,.light .deny {
   background-color: rgba(255, 89, 89, 0.671);
   border: 1px solid rgba(31, 0, 0, 0.671);
-  border-radius:20px;
+  border-radius:8px;
+  margin-left: 5%;
+  margin-bottom: -50px;
+  min-height: 10%;
+  width: 240px;
 }
 .light .edit {
   background-color: rgba(89, 147, 255, 0.671);
-  border-radius:20px;
   border: 1px solid rgba(0, 22, 31, 0.671);
+  border-radius:8px;
+  margin-left: 8%;
+  margin-bottom: -50px;
+  min-height: 10%;
+  width: 240px;
+}
+.light .edit_wjj{
+  background-color: rgba(89, 147, 255, 0.671);
+  border: 1px solid rgba(0, 22, 31, 0.671);
+  border-radius:8px;
 }
 a {
   TEXT-DECORATION:none;
@@ -1653,3 +1667,31 @@ pre {
   transform: translateY(4px);
 }
 
+.model_name_edit{
+  margin-left: 5%;
+}
+
+.model_url_edit{
+  margin-left: 5%;
+}
+
+.model_type_edit{
+  margin-left: 5%;
+}
+
+.model_key_edit{
+  margin-left: 5%;
+}
+
+.fa-caret-square-o-down{
+  margin-left: 5%;
+  /* display:none; */
+}
+
+.launch_comp_edit{
+  margin-left: 5%;
+}
+
+.launch_path_edit{
+  margin-left: 5%;
+}

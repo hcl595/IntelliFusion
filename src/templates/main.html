@@ -49,28 +49,28 @@
         <button class="btn" id="model_close"><i class="fa fa-close"></i></button>
         <input type="hidden" id="model_id_edit" value="-1" />
         <br>
-        <input type="name" id="model_name_edit" placeholder="名称" />
+        <input type="name" id="model_name_edit" class="model_name_edit" placeholder="名称" />
         <br>
-        <input type="url" id="model_url_edit" placeholder="调用地址" />
+        <input type="url" id="model_url_edit" class="model_url_edit" placeholder="调用地址" />
         <br>
-        <select id="model_type_edit" name="type">
+        <select id="model_type_edit" class="model_type_edit" name="type">
             <option selected>OpenAI</option>
             <option>WebUI</option>
             <option>API</option>
         </select>
         <br>
-        <input type="url" id="model_key_edit" placeholder="密钥" />
+        <input type="url" id="model_key_edit" class="model_key_edit" placeholder="密钥" />
         <br>
-        <p>高级设置<i class="fa fa-caret-square-o-down" id="model_details_button"></i></p>
+        <p class="fa-caret-square-o-down">高级设置<i class="fa fa-caret-square-o-down" id="model_details_button"></i></p>
         <div id="model_details" class="" status="off" style="display: none;">
-        <input type="url" id="launch_comp_edit" placeholder="调用地址" />
-        <button class="edit" onclick="ReadFile(`launch_comp_edit`)"><i class="fa fa-folder-open-o"></i></button>
+        <input type="url" id="launch_comp_edit" class="launch_comp_edit" placeholder="调用地址" />
+        <button class="edit_wjj" onclick="ReadFile(`launch_comp_edit`)"><i class="fa fa-folder-open-o"></i></button>
         <br>
-        <input type="url" id="launch_path_edit" placeholder="调用地址" />
-        <button class="edit" onclick="ReadFile(`launch_path_edit`)"><i class="fa fa-folder-open-o"></i></button>
+        <input type="url" id="launch_path_edit" class="launch_path_edit" placeholder="调用地址" />
+        <button class="edit_wjj" onclick="ReadFile(`launch_path_edit`)"><i class="fa fa-folder-open-o"></i></button>
         </div>
-        <button class="deny" onclick="commit_model('del')">del</button>
-        <button class="edit" onclick="commit_model('edit')">edit</button>
+        <button class="deny" onclick="commit_model('del')">删除</button>
+        <button class="edit" onclick="commit_model('edit')">确认</button>
     </div>
 
     <div class="model_edit" id="model_add" style="display: none;">
