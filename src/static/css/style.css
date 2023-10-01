@@ -537,7 +537,7 @@ textarea{
   box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
   overflow: hidden;
   width: 600px;
-  height: 300px;
+  height: 460px;
   min-height: 30vh;   
   z-index: 3;
   position:fixed;
@@ -1128,7 +1128,7 @@ textarea{
   background-color: rgba(255, 89, 89, 0.671);
   border: 1px solid rgba(31, 0, 0, 0.671);
   border-radius:8px;
-  margin-left: 5%;
+  margin-left: 0;
   margin-bottom: -50px;
   min-height: 10%;
   width: 240px;
@@ -1668,30 +1668,40 @@ pre {
 }
 
 .model_name_edit{
-  margin-left: 5%;
+  width: 530px;
+  border-radius: 8px;
+  border :solid 1px #5b5b5b
 }
 
 .model_url_edit{
-  margin-left: 5%;
+  width: 530px;
+  border-radius: 8px;
+  border :solid 1px #5b5b5b
 }
 
 .model_type_edit{
-  margin-left: 5%;
+  width: 100px;
+  border-radius: 8px;
+  border :solid 1px #5b5b5b
 }
 
 .model_key_edit{
+  width: 530px;
+  border-radius: 8px;
+  border :solid 1px #5b5b5b
+}
+
+.launch_comp_edit,.launch_path_edit{
+  width: 498px;
+  border-radius: 8px;
+  border :solid 1px #5b5b5b
+}
+
+.model_edit_box1{
   margin-left: 5%;
 }
 
-.fa-caret-square-o-down{
+.model_edit_box2{
   margin-left: 5%;
-  /* display:none; */
-}
-
-.launch_comp_edit{
-  margin-left: 5%;
-}
-
-.launch_path_edit{
-  margin-left: 5%;
+  margin-top: 20px;
 }
