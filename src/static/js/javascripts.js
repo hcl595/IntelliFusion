@@ -129,6 +129,7 @@ function show_widgets_edit(id) {
     $("#widgets_edit").fadeIn(100)
     var name = $("#widgets_"+id).attr("widgets_name")
     var url = $("#widgets_"+id).attr("widgets_url")
+    var size = $("#widgets_"+id).attr("widgets_size")
     var ava = $("#widgets_"+id).attr("widgets_available")
     if (ava == "True"){
         $("#widgets_available_edit_Checkbox").attr("checked",true)
@@ -136,7 +137,7 @@ function show_widgets_edit(id) {
     if (ava == "False"){
         $("#widgets_available_edit_Checkbox").prop("checked",false)
     }
-    $("#widgets_preview").attr("src", url)
+    $("#preview_widgets_edit").attr("src", url)
     $("#widgets_id_edit").val(id)
     $("#widgets_name_edit").val(name)
     $("#widgets_url_edit").val(url)
@@ -963,6 +964,12 @@ function change_widgets_pre(id,target){
     $("#"+id).removeClass("small")
     $("#"+id).addClass(target)
 }
+
+function preview_widgets(pre,input){
+    input_url = $("#"+input).val()
+    $("#"+pre).attr("src",input_url)
+}
+
 function load_widgets(){
     $.ajax({
         url: "/GetWidgets",
