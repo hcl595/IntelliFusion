@@ -667,7 +667,6 @@ textarea{
   overflow: hidden;
 }
 .widgets_contentbox_pre{
-  height: 300px;
   width: 300px;
   margin-left: 160px;
   position: relative;
@@ -680,13 +679,13 @@ textarea{
   white-space: nowrap; 
   overflow: hidden;
 }
-.widgets_container .medium{
+.widgets_container .medium, .widgets_container_pre .medium{
   height: 300px;
 }
-.widgets_container .small{
+.widgets_container .small, .widgets_container_pre .small{
   height: 100px;
 }
-.widgets_container .large{
+.widgets_container .large, .widgets_container_pre .large{
   height: 600px;
 }
 .widgets_bar {
@@ -743,12 +742,13 @@ textarea{
   -webkit-backdrop-filter: blur(18px);
   border-radius: 10px;
   box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
-  overflow: hidden;
+  overflow: scroll;
   width: 600px;
-  min-height: 30vh;   
+  min-height: 60vh;
+  max-height: 70vh;  
   z-index: 3;
   position:fixed;
-  margin-top: 80px;
+  margin-top: 50px;
   margin-left: calc((100% - 650px)/2);
 }
 

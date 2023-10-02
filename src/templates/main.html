@@ -150,21 +150,45 @@
     <div class="widgets_edit" id="widgets_add" style="display: none;">
         <button class="btn" id="widgets_close_add"><i class="fa fa-close"></i></button>
         <br>
-        <div class="widgets_contentbox_pre">
-            <iframe id="widgets_preview" allow="autoplay *"></iframe>
-        </div>
-        <p class="p_widgets_bzdz">备注: <input type="name" class="widgets_name" id="widgets_name_add" value="" /></p>
-        <p class="p_widgets_bzdz">地址: <input type="url" class="widgets_url" id="widgets_url_add" value="" placeholder="/widgets/your_widgets"/></p>
-        <p class="p_widgets_bzdz" style="display: inline-block">是否启用:</p>
-        <div class="switch-container" style="display: inline-block">
-            <input id="widgets_available_add" type="hidden" value="True">
-            <input id="widgets_available_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('widgets_available_add')">
-            <span class="switch-area"></span>
-            <span class="switch-toggle"></span>
-        </div>
-        <br>
-        <button id="widgets_close_add_1" class="widgets_edit_commit deny">取消</button>
-        <button id="widgets_edit" class="widgets_edit_commit run" onclick="upload_widgets_add()">提交</button>
+        <span>
+            <div style="float: 1;">
+            <div class="widgets_container_pre">
+            <div id="widgets_contentbox_pre" class="widgets_contentbox_pre medium">
+                <div class="widgets_bar">
+                    <i class="fa fa-minus" onclick="change_widgets_pre('widgets_contentbox_pre',`small`)"></i>
+                    <i class="fa fa-window-maximize" onclick="change_widgets_pre('widgets_contentbox_pre',`medium`)"></i>
+                    <i class="fa fa-plus" onclick="change_widgets_pre('widgets_contentbox_pre',`large`)"></i>
+                </div>
+                <div style="height: 90%;">
+                    <iframe src='/widgets' frameborder=0></iframe>
+                </div>
+            </div>
+            </div>
+            </div>
+            <div style="float: 2;">
+            <p class="p_widgets_bzdz">备注: <input type="name" class="widgets_name" id="widgets_name_add" value="" /></p>
+            <p class="p_widgets_bzdz">地址: <input type="url" class="widgets_url" id="widgets_url_add" value="" placeholder="/widgets/your_widgets"/></p>
+            <p class="p_widgets_bzdz" style="display: inline-block">是否启用:</p>
+            <div class="switch-container" style="display: inline-block">
+                <input id="widgets_available_add" type="hidden" value="True">
+                <input id="widgets_available_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('widgets_available_add')">
+                <span class="switch-area"></span>
+                <span class="switch-toggle"></span>
+            </div>
+            <br>
+            <div>
+                <p class="p_widgets_bzdz">
+                大小: 
+                <button onclick="change_widgets_pre('widgets_contentbox_pre',`small`)">小</button>
+                <button onclick="change_widgets_pre('widgets_contentbox_pre',`medium`)">中</button>
+                <button onclick="change_widgets_pre('widgets_contentbox_pre',`large`)">大</button>
+                </p>
+            </div>
+            <br>
+            <button id="widgets_close_add_1" class="widgets_edit_commit deny">取消</button>
+            <button id="widgets_edit" class="widgets_edit_commit run" onclick="upload_widgets_add()">提交</button>
+            </div>
+        </span>
     </div>
 </div>
 

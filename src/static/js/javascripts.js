@@ -376,10 +376,11 @@ function upload_widgets_edit(){
         url: "/edit_widgets",
         method : "POST",
         data : {
-            id: $("#widgets_id_edit").val(),
             operation: "edit",
+            id: $("#widgets_id_edit").val(),
             name: $("#widgets_name_edit").val(),
             url: $("#widgets_url_edit").val(),
+            size: $("#widgets_size_edit").val(),
             ava: $("#widgets_available_edit").val(),
         },
         success: function(response){
@@ -401,10 +402,11 @@ function upload_widgets_del(){
         url: "/edit_widgets",
         method : "POST",
         data : {
-            id: $("#widgets_id_edit").val(),
             operation: "del",
+            id: $("#widgets_id_edit").val(),
             name: $("#widgets_name_edit").val(),
             url: $("#widgets_url_edit").val(),
+            size: $("#widgets_size_edit").val(),
             ava: $("#widgets_avaliable_edit").val(),
         },
         success: function(response){
@@ -430,6 +432,7 @@ function upload_widgets_add(){
             name: $("#widgets_name_add").val(),
             url: $("#widgets_url_add").val(),
             ava: $("#widgets_available_add").val(),
+            size: $("#widgets_size_add").val(),
         },
         success: function(response){
             if (response.response){
@@ -931,7 +934,7 @@ function load_active_widgets(){
             $("#widgets_container_live").empty()
             for (i in data){
                 $("#widgets_container_live").append('\
-                <div id="widgets_window_'+ data[i].id +'" class="widgets_contentbox medium">\
+                <div id="widgets_window_'+ data[i].id +'" class="widgets_contentbox '+ data[i].size +'">\
                     <div class="widgets_bar">\
                         <i class="fa fa-minus" onclick="change_widgets('+ data[i].id +',`small`)"></i>\
                         <i class="fa fa-window-maximize" onclick="change_widgets('+ data[i].id +',`medium`)"></i>\
@@ -948,15 +951,18 @@ function load_active_widgets(){
 }
 
 function change_widgets(id,target){
-    $("#widgets_window_"+id).addClass("medium")
-    $("#widgets_window_"+id).addClass("large")
-    $("#widgets_window_"+id).addClass("small")
     $("#widgets_window_"+id).removeClass("medium")
     $("#widgets_window_"+id).removeClass("large")
     $("#widgets_window_"+id).removeClass("small")
     $("#widgets_window_"+id).addClass(target)
 }
 
+function change_widgets_pre(id,target){
+    $("#"+id).removeClass("medium")
+    $("#"+id).removeClass("large")
+    $("#"+id).removeClass("small")
+    $("#"+id).addClass(target)
+}
 function load_widgets(){
     $.ajax({
         url: "/GetWidgets",
@@ -971,8 +977,14 @@ function load_widgets(){
                         <span><div class="widgets_subtitle">'+ data[i].widgets_url +'</div></span>\
                     </div>\
                     <i class="fa fa-bars"></i>\
-                    <i class="fa fa-info" id="widgets_'+ data[i].id +'" widgets_name="'+ data[i].widgets_name +'"\
-                    widgets_url="'+ data[i].widgets_url +'" widgets_available="' + data[i].available + '" onclick="show_widgets_edit('+ data[i].id +')"></i>\
+                    <i class="fa fa-info"\
+                    id="widgets_'+ data[i].id +'"\
+                    widgets_name="'+ data[i].widgets_name +'"\
+                    widgets_url="'+ data[i].widgets_url +'"\
+                    widgets_size="'+ data[i].size +'"\
+                    widgets_available="' + data[i].available + '"\
+                    onclick="show_widgets_edit('+ data[i].id +')"\
+                    ></i>\
                 </li>\
                 ')
             }

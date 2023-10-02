@@ -295,6 +295,7 @@ def edit_widgets():
     widgets_id = request.form.get("id")
     widgets_name = request.form.get("name")
     widgets_url = request.form.get("url")
+    widgets_size = request.form.get("size")
     available = request.form.get("ava")
     if widgets_id == "-1":
         try:
@@ -303,6 +304,7 @@ def edit_widgets():
                 widgets_name = widgets_name,
                 widgets_url = widgets_url,
                 available = available,
+                size = widgets_size,
             )
             w.save()
             return jsonify({"response": True, "message": "添加成功"})
@@ -315,6 +317,7 @@ def edit_widgets():
                     Widgets.widgets_name: widgets_name,
                     Widgets.widgets_url: widgets_url,
                     Widgets.available: available,
+                    Widgets.size: widgets_size,
                 }).where(Widgets.id == widgets_id)
                 u.execute()
                 return jsonify({"response": True, "message": "更改成功"})
