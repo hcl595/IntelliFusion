@@ -689,6 +689,9 @@ textarea{
 .widgets_container .large{
   height: 600px;
 }
+.widgets_bar {
+  margin-left: 80%;
+}
 .widgets_contentbox h2 {
   margin-left: 20px;
   color: black;

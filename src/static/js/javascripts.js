@@ -931,13 +931,30 @@ function load_active_widgets(){
             $("#widgets_container_live").empty()
             for (i in data){
                 $("#widgets_container_live").append('\
-                <div class="widgets_contentbox medium">\
-                    <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
+                <div id="widgets_window_'+ data[i].id +'" class="widgets_contentbox medium">\
+                    <div class="widgets_bar">\
+                        <i class="fa fa-minus" onclick="change_widgets('+ data[i].id +',`small`)"></i>\
+                        <i class="fa fa-window-maximize" onclick="change_widgets('+ data[i].id +',`medium`)"></i>\
+                        <i class="fa fa-plus" onclick="change_widgets('+ data[i].id +',`large`)"></i>\
+                    </div>\
+                    <div style="height: 90%;">\
+                        <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
+                    </div>\
                 </div>\
                 ')
             }
         }
     })
+}
+
+function change_widgets(id,target){
+    $("#widgets_window_"+id).addClass("medium")
+    $("#widgets_window_"+id).addClass("large")
+    $("#widgets_window_"+id).addClass("small")
+    $("#widgets_window_"+id).removeClass("medium")
+    $("#widgets_window_"+id).removeClass("large")
+    $("#widgets_window_"+id).removeClass("small")
+    $("#widgets_window_"+id).addClass(target)
 }
 
 function load_widgets(){
