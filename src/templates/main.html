@@ -85,25 +85,31 @@
         <button class="btn" id="model_close"><i class="fa fa-close"></i></button>
         <input type="hidden" id="model_id_add" value="-1" />
         <br>
-        <input type="name" id="model_name_add" placeholder="名称" />
-        <br>
-        <input type="url" id="model_url_add" placeholder="调用地址" />
-        <br>
-        <select id="model_type_add" name="type">
-            <option selected>OpenAI</option>
-            <option>WebUI</option>
-            <option>API</option>
-        </select>
-        <br>
-        <input type="url" id="model_key_add" placeholder="密钥" />
-        <br>
-        <p>高级设置<i class="fa fa-caret-square-o-down" id="model_details_button"></i></p>
-        <div id="model_details" class="" status="off" style="display: none;">
-        <input type="url" id="launch_comp_add" placeholder="调用地址" />
-        <button class="add" onclick="ReadFile(`launch_comp_add`)"><i class="fa fa-folder-open-o"></i></button>
-        <br>
-        <input type="url" id="launch_path_add" placeholder="调用地址" />
-        <button class="add" onclick="ReadFile(`launch_path_add`)"><i class="fa fa-folder-open-o"></i></button>
+        <div class="model_edit_box1">
+            <p>名称：</p>
+            <input type="name" id="model_name_add" class="model_name_edit" placeholder="名称" />
+            <br>
+            <p>调用地址：</p>
+            <input type="url" id="model_url_add" class="model_url_edit" placeholder="调用地址" />
+            <br>
+            <p>调用方式:</p>
+            <select id="model_type_add" class="model_type_edit" name="type">
+                <option selected>OpenAI</option>
+                <option>WebUI</option>
+                <option>API</option>
+            </select>
+            <br>
+            <p>密钥：</p>
+            <input type="url" id="model_key_edit" class="model_key_add" placeholder="密钥" />
+            <br>
+            <p>高级设置<i class="fa fa-caret-square-o-down" id="model_details_button"></i></p>
+            <div id="model_details" class="" status="off" style="display: none;">
+                <input type="url" id="launch_comp_add" class="launch_comp_add" placeholder="调用地址" />
+                <button class="edit_wjj" onclick="ReadFile(`launch_comp_add`)"><i class="fa fa-folder-open-o"></i></button>
+                <br>
+                <input type="url" id="launch_path_add" class="launch_path_edit" placeholder="调用地址" />
+                <button class="edit_wjj" onclick="ReadFile(`launch_path_add`)"><i class="fa fa-folder-open-o"></i></button>
+            </div>
         </div>
         <button class="deny" onclick="">cancel</button>
         <button class="add" onclick="upload_model_add()">add</button>

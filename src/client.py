@@ -213,7 +213,12 @@ def AddModel():
                             "message":"运行失败,原因:请输入正确的启动方式",})
         else:
             launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LcUrl")
-            pool.submit(subprocess.run, launchCMD)
+            with ProcessPoolExecutor() as p:
+                try:
+                    p.submit(subprocess.run, launchCMD)
+                except psutil.AccessDenied:
+                    return jsonify({"response": False,
+                                    "message":"运行失败,原因:权限不足",})
             count = 0
             while True:
                 for conn in psutil.net_connections():

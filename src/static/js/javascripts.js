@@ -555,6 +555,43 @@ function commit_model(operate){
     });
 }
 
+function launch_model(id){
+    var status = $("#online_status_"+id).attr("online")
+    if (status == 'online'){
+        loading()
+        alert('启动中...','success')
+        $.ajax({
+            url: '/exchange',
+            type: 'POST',
+            data: {
+                state: 'run' ,
+                number: id ,
+                LcCompiler: $("#online_status_"+id).attr("launch_comp") ,
+                LcUrl: $("#online_status_"+id).attr("launch_path") ,
+            },
+            success: function(response) {
+                if (response.response){
+                    alert(response.message,"success")
+                    Refresh_Tabs()
+                    $("#loading").fadeOut(100)
+                }
+                else{
+                    alert(response.message,"danger")
+                    $("#loading").fadeOut(100)
+                }
+                Refresh_ModelList()
+                $("#model_edit").fadeOut(100);
+                $("#model_name_add").val("");
+                $("#model_url_add").val("");
+                
+            }
+        });
+    }
+    if (status == 'offline'){
+        alert('无法启动...','danger')
+    }
+}
+
 function upload_model_add(){
     if ($('#model_url_add').val() == "" || $('#model_name_add').val() == ""){
         alert('内容不能为空',"warning");
@@ -761,12 +798,26 @@ function Refresh_ModelList(){
                     model_launch_path="'+ data[i].launch_path +'"\
                     model_available="' + data[i].available + '" \
                     onclick="show_model_edit('+ data[i].id +')"></i>\
-                    <i id="online_status_'+ data[i].id +'" onclick="launch_model('+ data[i].id +')" class="fa fa-circle-o"></i>\
+                    <i id="online_status_'+ data[i].id +'" \
+                    model="'+ data[i].id +'" \
+                    onclick="launch_model('+ data[i].id +')" \
+                    class="fa fa-circle-o active_status" \
+                    launch_comp="'+ data[i].launch_compiler +'"\
+                    launch_path="'+ data[i].launch_path +'"\
+                    online=""></i>\
                     </li>'
                 )
                 if (data[i].launch_path != '/' && data[i].launch_path != ''){
                     $('#online_status_'+data[i].id).addClass("fa-circle")
                     $('#online_status_'+data[i].id).removeClass("fa-circle-o")
+                    $('#online_status_'+data[i].id).addClass("active_status")
+                    $('#online_status_'+data[i].id).removeClass("deactive_status")
+                    $('#online_status_'+data[i].id).attr("online","online")
+                }
+                else{
+                    $('#online_status_'+data[i].id).removeClass("active_status")
+                    $('#online_status_'+data[i].id).addClass("deactive_status")
+                    $('#online_status_'+data[i].id).attr("online","offline")
                 }
 
             }

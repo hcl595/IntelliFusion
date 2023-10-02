@@ -1648,6 +1648,14 @@ pre {
   margin-right: 10px;
 }
 
+.active_status {
+  color: rgb(0, 199, 0);
+}
+
+.deactive_status {
+  color: rgb(0, 93, 0);
+}
+
 .btn_expand{
   margin: auto;
   margin-left: 50%;
