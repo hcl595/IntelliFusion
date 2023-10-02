@@ -1696,7 +1696,7 @@ pre {
   border :solid 1px #5b5b5b
 }
 
-.model_key_edit{
+.model_key_edit,.model_key_add{
   width: 530px;
   border-radius: 8px;
   border :solid 1px #5b5b5b
@@ -1715,4 +1715,24 @@ pre {
 .model_edit_box2{
   margin-left: 5%;
   margin-top: 20px;
+}
+
+.deny_beyond{
+  background-color: rgba(255, 89, 89, 0.671);
+  border: 1px solid rgba(31, 0, 0, 0.671);
+  border-radius:8px;
+  margin-left: 0;
+  margin-bottom: -50px;
+  min-height: 5%;
+  width: 240px;
+}
+
+.add_beyond{
+  background-color: rgba(89, 147, 255, 0.671);
+  border: 1px solid rgba(31, 0, 0, 0.671);
+  border-radius:8px;
+  margin-left: 40px;
+  margin-bottom: -50px;
+  min-height: 5%;
+  width: 240px;
 }
