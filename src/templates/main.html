@@ -157,9 +157,13 @@
         <div>
             <p class="p_widgets_bzdz">
             大小: 
-            <button onclick="change_widgets_pre('widgets_contentbox_pre_edit',`small`)">小</button>
-            <button onclick="change_widgets_pre('widgets_contentbox_pre_edit',`medium`)">中</button>
-            <button onclick="change_widgets_pre('widgets_contentbox_pre_edit',`large`)">大</button>
+            <input type="hidden" id="widgets_contentbox_pre_edit_val" value="" />
+            <button id="widgets_contentbox_pre_edit_button_small" class="widgets_size"
+            onclick="change_widgets_pre('widgets_contentbox_pre_edit',`small`)">小</button>
+            <button id="widgets_contentbox_pre_edit_button_medium" class="widgets_size"
+            onclick="change_widgets_pre('widgets_contentbox_pre_edit',`medium`)">中</button>
+            <button id="widgets_contentbox_pre_edit_button_large" class="widgets_size"
+            onclick="change_widgets_pre('widgets_contentbox_pre_edit',`large`)">大</button>
             </p>
         </div>
         <br>
@@ -181,7 +185,7 @@
                             <i class="fa fa-plus" onclick="change_widgets_pre('widgets_contentbox_pre',`large`)"></i>
                         </div>
                         <div style="height: 90%;">
-                            <iframe id="preview_widgets" src='/widgets/CPU_Precent' frameborder=0></iframe>
+                            <iframe id="preview_widgets" src='/widgets/CPU_Percent' frameborder=0></iframe>
                         </div>
                     </div>
                 </div>
@@ -202,11 +206,15 @@
                 <br>
                 <div>
                     <p class="p_widgets_bzdz">
-                    大小: 
-                    <button onclick="change_widgets_pre('widgets_contentbox_pre',`small`)">小</button>
-                    <button onclick="change_widgets_pre('widgets_contentbox_pre',`medium`)">中</button>
-                    <button onclick="change_widgets_pre('widgets_contentbox_pre',`large`)">大</button>
-                    </p>
+                        大小: 
+                        <input type="hidden" id="widgets_contentbox_pre_val" value="" />
+                        <button id="widgets_contentbox_pre_button_small" class="widgets_size"
+                        onclick="change_widgets_pre('widgets_contentbox_pre',`small`)">小</button>
+                        <button id="widgets_contentbox_pre_button_medium" class="widgets_size"
+                        onclick="change_widgets_pre('widgets_contentbox_pre',`medium`)">中</button>
+                        <button id="widgets_contentbox_pre_button_large" class="widgets_size"
+                        onclick="change_widgets_pre('widgets_contentbox_pre',`large`)">大</button>
+                        </p>
                 </div>
                 <br>
                 <button id="widgets_close_add_1" class="widgets_edit_commit deny">取消</button>

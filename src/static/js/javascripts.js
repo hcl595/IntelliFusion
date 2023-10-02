@@ -138,6 +138,8 @@ function show_widgets_edit(id) {
         $("#widgets_available_edit_Checkbox").prop("checked",false)
     }
     $("#preview_widgets_edit").attr("src", url)
+    $("#widgets_contentbox_pre_edit_button_"+size).addClass("active")
+    $("#widgets_size_edit").val(size)
     $("#widgets_id_edit").val(id)
     $("#widgets_name_edit").val(name)
     $("#widgets_url_edit").val(url)
@@ -381,7 +383,7 @@ function upload_widgets_edit(){
             id: $("#widgets_id_edit").val(),
             name: $("#widgets_name_edit").val(),
             url: $("#widgets_url_edit").val(),
-            size: $("#widgets_size_edit").val(),
+            size: $("#widgets_contentbox_pre_edit_val").val(),
             ava: $("#widgets_available_edit").val(),
         },
         success: function(response){
@@ -962,6 +964,11 @@ function change_widgets_pre(id,target){
     $("#"+id).removeClass("medium")
     $("#"+id).removeClass("large")
     $("#"+id).removeClass("small")
+    $("#"+id+"_button_small").removeClass("active")
+    $("#"+id+"_button_medium").removeClass("active")
+    $("#"+id+"_button_large").removeClass("active")
+    $("#"+id+"_button_"+target).addClass("active")
+    $("#"+id+"_val").val(target)
     $("#"+id).addClass(target)
 }
 

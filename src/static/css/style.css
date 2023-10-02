@@ -752,6 +752,21 @@ textarea{
   margin-left: calc((100% - 650px)/2);
 }
 
+.widgets_size {
+  margin-left: 0px;
+  margin-right: 0px;
+  border:0;
+  border-radius: 10px;
+  background-color: #9b9b9b42;
+}
+
+.widgets_size.active{
+  margin-left: 0px;
+  margin-right: 0px;
+  border:0;
+  border-radius: 10px;
+  background-color: #0c76006b;
+}
 .p_widgets_bzdz{
   margin-left: 10px;
 }
