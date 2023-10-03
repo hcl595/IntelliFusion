@@ -427,6 +427,18 @@ function upload_widgets_del(){
 }
 
 function upload_widgets_add(){
+    if ($("#widgets_name_add").val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
+    if ($("#widgets_url_add").val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
+    if ($("#widgets_size_add").val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
     $.ajax({
         url: "/edit_widgets",
         method : "POST",
