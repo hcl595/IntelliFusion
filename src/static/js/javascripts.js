@@ -527,6 +527,10 @@ function GetPrompts(id){
     })
 }
 
+function copy_context(){
+
+}
+
 function prompts(id){
     var value = $("#prompt-single-"+id).val()
     var source_id = $("#prompt-single-"+id).attr("source_id");
@@ -784,7 +788,10 @@ function load_history(id) {
             $('#output-' + id).empty()
             for (i in data){
                 $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right" id="high_light_1">' + data[i].UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left" id="high_light_2">' + data[i].response + '</div></div>');
+                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left" id="high_light_2">' + data[i].response + '\
+                <i class="fa fa-copy"></i>\
+                <i class="fa fa-thumbs-o-up"></i>\
+                </div></div>');
                 smoothScroll("output-"+id);
                 hljs.highlightAll();
                 }
