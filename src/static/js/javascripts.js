@@ -668,13 +668,16 @@ function send_input_stream(id) {
         $("#loading").fadeOut(100)
         $('#output-' + id).append('<div class="item item-left"><div class="avatar">\
         <i class="fa fa-user-circle-o"></i></div>\
-        <div class="bubble bubble-left" id="streaming"></div></div>');
+        <div class="bubble bubble-left" id="streaming">\
+        </div></div>');
         for await (const chunk of readChunks(reader)) {
             document.getElementById("streaming").innerHTML = new TextDecoder('utf-8').decode(chunk);
             smoothScroll("output-"+id);
         }
+        $("#streaming").append('<i onclick="copyContext(-1)" class="fa fa-copy"></i>\
+        <i class="fa fa-thumbs-o-up"></i>')
         hljs.highlightAll();
-        $("#streaming").removeAttr("id");
+        $("#streaming").attr("id","context_-1");
     });
 }
 function readChunks(reader) {
@@ -786,8 +789,8 @@ function load_history(id) {
             for (i in data){
                 $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right" id="high_light_1">' + data[i].UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
                 $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left"\
-                id="high_light_2">' + data[i].response + '\
-                <i onclick="copyToClip(`' + data[i].response + '`)" class="fa fa-copy"></i>\
+                id="context_' + data[i].id + '">' + data[i].response + '\
+                <i onclick="copyContext(`' + data[i].id + '`)" class="fa fa-copy"></i>\
                 <i class="fa fa-thumbs-o-up"></i>\
                 </div></div>');
                 smoothScroll("output-"+id);
@@ -795,6 +798,11 @@ function load_history(id) {
                 }
         }
     })
+}
+
+function copyContext(id){
+    message = $("#context_"+id).text();
+    copyToClip(message);
 }
 
 function copyToClip(content, message) {

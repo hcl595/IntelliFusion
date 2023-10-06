@@ -164,6 +164,7 @@ def Close_Session():
     logger.debug(request.form["model_id"])
     u = Sessions.get(Sessions.id ==  session_id)
     u.delete_instance()
+    History.delete().where(History.session_id == session_id).execute()
     return jsonify({"response": True,
                     "message": "关闭成功"})
 
