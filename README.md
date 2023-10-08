@@ -3,8 +3,7 @@
 
 <div align="center">
 
-[![Fork me on Gitee](https://gitee.com/argonserver/IntelliFusion/widgets/widget_6.svg?color=00d4d4)](https://gitee.com/argonserver/IntelliFusion)
-</div>
+[![Fork me on Gitee](https://gitee.com/argonserver/IntelliFusion/widgets/widget_6.svg?color=00d4d4)](https://gitee.com/argonserver/IntelliFusion)</div>
 
 <div align="center">
 
@@ -24,7 +23,8 @@
 *<u>以下所举均为举例，用户亦可自行添加模型进行使用，皆可通用</u>*
 
 #### 通过webui调用的所有模型
-- [Midjourney](https://www.midjourney.com)([Stable Diffusion](https://stability.ai))
+- [Midjourney](https://www.midjourney.com)
+- [Stable Diffusion](https://stability.ai)
 
 #### 通过api调用的语言模型
 - [ChatGPT](https://chat.openai.com) ([GPT-4](https://openai.com/product/gpt-4))
@@ -78,4 +78,4 @@
 
 ### 了解更多
 
-- [想反馈问题？]开发者邮箱：3545742020@qq.com
+- 想反馈问题？ 开发者邮箱：3545742020@qq.com
