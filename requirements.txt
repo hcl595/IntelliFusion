@@ -1,6 +1,6 @@
 flask
-# flaskwebgui
-git+https://github.com/ClimenteA/flaskwebgui.git
+flaskwebgui
+# git+https://github.com/ClimenteA/flaskwebgui.git
 jieba
 loguru
 openai

@@ -29,8 +29,10 @@ def create_session(comment:str, model_id:int):
     except:
         try:
             # Sessions数据库出现错误
-            Models.get(Models.id == model_id).type
-            raise Sessions.DoesNotExist
+            try:
+                Models.get(Models.id == model_id).type
+            except:
+                raise Sessions.DoesNotExist
         except:
             # Models数据库出现错误
             raise Models.DoesNotExist
