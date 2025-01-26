@@ -1,16 +1,16 @@
 from flask import Flask, Blueprint
-from flask_socketio import SocketIO
+# from flask_socketio import SocketIO
 
-socketio = SocketIO()
+# socketio = SocketIO()
 
 def create_app(debug=True):
     '''Create an application.'''
     app = Flask(__name__)
-    from flask_cors import CORS
+    # from flask_cors import CORS
     
-    CORS(app)
-    app.debug = debug
-    app.config['SECRET_KEY'] = 'IntelliFusion'
+    # CORS(app)
+    # app.debug = debug
+    # app.config['SECRET_KEY'] = 'IntelliFusion'
 
     from widgets import widgets_blue
 
@@ -19,4 +19,4 @@ def create_app(debug=True):
 
 widgets_blue = Blueprint('widgets', __name__, url_prefix='/widgets', static_folder='./static/', template_folder='./templates/')
 
-from . import views
+# from . import views

@@ -50,10 +50,13 @@ def request_OpenAI(SessionID: int, Userinput: str,stream: bool = True):
     response = ""
     if SessionID is None or Userinput is None:
         raise ValueError
-    
+
     #Check lib & auto install
     try:
         import openai
+        from openai import OpenAI
+        
+        client = OpenAI(api_key=(Model_ID.api_key))
     except ImportError:
         with ProcessPoolExecutor() as p:
             try:
@@ -80,14 +83,12 @@ def request_OpenAI(SessionID: int, Userinput: str,stream: bool = True):
     #Request ai
     question: Message = {"role": "user", "content": Userinput}
     messages.append(question)
-    openai.api_key = (Model_ID.api_key)
-    openai.api_base = (Model_ID.url)
-    for chunk in openai.ChatCompletion.create(
-        model=Model_ID.name,
-        messages=messages,
-        stream=True,
-        temperature=0,
-    ):
+    # TODO: The 'openai.api_base' option isn't read in the client API. You will need to pass it when you instantiate the client, e.g. 'OpenAI(base_url=(Model_ID.url))'
+    # openai.api_base = (Model_ID.url)
+    for chunk in client.chat.completions.create(model=Model_ID.name,
+    messages=messages,
+    stream=True,
+    temperature=0):
         if stream == True:
             if hasattr(chunk.choices[0].delta, "content"):
                 print(chunk.choices[0].delta.content, end="", flush=True)
@@ -100,7 +101,7 @@ def request_OpenAI(SessionID: int, Userinput: str,stream: bool = True):
                 response = response + chunk.choices[0].delta.content
                 response = mistune.html(response)
             return response
-        
+
     #Save conversation
     History.create(
         session_id = SessionID,
@@ -119,7 +120,7 @@ def request_ZhipuAI(SessionID: int, Userinput: str,stream: bool = True):
     response = ""
     if SessionID is None or Userinput is None:
         raise ValueError
-    
+
     #Check lib & auto install
     try:
         from zhipuai import ZhipuAI
@@ -129,7 +130,7 @@ def request_ZhipuAI(SessionID: int, Userinput: str,stream: bool = True):
                 p.submit(subprocess.run, "pip install "+"zhipuai")
             except psutil.AccessDenied:
                 raise ImportError("No moduel named"+"zhipuai")
-    
+
     #Get API KEY
     try:
         Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID).model_id)
@@ -169,7 +170,7 @@ def request_ZhipuAI(SessionID: int, Userinput: str,stream: bool = True):
                 response = response + chunk.choices[0].delta.content
                 response = mistune.html(response)
             return response
-        
+
     #Save conversation
     History.create(
         session_id = SessionID,

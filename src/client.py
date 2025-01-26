@@ -21,7 +21,7 @@ from zhipuai import *
 import psutil
 import validators
 from flask import Flask, stream_with_context, json, jsonify, render_template, request
-from flask_socketio import SocketIO
+# from flask_socketio import SocketIO
 from flaskwebgui import FlaskUI
 from loguru import logger
 from playhouse.shortcuts import model_to_dict
@@ -68,8 +68,9 @@ def request_models_stream():
             Model_response = request_OpenAI(SessionID=InputModel, Userinput=InputInfo, stream=True)
             for r in Model_response:
                 yield r
-        except openai.error.AuthenticationError:
+        except:
             yield "Check Your API Key"
+            raise
     elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).type == "ZhipuAI":
         try:
             Model_response = request_ZhipuAI(SessionID=InputModel, Userinput=InputInfo, stream=True)
