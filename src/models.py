@@ -182,11 +182,11 @@ def request_Json(SessionID: int, Userinput: str):
     if SessionID is None or Userinput is None:
         raise ValueError
     try:
-        Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID)).id
+        Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID).model_id).id
     except:
         raise ValueError("SessionID Error")
     response = requests.post(
-        url=Models.get(Models.name == Model_ID).url,
+        url=Models.get(Models.id == Model_ID).url,
         data=json.dumps({"prompt": Userinput, "history": []}),
         headers={"Content-Type": "application/json"},
     )
