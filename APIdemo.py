@@ -7,7 +7,7 @@ app.config.from_object(__name__)
 
 #setup
 response = {
-        'response': '你好👋！我是人工智能助手 ChatGLM-6B，很高兴见到你，欢迎问我任何问题。',
+        'response': 'micro-python和Ardu',
         'history': [['你好', '你好👋！我是人工智能助手 ChatGLM-6B，很高兴见到你，欢迎问我任何问题。']],
         'status': 200,
         'time': '2023-05-13 18:56:53'}

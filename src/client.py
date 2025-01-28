@@ -61,7 +61,7 @@ def root():
 @app.post("/request_models_stream")
 @stream_with_context
 def request_models_stream():
-    InputInfo = request.form.get("userinput")
+    InputInfo = request.form["userinput"]
     InputModel = request.form["modelinput"]
     if Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).type == "OpenAI":
         try:
@@ -70,7 +70,6 @@ def request_models_stream():
                 yield r
         except:
             yield "Check Your API Key"
-            raise
     elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).type == "ZhipuAI":
         try:
             Model_response = request_ZhipuAI(SessionID=InputModel, Userinput=InputInfo, stream=True)
