@@ -66,7 +66,7 @@ def request_OpenAI(SessionID: int, Userinput: str,stream: bool = True):
     try:
         Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID).model_id)
     except:
-        raise Models.get.error
+        raise Models
 
     #Get history
     for r in History.select().where(History.session_id == SessionID):
@@ -134,7 +134,7 @@ def request_ZhipuAI(SessionID: int, Userinput: str,stream: bool = True):
     try:
         Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID).model_id)
     except:
-        raise Models.get.error
+        raise Models
 
     #Get Histroy
     for r in History.select().where(History.session_id == SessionID):
@@ -204,17 +204,17 @@ def request_Ollama(SessionID: int, Userinput: str,stream: bool = True):
     try:
         Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID).model_id)
     except:
-        raise Models.get.error
+        raise
 
     #Get Histroy
     for r in History.select().where(History.session_id == SessionID):
         r: History
         assert isinstance(r.UserInput, str)
         assert isinstance(r.response, str)
-        question: Message = {"role": "user", "content": r.UserInput}
-        response: Message = {"role": "assistant", "content": r.response}
-        messages.append(question)
-        messages.append(response)
+        question_h: Message = {"role": "user", "content": r.UserInput}
+        response_h: Message = {"role": "assistant", "content": r.response}
+        messages.append(question_h)
+        messages.append(response_h)
 
     #Request AI
     question: Message = {"role": "user", "content": Userinput}
@@ -228,21 +228,21 @@ def request_Ollama(SessionID: int, Userinput: str,stream: bool = True):
 
         print(chunk['message']['content'], end='', flush=True)
         if stream == True:
-            if hasattr(chunk.choices[0].delta, "content"):
-                print(chunk.choices[0].delta.content, end="", flush=True)
-                response = response + chunk.choices[0].delta.content
+            if hasattr(chunk.message, "content"):
+                print(chunk.message.content, end="", flush=True)
+                response = response + chunk.message.content
                 response_out = mistune.html(response)
                 yield response_out
             else:
                 yield "I'm a chat robot, How can I assist you today?"
-        else:
-            if hasattr(chunk.choices[0].delta, "content"):
-                print(chunk.choices[0].delta.content, end="", flush=True)
-                response = chunk.choices[0].delta.content
-                response = mistune.html(response)
-                return response
-            else:
-                return "I'm a chat robot, How can I assist you today?"
+        # else:
+        #     if hasattr(chunk.choices[0].delta, "content"):
+        #         print(chunk.choices[0].delta.content, end="", flush=True)
+        #         response = chunk.choices[0].delta.content
+        #         response = mistune.html(response)
+        #         return response
+        #     else:
+        #         return "I'm a chat robot, How can I assist you today?"
 
     #Save conversation
     History.create(

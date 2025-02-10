@@ -16,7 +16,7 @@ from concurrent.futures import ProcessPoolExecutor
 from tkinter.filedialog import askopenfilename
 
 import jieba
-import openai
+import ollama
 from zhipuai import *
 import psutil
 import validators
@@ -69,7 +69,7 @@ def request_models_stream():
             for r in Model_response:
                 yield r
         except:
-            yield "Check Your API Key"
+            raise
     elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).type == "ZhipuAI":
         try:
             Model_response = request_ZhipuAI(SessionID=InputModel, Userinput=InputInfo, stream=True)
@@ -77,6 +77,8 @@ def request_models_stream():
                 yield r
         except ZhipuAIError.AuthenticationError:
             yield "Check Your API Key"
+        except:
+            raise
     elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).type == "Ollama":
         try:
             Model_response = request_Ollama(SessionID=InputModel, Userinput=InputInfo, stream=True)
@@ -84,7 +86,6 @@ def request_models_stream():
                 yield r
         except:
             raise
-            yield "Check Your API Key"
     else:
         r = request_Json(SessionID=InputModel, Userinput=InputInfo,)
         yield r
@@ -96,7 +97,20 @@ def GetModelList():
         ModelList = Models.select()
     except:
         ModelList = {}
+        
     ModelList_json = [model_to_dict(Model) for Model in ModelList]
+    for m in ollama.list().models:
+        m_json={"id":m.size, 
+                "api_key":"not_required",
+                "launch_compiler":"",
+                'launch_path': '/',
+                'name': m.model,
+                'type': 'Ollama',
+                'url': 'http://127.0.0.1:11434'
+                }
+        ModelList_json.append(m_json)
+        
+        
     logger.info("{}", ModelList_json)
     return jsonify(ModelList_json)
 
@@ -371,7 +385,6 @@ def edit_APIs():
     APIs_id = request.form.get("id")
     APIs_name = request.form.get("name")
     APIs_url = request.form.get("url")
-    print("sss",APIs_id, APIs_name,)
     if request.form.get("operation") == "edit":
         try:
             u = APIs.update({
@@ -394,6 +407,7 @@ def edit_APIs():
 def add_APIs():
     APIName = request.form.get("name")
     APIUrl = request.form.get("url")
+    # if 
     # write_pyFile(APIUrl,LUNA_FILE)
     try:
         APIs.create(

@@ -993,8 +993,8 @@ function Refresh_Tabs(){
                 <span>'+ data[i].comment +'</span>\
                 <i class="fa fa-close close" onclick="Close_session('+ data[i].id +')"></i>\
                 </li>')
-                alert(data[i].model_type)
-                if (data[i].model_type == "openai" || data[i].model_type == "zhipuai" || data[i].model_type == "API" || data[i].model_type == "OpenAI" ){
+                if (data[i].model_type != "WebUI"){
+                    alert(data[i].model_type)
                     $("#Contents").append('\
                     <div class="dialogbox_container" id='+ data[i].id +'>\
                         <div class="content" id="output-'+ data[i].id +'"></div>\
@@ -1026,7 +1026,7 @@ function Refresh_Tabs(){
                     <span>'+ data[i].comment +'</span>\
                     <i class="fa fa-close close" onclick="Close_session('+ data[i].id +')"></i>\
                     </li>')
-                    if (data[i].model_type == "OpenAI" ||   data[i].model_type == "ZhipuAI" || data[i].model_type == "API"){
+                    if (data[i].model_type != "WebUI"){
                         $("#Contents").append('\
                         <div class="dialogbox_container" id='+ data[i].id +' style="display: none;">\
                             <div class="content" id="output-'+ data[i].id +'"></div>\
