@@ -77,6 +77,14 @@ def request_models_stream():
                 yield r
         except ZhipuAIError.AuthenticationError:
             yield "Check Your API Key"
+    elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).type == "Ollama":
+        try:
+            Model_response = request_Ollama(SessionID=InputModel, Userinput=InputInfo, stream=True)
+            for r in Model_response:
+                yield r
+        except:
+            raise
+            yield "Check Your API Key"
     else:
         r = request_Json(SessionID=InputModel, Userinput=InputInfo,)
         yield r

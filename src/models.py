@@ -178,6 +178,80 @@ def request_ZhipuAI(SessionID: int, Userinput: str,stream: bool = True):
     )
 
 
+def request_Ollama(SessionID: int, Userinput: str,stream: bool = True):
+    '''
+    SessionID 会话在数据库中的ID
+    Userinput 用户输入的内容
+    stream    是否需要流式传输
+    '''
+    #Setup
+    messages = []
+    response = ""
+    if SessionID is None or Userinput is None:
+        raise ValueError
+
+    #Check lib & auto install
+    try:
+        from ollama import Client
+    except ImportError:
+        with ProcessPoolExecutor() as p:
+            try:
+                p.submit(subprocess.run, "pip install "+"ollama")
+            except psutil.AccessDenied:
+                raise ImportError("No moduel named"+"zhipuai")
+
+    #Get API KEY
+    try:
+        Model_ID = Models.get(Models.id == Sessions.get(Sessions.id == SessionID).model_id)
+    except:
+        raise Models.get.error
+
+    #Get Histroy
+    for r in History.select().where(History.session_id == SessionID):
+        r: History
+        assert isinstance(r.UserInput, str)
+        assert isinstance(r.response, str)
+        question: Message = {"role": "user", "content": r.UserInput}
+        response: Message = {"role": "assistant", "content": r.response}
+        messages.append(question)
+        messages.append(response)
+
+    #Request AI
+    question: Message = {"role": "user", "content": Userinput}
+    messages.append(question)
+
+    for chunk in Client(host=Models.get(Models.id == Model_ID).url).chat(
+        model=Model_ID.name,
+        messages=messages,
+        stream=stream,
+        ):
+
+        print(chunk['message']['content'], end='', flush=True)
+        if stream == True:
+            if hasattr(chunk.choices[0].delta, "content"):
+                print(chunk.choices[0].delta.content, end="", flush=True)
+                response = response + chunk.choices[0].delta.content
+                response_out = mistune.html(response)
+                yield response_out
+            else:
+                yield "I'm a chat robot, How can I assist you today?"
+        else:
+            if hasattr(chunk.choices[0].delta, "content"):
+                print(chunk.choices[0].delta.content, end="", flush=True)
+                response = chunk.choices[0].delta.content
+                response = mistune.html(response)
+                return response
+            else:
+                return "I'm a chat robot, How can I assist you today?"
+
+    #Save conversation
+    History.create(
+        session_id = SessionID,
+        UserInput = Userinput,
+        response = response_out,
+    )
+
+
 def request_Json(SessionID: int, Userinput: str):
     if SessionID is None or Userinput is None:
         raise ValueError
