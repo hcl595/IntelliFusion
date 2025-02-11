@@ -10,6 +10,8 @@ requests
 thefuzz
 validators
 mistune
+zhipuai
+ollama
 
 # dev
 # auto-py-to-exe

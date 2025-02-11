@@ -8,18 +8,24 @@ function focus_input(id){
 }
 
 function ChangeToMainA(){
+    Refresh_Tabs()
+    load_active_widgets()
     $("#main-box").fadeIn(200)
 }
-function ChangeToAccA(){
-    $("#account-box").fadeIn(200)
+function ChangeToModelA(){
+    Refresh_ModelList()
+    $("#model-box").fadeIn(200)
 }
 function ChangeToSetA(){
+    load_settings()
     $("#setting-box").fadeIn(200)
 }
-function ChangeToMdlA(){
-    $("#models-box").fadeIn(200)
+function ChangeToAPIA(){
+    load_api()
+    $("#api-box").fadeIn(200)
 }
 function ChangeToWdgA(){
+    load_widgets()
     $("#widgets-box").fadeIn(200)
 }
 function ChangeToRtsA(){
@@ -28,8 +34,8 @@ function ChangeToRtsA(){
 
 function ChangeToMain(){
     $("#login-box").fadeOut(1)
-    $("#account-box").fadeOut(200)
-    $("#models-box").fadeOut(200)
+    $("#model-box").fadeOut(200)
+    $("#api-box").fadeOut(200)
     $("#widgets-box").fadeOut(200)
     $("#setting-box").fadeOut(200)
     $("#rights-box").fadeOut(200)
@@ -45,11 +51,11 @@ function ChangeToMain(){
 function ChangeToAcc(){
     $("#login-box").fadeOut(1)
     $("#main-box").fadeOut(200)
-    $("#models-box").fadeOut(200)
+    $("#api-box").fadeOut(200)
     $("#widgets-box").fadeOut(200)
     $("#setting-box").fadeOut(200)
     $("#rights-box").fadeOut(200)
-    setTimeout(ChangeToAccA,250)
+    setTimeout(ChangeToModelA,250)
     $("#main").removeClass("active")
     $("#acc").addClass("active")
     $("#wig").removeClass("active")
@@ -61,8 +67,8 @@ function ChangeToAcc(){
 function ChangeToSet(){
     $("#login-box").fadeOut(1)
     $("#main-box").fadeOut(200)
-    $("#account-box").fadeOut(200)
-    $("#models-box").fadeOut(200)
+    $("#model-box").fadeOut(200)
+    $("#api-box").fadeOut(200)
     $("#widgets-box").fadeOut(200)
     $("#rights-box").fadeOut(200)
     setTimeout(ChangeToSetA,250)
@@ -77,11 +83,11 @@ function ChangeToSet(){
 function ChangeToMdl(){
     $("#login-box").fadeOut(1)
     $("#main-box").fadeOut(200)
-    $("#account-box").fadeOut(200)
+    $("#model-box").fadeOut(200)
     $("#widgets-box").fadeOut(200)
     $("#setting-box").fadeOut(200)
     $("#rights-box").fadeOut(200)
-    setTimeout(ChangeToMdlA,250)
+    setTimeout(ChangeToAPIA,250)
     $("#main").removeClass("active")
     $("#acc").removeClass("active")
     $("#wig").removeClass("active")
@@ -93,8 +99,8 @@ function ChangeToMdl(){
 function ChangeToWdg(){
     $("#login-box").fadeOut(1)
     $("#main-box").fadeOut(200)
-    $("#account-box").fadeOut(200)
-    $("#models-box").fadeOut(200)
+    $("#model-box").fadeOut(200)
+    $("#api-box").fadeOut(200)
     $("#setting-box").fadeOut(200)
     $("#rights-box").fadeOut(200)
     setTimeout(ChangeToWdgA,250)
@@ -129,6 +135,7 @@ function show_widgets_edit(id) {
     $("#widgets_edit").fadeIn(100)
     var name = $("#widgets_"+id).attr("widgets_name")
     var url = $("#widgets_"+id).attr("widgets_url")
+    var size = $("#widgets_"+id).attr("widgets_size")
     var ava = $("#widgets_"+id).attr("widgets_available")
     if (ava == "True"){
         $("#widgets_available_edit_Checkbox").attr("checked",true)
@@ -136,7 +143,9 @@ function show_widgets_edit(id) {
     if (ava == "False"){
         $("#widgets_available_edit_Checkbox").prop("checked",false)
     }
-    $("#widgets_preview").attr("src", url)
+    $("#preview_widgets_edit").attr("src", url)
+    $("#widgets_contentbox_pre_edit_button_"+size).addClass("active")
+    $("#widgets_size_edit").val(size)
     $("#widgets_id_edit").val(id)
     $("#widgets_name_edit").val(name)
     $("#widgets_url_edit").val(url)
@@ -148,19 +157,25 @@ function show_model_edit(id) {
     $("#model_edit").fadeIn(100)
     var name = $("#model_"+id).attr("model_name")
     var url = $("#model_"+id).attr("model_url")
-    // var ava = $("#model_"+id).attr("widgets_available")
-    if (ava == "True"){
-        $("#model_available_edit_Checkbox").attr("checked",true)
-    }
-    if (ava == "False"){
-        $("#model_available_edit_Checkbox").prop("checked",false)
-    }
-    // $("#widgets_preview").attr("src", url)
+    var type = $("#model_"+id).attr("model_type")
+    var api_key = $("#model_"+id).attr("model_key")
+    var path = $("#model_"+id).attr("model_launch_path")
+    var comp = $("#model_"+id).attr("model_launch_comp")
     $("#model_id_edit").val(id)
+    $("#model_type_edit").val(type)
     $("#model_name_edit").val(name)
+    $("#model_key_edit").val(api_key)
     $("#model_url_edit").val(url)
-    // $("#widgets_available_edit").val(ava)
+    $("#launch_comp_edit").val(comp)
+    $("#launch_path_edit").val(path)
 }
+function show_model_add() {
+    $("#model_edit").fadeOut(100)
+    $("#model_add").fadeIn(100)
+    $("#model_name").val("")
+    $("#model_url").val("")
+}
+
 function show_widgets_add() {
     $("#widgets_edit").fadeOut(100)
     $("#widgets_add").fadeIn(100)
@@ -171,6 +186,22 @@ function show_widgets_add() {
 function show_session_add() {
     $('#session_add').fadeIn(110)
 }
+
+function show_api_edit(id) {
+    $("#api_add").fadeOut(100)
+    $("#api_edit").fadeIn(100)
+    var name = $("#api_"+id).attr("api_name")
+    $("#api_id_edit").val(id)
+    $("#api_name_edit").val(name)
+}
+
+function show_api_add() {
+    $("#api_edit").fadeOut(100)
+    $("#api_add").fadeIn(100)
+    $("#api_name").val("")
+    $("#api_url").val("")
+}
+
 
 //版本号
 $(document).ready(function(){
@@ -187,14 +218,40 @@ $(document).ready(function(){
     $("#widgets_close_add").click(function(){
         $("#widgets_add").fadeOut(100);
       });
-    $("#widgets_close_add_1").click(function(){
-        $("#widgets_add").fadeOut(100);
+    $("#model_close").click(function(){
+        $("#model_edit").fadeOut(100);
     });
+    $("#model_close_add").click(function(){
+        $("#model_add").fadeOut(100);
+    });
+    $("#model_details_button").click(function(){
+        now = $('#model_details').attr('status')
+        if (now == "off"){
+            $('#model_details').fadeIn(300);
+            now = $('#model_details').removeAttr('status')
+            now = $('#model_details').attr('status',"on")
+            $("#model_details_button").removeClass("fa fa-caret-square-o-down")
+            $('#model_details_button').addClass("fa fa-caret-square-o-up")
+        }
+        if (now == "on"){
+            $('#model_details').fadeOut(300);
+            now = $('#model_details').removeAttr('status')
+            now = $('#model_details').attr('status',"off")
+            $('#model_details_button').removeClass("fa fa-caret-square-o-up")
+            $("#model_details_button").addClass("fa fa-caret-square-o-down")
+        }
+    })
     $("#session_close").click(function(){
         $("#session_add").fadeOut(100);
     });
     $("#session_cancel").click(function(){
         $("#session_add").fadeOut(100);
+    });
+    $("#api_close_add").click(function(){
+        $("#api_add").fadeOut(100);
+    });
+    $("#api_close_edit").click(function(){
+        $("#api_edit").fadeOut(100);
     });
 });
 
@@ -282,8 +339,9 @@ function change_tab(id){
     var now = $(".current").val()
     $(".current").removeClass("current")
     $("#Tab"+id).addClass("current")
-    $('#'+now).fadeOut(100)
-    $('#'+id).fadeIn(110)
+    $('#'+now).fadeOut(1)
+    $('#'+id).fadeIn(1)
+    alert(id)
     smoothScroll("output-"+id);
 }
 
@@ -350,10 +408,11 @@ function upload_widgets_edit(){
         url: "/edit_widgets",
         method : "POST",
         data : {
-            id: $("#widgets_id_edit").val(),
             operation: "edit",
+            id: $("#widgets_id_edit").val(),
             name: $("#widgets_name_edit").val(),
             url: $("#widgets_url_edit").val(),
+            size: $("#widgets_contentbox_pre_edit_val").val(),
             ava: $("#widgets_available_edit").val(),
         },
         success: function(response){
@@ -375,10 +434,11 @@ function upload_widgets_del(){
         url: "/edit_widgets",
         method : "POST",
         data : {
-            id: $("#widgets_id_edit").val(),
             operation: "del",
+            id: $("#widgets_id_edit").val(),
             name: $("#widgets_name_edit").val(),
             url: $("#widgets_url_edit").val(),
+            size: $("#widgets_size_edit").val(),
             ava: $("#widgets_avaliable_edit").val(),
         },
         success: function(response){
@@ -396,6 +456,18 @@ function upload_widgets_del(){
 }
 
 function upload_widgets_add(){
+    if ($("#widgets_name_add").val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
+    if ($("#widgets_url_add").val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
+    if ($("#widgets_size_add").val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
     $.ajax({
         url: "/edit_widgets",
         method : "POST",
@@ -404,6 +476,7 @@ function upload_widgets_add(){
             name: $("#widgets_name_add").val(),
             url: $("#widgets_url_add").val(),
             ava: $("#widgets_available_add").val(),
+            size: $("#widgets_size_add").val(),
         },
         success: function(response){
             if (response.response){
@@ -422,6 +495,7 @@ function upload_widgets_add(){
         }
     })
 }
+
 
 function Add_session() {
     if ($("#session_comment").val() == ""){
@@ -442,6 +516,7 @@ function Add_session() {
                 alert(response.message,"success") ;
             }
             Refresh_Tabs()
+            $("#session_add").fadeOut(100);
         }
     })
 }
@@ -455,6 +530,94 @@ function Close_session(id) {
         },
         success : function(response){
             Refresh_Tabs()
+        }
+    })
+}
+
+function upload_api_add() {
+    if ($("#api_name_add").val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
+    $.ajax({
+        url: "/AddAPIs",
+        method: "POST",
+        data: {
+            name: $("#api_name_add").val(),
+            url: $("#api_url_add").val(),
+        },
+        success : function(response){
+            if (response.response){
+                alert(response.message,"success") ;
+            }
+            Refresh_Tabs()
+            $("#api_add").fadeOut(100);
+            $("#api_name_add").val("")
+            $("#api_url_add").val("")
+        }
+    })
+}
+
+function upload_api_edit(){
+    if ($('#api_name_edit').val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
+    $.ajax({
+        url: '/editAPIs',
+        type: 'POST',
+        data: {
+            operation: "edit",
+            id: $("#api_id_edit").val(),
+            name: $("#api_name_edit").val(),
+            url: $("#api_url_edit").val(),
+        },
+        success: function(response){
+            if (response.response){
+                alert(response.message,"success")
+                Refresh_Tabs()
+                $("#loading").fadeOut(100)
+            }
+            else{
+                alert(response.message,"danger")
+                $("#loading").fadeOut(100)
+            }
+            load_api()
+            $("#api_edit").fadeOut(100);
+            $("#api_name_edit").val("");
+            $("#api_url_edit").val("");
+        }
+    })
+}
+
+function upload_api_del(){
+    if ($('#api_name_edit').val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
+    $.ajax({
+        url: '/editAPIs',
+        type: 'POST',
+        data: {
+            id: $("#api_id_edit").val(),
+            operation: "del",
+            name: $("#api_name_add").val(),
+            url: $("#api_url_add").val(),
+        },
+        success: function(response){
+            if (response.response){
+                alert(response.message,"success")
+                Refresh_Tabs()
+                $("#loading").fadeOut(100)
+            }
+            else{
+                alert(response.message,"danger")
+                $("#loading").fadeOut(100)
+            }
+            load_api()
+            $("#api_edit").fadeOut(100);
+            $("#api_name_add").val("");
+            $("#api_url_add").val("");
         }
     })
 }
@@ -481,6 +644,7 @@ function GetPrompts(id){
     })
 }
 
+
 function prompts(id){
     var value = $("#prompt-single-"+id).val()
     var source_id = $("#prompt-single-"+id).attr("source_id");
@@ -488,43 +652,120 @@ function prompts(id){
     $('#user-input-'+source_id).val(""+value)
 }
 
-function commit_model(id,operate){
-    if ($('#Url'+id).val() == "" || $('#Comment'+id).val() == ""){
+//model
+function commit_model(operate){
+    id = $("#model_id").val()
+    if ($('#model_url').val() == "" || $('#Comment').val() == ""){
         alert('内容不能为空',"warning");
         return;
     }
     $("#loading").fadeIn(100)
-    $('#'+operate+id).attr("disabled",true)
+    $('#'+operate).attr("disabled",true)
     $.ajax({
         url: '/exchange',
         type: 'POST',
         data: {
             state: operate ,
-            number: $('#id'+id).val() ,
-            comment: $('#Comment'+id).val() ,
-            type: $('#Type'+id).val() ,
-            url: $('#Url'+id).val() ,
-            APIkey: $('#APIkey'+id).val() ,
-            LcCompiler: $('#LcCompiler'+id).val() ,
-            LcUrl: $('#LcUrl'+id).val() ,
+            number: $('#model_id_edit').val() ,
+            comment: $('#model_name_edit').val() ,
+            type: $('#model_type_edit').val() ,
+            url: $('#model_url_edit').val() ,
+            APIkey: $('#model_key_edit').val() ,
+            LcCompiler: $('#launch_comp_edit').val() ,
+            LcUrl: $('#launch_path_edit').val() ,
         },
         success: function(response) {
             if (response.response){
                 alert(response.message,"success")
                 Refresh_Tabs()
                 $("#loading").fadeOut(100)
-                $('#'+operate+id).removeAttr("disabled")
             }
             else{
                 alert(response.message,"danger")
                 $("#loading").fadeOut(100)
-                $('#'+operate+id).removeAttr("disabled")
             }
             Refresh_ModelList()
+            $("#model_edit").fadeOut(100);
+            $("#model_name_add").val("");
+            $("#model_url_add").val("");
         }
     });
 }
 
+function launch_model(id){
+    var status = $("#online_status_"+id).attr("online")
+    if (status == 'online'){
+        loading()
+        alert('启动中...','success')
+        $.ajax({
+            url: '/exchange',
+            type: 'POST',
+            data: {
+                state: 'run' ,
+                number: id ,
+                LcCompiler: $("#online_status_"+id).attr("launch_comp") ,
+                LcUrl: $("#online_status_"+id).attr("launch_path") ,
+            },
+            success: function(response) {
+                if (response.response){
+                    alert(response.message,"success")
+                    Refresh_Tabs()
+                    $("#loading").fadeOut(100)
+                }
+                else{
+                    alert(response.message,"danger")
+                    $("#loading").fadeOut(100)
+                }
+                Refresh_ModelList()
+                $("#model_edit").fadeOut(100);
+                $("#model_name_add").val("");
+                $("#model_url_add").val("");
+                
+            }
+        });
+    }
+    if (status == 'offline'){
+        alert('无法启动...','danger')
+    }
+}
+
+function upload_model_add(){
+    if ($('#model_url_add').val() == "" || $('#model_name_add').val() == ""){
+        alert('内容不能为空',"warning");
+        return;
+    }
+    $.ajax({
+        url: '/exchange',
+        type: 'POST',
+        data: {
+            state: "add" ,
+            number: $('#model_id_add').val() ,
+            comment: $('#model_name_add').val() ,
+            type: $('#model_type_add').val() ,
+            url: $('#model_url_add').val() ,
+            APIkey: $('#model_key_add').val() ,
+            LcCompiler: $('#launch_comp_add').val() ,
+            LcUrl: $('#launch_path_add').val() ,
+        },
+        success: function(response){
+            if (response.response){
+                alert(response.message,"success")
+                Refresh_Tabs()
+                $("#loading").fadeOut(100)
+            }
+            else{
+                alert(response.message,"danger")
+                $("#loading").fadeOut(100)
+            }
+            Refresh_ModelList()
+            $("#model_add").fadeOut(100);
+            $("#model_name_add").val("");
+            $("#model_url_add").val("");
+        }
+    })
+}
+
+//stream
 function send_input_stream(id) {
     if ($('#user-input-' + id).val() == ""){
         alert('内容不能为空',"warning");
@@ -546,13 +787,16 @@ function send_input_stream(id) {
         $("#loading").fadeOut(100)
         $('#output-' + id).append('<div class="item item-left"><div class="avatar">\
         <i class="fa fa-user-circle-o"></i></div>\
-        <div class="bubble bubble-left" id="streaming"></div></div>');
+        <div class="bubble bubble-left" id="streaming">\
+        </div></div>');
         for await (const chunk of readChunks(reader)) {
             document.getElementById("streaming").innerHTML = new TextDecoder('utf-8').decode(chunk);
             smoothScroll("output-"+id);
         }
+        $("#streaming").append('<i onclick="copyContext(-1)" class="fa fa-copy"></i>\
+        <i class="fa fa-thumbs-o-up"></i>')
         hljs.highlightAll();
-        $("#streaming").removeAttr("id");
+        $("#streaming").attr("id","context_-1");
     });
 }
 function readChunks(reader) {
@@ -627,21 +871,12 @@ $(document).ready(function() {
 
 // Refresh Data
 function refresh_website(){
-    Refresh_ModelList();
-    Refresh_Tabs();
-    load_active_widgets();
-    load_widgets();
-    load_settings();
+    Refresh_Tabs()
     hljs.highlightAll();
 }
 
 function setup_website(){
-    Refresh_ModelList();
-    Refresh_Tabs();
-    load_active_widgets();
-    load_widgets();
-    load_settings();
-    Get_Version();
+    Refresh_Tabs()
     hljs.highlightAll();
 }
 
@@ -663,7 +898,11 @@ function load_history(id) {
             $('#output-' + id).empty()
             for (i in data){
                 $('#output-' + id).append('<div class="item item-right"><div class="bubble bubble-right" id="high_light_1">' + data[i].UserInput + '</div><div class="avatar"><i class="fa fa-user-circle"></i></div></div>');
-                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left" id="high_light_2">' + data[i].response + '</div></div>');
+                $('#output-' + id).append('<div class="item item-left"><div class="avatar"><i class="fa fa-user-circle-o"></i></div><div class="bubble bubble-left"\
+                id="context_' + data[i].id + '">' + data[i].response + '\
+                <i onclick="copyContext(`' + data[i].id + '`)" class="fa fa-copy"></i>\
+                <i class="fa fa-thumbs-o-up"></i>\
+                </div></div>');
                 smoothScroll("output-"+id);
                 hljs.highlightAll();
                 }
@@ -671,51 +910,70 @@ function load_history(id) {
     })
 }
 
+function copyContext(id){
+    message = $("#context_"+id).text();
+    copyToClip(message);
+}
+
+function copyToClip(content, message) {
+    var aux = document.createElement("input"); 
+    aux.setAttribute("value", content); 
+    document.body.appendChild(aux); 
+    aux.select();
+    document.execCommand("copy"); 
+    document.body.removeChild(aux);
+    if (message == null) {
+        alert("复制成功","success");
+    } else{
+        alert(message);
+    }
+}
+
 function Refresh_ModelList(){
     $.ajax({
         url: '/GetModelList',
         method: "POST",
         success: function(data){
-            $('#ModelTable').empty()
+            $('#model_container_table').empty()
             for (i in data){
-                $('#ModelTable').append('<input type="hidden" id="id'+ data[i].id +'" value='+ data[i].id +'>')
-                $('#ModelTable').append('\
-                <tr id="ModelTr">\
-                    <td>\
-                    <select name="type" id="Type'+ data[i].id +'">\
-                        <option>'+ data[i].type +'</option>\
-                        <option>OpenAI</option>\
-                        <option>WebUI</option>\
-                        <option>API</option>\
-                    </select>\
-                    </td>\
-                    <td> \
-                        <input type="text" name="comment" id="Comment'+ data[i].id +'" placeholder="ChatGLM" value='+ data[i].name +'>\
-                    </td>\
-                    <td>\
-                        <input type="text" class="url" id="Url'+ data[i].id +'" name="url" placeholder="127.0.0.1:8000" value='+ data[i].url +'>\
-                    </td>\
-                    <td>\
-                        <input type="text" class="url" id="APIkey'+ data[i].id +'" name="APIkey" placeholder="sk-qwdjqfooajkash & none" value='+ data[i].api_key +'>\
-                    </td>\
-                    <td>\
-                        <input type="text" class="url" id="LcCompiler'+ data[i].id +'" name="LcCompiler" placeholder=".\venv\python.exe & OpenAI" value='+ data[i].launch_compiler +'>\
-                        <button class="edit" onclick="ReadFile(`LcCompiler' + data[i].id + '`)"><i class="fa fa-folder-open-o"></i></button>\
-                    </td>\
-                    <td>\
-                        <input type="text" class="url" id="LcUrl'+ data[i].id +'" name="LCurl" placeholder="Browse File" value='+ data[i].launch_path +'>\
-                        <button class="edit" onclick="ReadFile(`LcUrl' + data[i].id + '`)"><i class="fa fa-folder-open-o"></i></button>\
-                        </td>\
-                    <td>\
-                        <button class="run" id="run-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`run`)"><i class="fa fa-play"></i></button>\
-                        <button class="stop" id="stop-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`stop`)"><i class="fa fa-stop"></i></button>\
-                    </td>\
-                    <td>\
-                        <button class="edit" id="edit-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`edit`)"><i class="fa fa-edit"></i></button>\
-                    </td>\
-                    <td><button class="deny" id="del-'+ data[i].id +'" value="'+ data[i].id +'" onclick="commit_model('+ data[i].id +',`del`)"><i class="fa fa-trash"></i></button>\
-                    </td>\
-                </tr>')
+                $('#model_container_table').append(
+                '<li class="ele" draggable="true" id="'+ data[i].id +'">\
+                    <div style="width: 70%;float:left;">\
+                        <span><div class="model_title">'+ data[i].name +'</div></span>\
+                        <span><div class="model_subtitle">'+ data[i].url +'</div></span>\
+                    </div>\
+                    <i class="fa fa-info"\
+                    id="model_'+ data[i].id +'" \
+                    model_type="'+ data[i].type +'"  \
+                    model_name="'+ data[i].name +'" \
+                    model_url="'+ data[i].url +'" \
+                    model_key="'+ data[i].api_key + '"\
+                    model_launch_comp="'+ data[i].launch_compiler +'"\
+                    model_launch_path="'+ data[i].launch_path +'"\
+                    model_available="' + data[i].available + '" \
+                    onclick="show_model_edit('+ data[i].id +')"></i>\
+                    <i id="online_status_'+ data[i].id +'" \
+                    model="'+ data[i].id +'" \
+                    onclick="launch_model('+ data[i].id +')" \
+                    class="fa fa-circle-o active_status" \
+                    launch_comp="'+ data[i].launch_compiler +'"\
+                    launch_path="'+ data[i].launch_path +'"\
+                    online=""></i>\
+                    </li>'
+                )
+                if (data[i].launch_path != '/' && data[i].launch_path != ''){
+                    $('#online_status_'+data[i].id).addClass("fa-circle")
+                    $('#online_status_'+data[i].id).removeClass("fa-circle-o")
+                    $('#online_status_'+data[i].id).addClass("active_status")
+                    $('#online_status_'+data[i].id).removeClass("deactive_status")
+                    $('#online_status_'+data[i].id).attr("online","online")
+                }
+                else{
+                    $('#online_status_'+data[i].id).removeClass("active_status")
+                    $('#online_status_'+data[i].id).addClass("deactive_status")
+                    $('#online_status_'+data[i].id).attr("online","offline")
+                }
+
             }
         }
     })
@@ -735,7 +993,8 @@ function Refresh_Tabs(){
                 <span>'+ data[i].comment +'</span>\
                 <i class="fa fa-close close" onclick="Close_session('+ data[i].id +')"></i>\
                 </li>')
-                if (data[i].model_type == "OpenAI" || data[i].model_type == "API"){
+                if (data[i].model_type != "WebUI"){
+                    alert(data[i].model_type)
                     $("#Contents").append('\
                     <div class="dialogbox_container" id='+ data[i].id +'>\
                         <div class="content" id="output-'+ data[i].id +'"></div>\
@@ -767,7 +1026,7 @@ function Refresh_Tabs(){
                     <span>'+ data[i].comment +'</span>\
                     <i class="fa fa-close close" onclick="Close_session('+ data[i].id +')"></i>\
                     </li>')
-                    if (data[i].model_type == "OpenAI" || data[i].model_type == "API"){
+                    if (data[i].model_type != "WebUI"){
                         $("#Contents").append('\
                         <div class="dialogbox_container" id='+ data[i].id +' style="display: none;">\
                             <div class="content" id="output-'+ data[i].id +'"></div>\
@@ -827,13 +1086,44 @@ function load_active_widgets(){
             $("#widgets_container_live").empty()
             for (i in data){
                 $("#widgets_container_live").append('\
-                <div class="widgets_contentbox medium">\
-                    <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
+                <div id="widgets_window_'+ data[i].id +'" class="widgets_contentbox '+ data[i].size +'">\
+                    <div class="widgets_bar">\
+                        <i class="fa fa-minus" onclick="change_widgets('+ data[i].id +',`small`)"></i>\
+                        <i class="fa fa-window-maximize" onclick="change_widgets('+ data[i].id +',`medium`)"></i>\
+                        <i class="fa fa-plus" onclick="change_widgets('+ data[i].id +',`large`)"></i>\
+                    </div>\
+                    <div style="height: 90%;">\
+                        <iframe src='+ data[i].widgets_url +' frameborder=0></iframe>\
+                    </div>\
                 </div>\
                 ')
             }
         }
     })
+}
+
+function change_widgets(id,target){
+    $("#widgets_window_"+id).removeClass("medium")
+    $("#widgets_window_"+id).removeClass("large")
+    $("#widgets_window_"+id).removeClass("small")
+    $("#widgets_window_"+id).addClass(target)
+}
+
+function change_widgets_pre(id,target){
+    $("#"+id).removeClass("medium")
+    $("#"+id).removeClass("large")
+    $("#"+id).removeClass("small")
+    $("#"+id+"_button_small").removeClass("active")
+    $("#"+id+"_button_medium").removeClass("active")
+    $("#"+id+"_button_large").removeClass("active")
+    $("#"+id+"_button_"+target).addClass("active")
+    $("#"+id+"_val").val(target)
+    $("#"+id).addClass(target)
+}
+
+function preview_widgets(pre,input){
+    input_url = $("#"+input).val()
+    $("#"+pre).attr("src",input_url)
 }
 
 function load_widgets(){
@@ -850,8 +1140,39 @@ function load_widgets(){
                         <span><div class="widgets_subtitle">'+ data[i].widgets_url +'</div></span>\
                     </div>\
                     <i class="fa fa-bars"></i>\
-                    <i class="fa fa-info" id="widgets_'+ data[i].id +'" widgets_name="'+ data[i].widgets_name +'"\
-                    widgets_url="'+ data[i].widgets_url +'" widgets_available="' + data[i].available + '" onclick="show_widgets_edit('+ data[i].id +')"></i>\
+                    <i class="fa fa-info"\
+                    id="widgets_'+ data[i].id +'"\
+                    widgets_name="'+ data[i].widgets_name +'"\
+                    widgets_url="'+ data[i].widgets_url +'"\
+                    widgets_size="'+ data[i].size +'"\
+                    widgets_available="' + data[i].available + '"\
+                    onclick="show_widgets_edit('+ data[i].id +')"\
+                    ></i>\
+                </li>\
+                ')
+            }
+        }
+    })
+}
+
+function load_api(){
+    $.ajax({
+        url: "/GetAPIs",
+        method: "POST",
+        success: function(data){
+            $("#api_container").empty()
+            for (i in data){
+                $("#api_container").append('\
+                <li class="ele" draggable="true" id="'+ data[i].id +'">\
+                    <div style="width: 70%;float:left;">\
+                        <span><div class="api_title">'+ data[i].requestFunctionName +'</div></span>\
+                    </div>\
+                    <i class="fa fa-bars"></i>\
+                    <i class="fa fa-info"\
+                    id="api_'+ data[i].id +'"\
+                    api_name="'+ data[i].requestFunctionName +'"\
+                    onclick="show_api_edit('+ data[i].id +')"\
+                    ></i>\
                 </li>\
                 ')
             }
@@ -888,6 +1209,7 @@ function save_settings(){
             alert("部分更改将在重启程序后生效","warning")
             load_settings()
         }
+        setup_website()
     }
     })
 }
@@ -1020,3 +1342,7 @@ function _css(el, prop, val) {
         }
     }
 }
+
+window.onload = function() {
+
+  }

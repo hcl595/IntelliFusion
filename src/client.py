@@ -1,4 +1,4 @@
-# main.py | Intellifusion Version 0.2.0(2023082412000) Developer Alpha
+# main.py | Intellifusion Version 0.3.0(2024102412000) Developer Alpha
 # headers
 from setup import setup
 setup()
@@ -16,10 +16,12 @@ from concurrent.futures import ProcessPoolExecutor
 from tkinter.filedialog import askopenfilename
 
 import jieba
-import openai
+import ollama
+from zhipuai import *
 import psutil
 import validators
 from flask import Flask, stream_with_context, json, jsonify, render_template, request
+# from flask_socketio import SocketIO
 from flaskwebgui import FlaskUI
 from loguru import logger
 from playhouse.shortcuts import model_to_dict
@@ -27,7 +29,8 @@ from thefuzz import fuzz, process
 from peewee import fn
 
 from config import Prompt, Settings
-from data import History, Models, Widgets, Sessions
+from data import History, Models, Widgets, Sessions, APIs
+# from LunaExtractor import extract_codeblock, write_pyFile
 from models import *
 
 pool = ThreadPoolExecutor()
@@ -39,6 +42,7 @@ from setup import APP_DIR
 DATA_DIR = APP_DIR / "data"
 DICT_DIR = APP_DIR / "dicts" / "dict.txt"
 LOG_FILE = DATA_DIR / "models.log"
+LUNA_FILE = APP_DIR / "LunaAutoSetup.py"
 
 # setup
 jieba.set_dictionary(DICT_DIR)
@@ -51,21 +55,49 @@ pmt = Prompt()
 # main
 @app.route("/")  # 根目录
 def root():
+    for om in ollama.list().models:
+        if  [model_to_dict(models) for models in Models.select().where(Models.api_key == om.size)] != []:
+            logger.debug("test", )
+        else:
+            Models.create(
+            type='Ollama',
+            name=om.model,
+            url='http://127.0.0.1:11434',
+            api_key=om.size,
+            launch_compiler="localhost",
+            launch_path="localhost",
+            )
     return render_template("main.html")
 
 
 @app.post("/request_models_stream")
 @stream_with_context
 def request_models_stream():
-    InputInfo = request.form.get("userinput")
+    InputInfo = request.form["userinput"]
     InputModel = request.form["modelinput"]
     if Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).type == "OpenAI":
         try:
             Model_response = request_OpenAI(SessionID=InputModel, Userinput=InputInfo, stream=True)
             for r in Model_response:
                 yield r
-        except openai.error.AuthenticationError:
+        except:
+            raise
+    elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).type == "ZhipuAI":
+        try:
+            Model_response = request_ZhipuAI(SessionID=InputModel, Userinput=InputInfo, stream=True)
+            for r in Model_response:
+                yield r
+        except ZhipuAIError.AuthenticationError:
             yield "Check Your API Key"
+        except:
+            raise
+    elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).type == "Ollama":
+        try:
+            Model_response = request_Ollama(SessionID=InputModel, Userinput=InputInfo, stream=True)
+            for r in Model_response:
+                yield r
+        except:
+            raise
     else:
         r = request_Json(SessionID=InputModel, Userinput=InputInfo,)
         yield r
@@ -77,7 +109,18 @@ def GetModelList():
         ModelList = Models.select()
     except:
         ModelList = {}
+        
     ModelList_json = [model_to_dict(Model) for Model in ModelList]
+    # for m in ollama.list().models:
+    #     m_json={"id":m.size, 
+    #             "api_key":"not_required",
+    #             "launch_compiler":"localhost",
+    #             'launch_path': 'localhost',
+    #             'name': m.model,
+    #             'type': 'Ollama',
+    #             'url': 'http://127.0.0.1:11434'
+    #             }
+    #     ModelList_json.append(m_json)
     logger.info("{}", ModelList_json)
     return jsonify(ModelList_json)
 
@@ -120,10 +163,9 @@ def GetActiveModels():
             ModelList = Sessions.select().order_by(Sessions.order)
         except:
             ModelList = {}
-        ModelList_json = [model_to_dict(Model) for Model in ModelList]
-        logger.info("{}", ModelList_json)
-        return jsonify(ModelList_json)
-
+        SessionList_json = [model_to_dict(Model) for Model in ModelList]
+        logger.info("{}", SessionList_json)
+        return jsonify(SessionList_json)
 
 
 @app.post("/GetModelForSession")
@@ -164,6 +206,7 @@ def Close_Session():
     logger.debug(request.form["model_id"])
     u = Sessions.get(Sessions.id ==  session_id)
     u.delete_instance()
+    History.delete().where(History.session_id == session_id).execute()
     return jsonify({"response": True,
                     "message": "关闭成功"})
 
@@ -213,7 +256,12 @@ def AddModel():
                             "message":"运行失败,原因:请输入正确的启动方式",})
         else:
             launchCMD = request.form.get("LcCompiler") + " " + request.form.get("LcUrl")
-            pool.submit(subprocess.run, launchCMD)
+            with ProcessPoolExecutor() as p:
+                try:
+                    p.submit(subprocess.run, launchCMD)
+                except psutil.AccessDenied:
+                    return jsonify({"response": False,
+                                    "message":"运行失败,原因:权限不足",})
             count = 0
             while True:
                 for conn in psutil.net_connections():
@@ -290,6 +338,7 @@ def edit_widgets():
     widgets_id = request.form.get("id")
     widgets_name = request.form.get("name")
     widgets_url = request.form.get("url")
+    widgets_size = request.form.get("size")
     available = request.form.get("ava")
     if widgets_id == "-1":
         try:
@@ -298,6 +347,7 @@ def edit_widgets():
                 widgets_name = widgets_name,
                 widgets_url = widgets_url,
                 available = available,
+                size = widgets_size,
             )
             w.save()
             return jsonify({"response": True, "message": "添加成功"})
@@ -310,6 +360,7 @@ def edit_widgets():
                     Widgets.widgets_name: widgets_name,
                     Widgets.widgets_url: widgets_url,
                     Widgets.available: available,
+                    Widgets.size: widgets_size,
                 }).where(Widgets.id == widgets_id)
                 u.execute()
                 return jsonify({"response": True, "message": "更改成功"})
@@ -319,9 +370,9 @@ def edit_widgets():
             try:
                 w = Widgets.get(Widgets.id == widgets_id)
                 w.delete_instance()
-                return jsonify({"response": True, "message": "更改成功"})
+                return jsonify({"response": True, "message": "删除成功"})
             except:
-                return jsonify({"response": False, "message": "更改失败"})
+                return jsonify({"response": False, "message": "删除失败"})
 
 
 @app.post("/EditWidgetsOrder")
@@ -331,6 +382,53 @@ def EditWidgetsOrder():
     }).where(Widgets.id == request.form.get("id"))
     Temp.execute()
     return jsonify({"response":True,})
+
+@app.post("/GetAPIs")
+def GetAPIs():
+    Apis = APIs.select()
+    APIJson = [model_to_dict(requestFunctionName) for requestFunctionName in Apis]
+    logger.debug(APIJson)
+    return jsonify(APIJson)
+
+@app.post("/editAPIs")
+def edit_APIs():
+    APIs_id = request.form.get("id")
+    APIs_name = request.form.get("name")
+    APIs_url = request.form.get("url")
+    if request.form.get("operation") == "edit":
+        try:
+            u = APIs.update({
+                APIs.requestFunctionName: APIs_name,
+            }).where(APIs.id == APIs_id)
+            u.execute()
+            return jsonify({"response": True, "message": "更改成功"})
+        except:
+            return jsonify({"response": False, "message": "更改失败"})
+    elif request.form.get("operation") == "del":
+        try:
+            w = APIs.get(APIs.id == APIs_id)
+            w.delete_instance()
+            return jsonify({"response": True, "message": "删除成功"})
+        except:
+            return jsonify({"response": False, "message": "删除失败"})
+
+
+@app.post("/AddAPIs")
+def add_APIs():
+    APIName = request.form.get("name")
+    APIUrl = request.form.get("url")
+    # if 
+    # write_pyFile(APIUrl,LUNA_FILE)
+    try:
+        APIs.create(
+            requestFunctionName = APIName,
+        )
+        return jsonify({"response": True,
+                        "message": "添加成功"})
+    except:
+        return jsonify({"response": False,
+                        "message": "添加失败"})
+
 
 
 @app.post("/EditSetting")  # 编辑设置
@@ -369,7 +467,7 @@ def Prompts():
         keywords = jieba.lcut_for_search(userinput)
         keywords = " ".join(keywords)
         result = process.extract(
-            keywords, prompt.keys(), limit=5, scorer=fuzz.partial_token_sort_ratio
+            keywords, prompt.keys(), limit=3, scorer=fuzz.partial_token_sort_ratio
         )
         result = {t:prompt[t] for (t,_) in result}
     else:
@@ -402,7 +500,7 @@ app.register_blueprint(widgets_blue)
 
 # class
 class Message(TypedDict):
-    role: Literal["admin"] | Literal["user"]
+    role: str
     content: str
 
 # functions

@@ -5,9 +5,8 @@ import json
 
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
-CONFIG_FILE = DATA_DIR / "config.0.4.1.alpha.json"
-LOG_FILE = DATA_DIR / "models.log"
-LUNA_FILE = APP_DIR / "LunaAutoSetup.py"
+CONFIG_FILE = DATA_DIR / "api_config.0.4.1.alpha.json"
+LOG_FILE = DATA_DIR / "api_models.log"
 
 def setup():
         if not DATA_DIR.exists():
@@ -23,7 +22,6 @@ def setup():
                     "Version" : "0.4.1.alpha",
                 },
                 "BaseConfig": {
-                    "Theme": "light",
                     "Develop": "False",
                     "ActiveExamine": "True",
                     "TimeOut": 60, 
@@ -40,7 +38,7 @@ def setup():
         from config import Settings
         setting = Settings()
         Version = setting.read("package","Version")
-        DATABASE_FILE = DATA_DIR / f"data.{Version}.sqlite"
+        DATABASE_FILE = DATA_DIR / f"api_data.{Version}.sqlite"
         if not DATABASE_FILE.exists():
             SetupDatabase()
             logger.info("Database is created successfully!")
