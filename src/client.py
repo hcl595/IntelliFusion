@@ -55,6 +55,18 @@ pmt = Prompt()
 # main
 @app.route("/")  # 根目录
 def root():
+    for om in ollama.list().models:
+        if  [model_to_dict(models) for models in Models.select().where(Models.api_key == om.size)] != []:
+            logger.debug("test", )
+        else:
+            Models.create(
+            type='Ollama',
+            name=om.model,
+            url='http://127.0.0.1:11434',
+            api_key=om.size,
+            launch_compiler="localhost",
+            launch_path="localhost",
+            )
     return render_template("main.html")
 
 
@@ -99,18 +111,16 @@ def GetModelList():
         ModelList = {}
         
     ModelList_json = [model_to_dict(Model) for Model in ModelList]
-    for m in ollama.list().models:
-        m_json={"id":m.size, 
-                "api_key":"not_required",
-                "launch_compiler":"localhost",
-                'launch_path': 'localhost',
-                'name': m.model,
-                'type': 'Ollama',
-                'url': 'http://127.0.0.1:11434'
-                }
-        ModelList_json.append(m_json)
-        
-        
+    # for m in ollama.list().models:
+    #     m_json={"id":m.size, 
+    #             "api_key":"not_required",
+    #             "launch_compiler":"localhost",
+    #             'launch_path': 'localhost',
+    #             'name': m.model,
+    #             'type': 'Ollama',
+    #             'url': 'http://127.0.0.1:11434'
+    #             }
+    #     ModelList_json.append(m_json)
     logger.info("{}", ModelList_json)
     return jsonify(ModelList_json)
 
