@@ -102,8 +102,8 @@ def GetModelList():
     for m in ollama.list().models:
         m_json={"id":m.size, 
                 "api_key":"not_required",
-                "launch_compiler":"",
-                'launch_path': '/',
+                "launch_compiler":"localhost",
+                'launch_path': 'localhost',
                 'name': m.model,
                 'type': 'Ollama',
                 'url': 'http://127.0.0.1:11434'
@@ -153,9 +153,9 @@ def GetActiveModels():
             ModelList = Sessions.select().order_by(Sessions.order)
         except:
             ModelList = {}
-        ModelList_json = [model_to_dict(Model) for Model in ModelList]
-        logger.info("{}", ModelList_json)
-        return jsonify(ModelList_json)
+        SessionList_json = [model_to_dict(Model) for Model in ModelList]
+        logger.info("{}", SessionList_json)
+        return jsonify(SessionList_json)
 
 
 @app.post("/GetModelForSession")
