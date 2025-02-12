@@ -5,7 +5,7 @@ import json
 
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR / "data"
-CONFIG_FILE = DATA_DIR / "config.0.4.1.alpha.json"
+CONFIG_FILE = DATA_DIR / "config.0.5.1.alpha.json"
 LOG_FILE = DATA_DIR / "models.log"
 LUNA_FILE = APP_DIR / "LunaAutoSetup.py"
 
@@ -20,7 +20,7 @@ def setup():
             logger.info("create config.json")
             data = {
                 "package": {
-                    "Version" : "0.4.1.alpha",
+                    "Version" : "0.5.1.alpha",
                 },
                 "BaseConfig": {
                     "Theme": "light",

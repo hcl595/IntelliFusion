@@ -159,21 +159,30 @@ function show_model_edit(id) {
     var url = $("#model_"+id).attr("model_url")
     var type = $("#model_"+id).attr("model_type")
     var api_key = $("#model_"+id).attr("model_key")
-    var path = $("#model_"+id).attr("model_launch_path")
-    var comp = $("#model_"+id).attr("model_launch_comp")
-    $("#model_id_edit").val(id)
+    var launchCommand = $("#model_"+id).attr("model_launchcommand")
+    var LunaBool = $("#model_"+id).attr("lunaBool")
+    var StreamBool = $("#model_"+id).attr("streamBool")
     $("#model_type_edit").val(type)
+    // $("#apiType_edit_"+type).selected = true
+    $("#model_id_edit").val(id)
     $("#model_name_edit").val(name)
     $("#model_key_edit").val(api_key)
     $("#model_url_edit").val(url)
-    $("#launch_comp_edit").val(comp)
-    $("#launch_path_edit").val(path)
+    $("#launch_command").val(launchCommand)
+    if (LunaBool == "true"){
+        $("#luna_edit_Checkbox").attr("checked",true)
+    }
+    if (StreamBool == "true"){
+        $("#stream_edit_Checkbox").attr("checked",true)
+    }
+    load_api_list()
 }
 function show_model_add() {
     $("#model_edit").fadeOut(100)
     $("#model_add").fadeIn(100)
     $("#model_name").val("")
     $("#model_url").val("")
+    load_api_list()
 }
 
 function show_widgets_add() {
@@ -502,14 +511,12 @@ function Add_session() {
         alert('内容不能为空',"warning");
         return;
     }
-    comment = $("#session_comment").val()
     $("#session_comment").val("")
     $.ajax({
         url: "/AddSession",
         method: "POST",
         data: {
             model_id: $("#session_model").val(),
-            comment: comment,
         },
         success : function(response){
             if (response.response){
@@ -665,14 +672,16 @@ function commit_model(operate){
         url: '/exchange',
         type: 'POST',
         data: {
+            // TODO database update
             state: operate ,
             number: $('#model_id_edit').val() ,
             comment: $('#model_name_edit').val() ,
             type: $('#model_type_edit').val() ,
             url: $('#model_url_edit').val() ,
             APIkey: $('#model_key_edit').val() ,
-            LcCompiler: $('#launch_comp_edit').val() ,
-            LcUrl: $('#launch_path_edit').val() ,
+            launchCommand: $('#launch_command_edit').val() ,
+            lunaBool: $('#luna_edit').val() ,
+            stream: $('#stream_edit').val() ,
         },
         success: function(response) {
             if (response.response){
@@ -703,8 +712,7 @@ function launch_model(id){
             data: {
                 state: 'run' ,
                 number: id ,
-                LcCompiler: $("#online_status_"+id).attr("launch_comp") ,
-                LcUrl: $("#online_status_"+id).attr("launch_path") ,
+                launchCommand: $("#online_status_"+id).attr("launch_command") ,
             },
             success: function(response) {
                 if (response.response){
@@ -738,14 +746,16 @@ function upload_model_add(){
         url: '/exchange',
         type: 'POST',
         data: {
+            // TODO database update
             state: "add" ,
             number: $('#model_id_add').val() ,
             comment: $('#model_name_add').val() ,
             type: $('#model_type_add').val() ,
             url: $('#model_url_add').val() ,
             APIkey: $('#model_key_add').val() ,
-            LcCompiler: $('#launch_comp_add').val() ,
-            LcUrl: $('#launch_path_add').val() ,
+            launchCommand: $('#launch_command_add').val() ,
+            lunaBool: $("luna_add").val() ,
+            stream: $("stream_add").val() ,
         },
         success: function(response){
             if (response.response){
@@ -933,45 +943,47 @@ function Refresh_ModelList(){
     $.ajax({
         url: '/GetModelList',
         method: "POST",
-        success: function(data){
+        success: function(models){
             $('#model_container_table').empty()
-            for (i in data){
+            for (i in models){
+                // TODO database update
                 $('#model_container_table').append(
-                '<li class="ele" draggable="true" id="'+ data[i].id +'">\
+                '<li class="ele" draggable="true" id="'+ models[i].id +'">\
                     <div style="width: 70%;float:left;">\
-                        <span><div class="model_title">'+ data[i].name +'</div></span>\
-                        <span><div class="model_subtitle">'+ data[i].url +'</div></span>\
+                        <span><div class="model_title">'+ models[i].modelName +'</div></span>\
+                        <span><div class="model_subtitle">'+ models[i].modelRemark +'</div></span>\
                     </div>\
                     <i class="fa fa-info"\
-                    id="model_'+ data[i].id +'" \
-                    model_type="'+ data[i].type +'"  \
-                    model_name="'+ data[i].name +'" \
-                    model_url="'+ data[i].url +'" \
-                    model_key="'+ data[i].api_key + '"\
-                    model_launch_comp="'+ data[i].launch_compiler +'"\
-                    model_launch_path="'+ data[i].launch_path +'"\
-                    model_available="' + data[i].available + '" \
-                    onclick="show_model_edit('+ data[i].id +')"></i>\
-                    <i id="online_status_'+ data[i].id +'" \
-                    model="'+ data[i].id +'" \
-                    onclick="launch_model('+ data[i].id +')" \
+                    id="model_'+ models[i].id +'" \
+                    model_type="'+ models[i].apiType +'"  \
+                    model_name="'+ models[i].modelName +'" \
+                    model_name="'+ models[i].modelRemark +'" \
+                    model_url="'+ models[i].requestUrl +'" \
+                    model_key="'+ models[i].apiKey + '"\
+                    model_launch_command="'+ models[i].launchCommand +'"\
+                    lunaBool="'+ models[i].lunaBool +'"\
+                    streamBool="'+ models[i].stream +'"\
+                    model_available="' + models[i].available + '" \
+                    onclick="show_model_edit('+ models[i].id +')"></i>\
+                    <i id="online_status_'+ models[i].id +'" \
+                    model="'+ models[i].id +'" \
+                    onclick="launch_model('+ models[i].id +')" \
                     class="fa fa-circle-o active_status" \
-                    launch_comp="'+ data[i].launch_compiler +'"\
-                    launch_path="'+ data[i].launch_path +'"\
+                    launch_command="'+ models[i].launchCommand +'"\
                     online=""></i>\
                     </li>'
                 )
-                if (data[i].launch_path != '/' && data[i].launch_path != ''){
-                    $('#online_status_'+data[i].id).addClass("fa-circle")
-                    $('#online_status_'+data[i].id).removeClass("fa-circle-o")
-                    $('#online_status_'+data[i].id).addClass("active_status")
-                    $('#online_status_'+data[i].id).removeClass("deactive_status")
-                    $('#online_status_'+data[i].id).attr("online","online")
+                if (models[i].launchCommand != ''){
+                    $('#online_status_'+models[i].id).addClass("fa-circle")
+                    $('#online_status_'+models[i].id).removeClass("fa-circle-o")
+                    $('#online_status_'+models[i].id).addClass("active_status")
+                    $('#online_status_'+models[i].id).removeClass("deactive_status")
+                    $('#online_status_'+models[i].id).attr("online","online")
                 }
                 else{
-                    $('#online_status_'+data[i].id).removeClass("active_status")
-                    $('#online_status_'+data[i].id).addClass("deactive_status")
-                    $('#online_status_'+data[i].id).attr("online","offline")
+                    $('#online_status_'+models[i].id).removeClass("active_status")
+                    $('#online_status_'+models[i].id).addClass("deactive_status")
+                    $('#online_status_'+models[i].id).attr("online","offline")
                 }
 
             }
@@ -1155,6 +1167,25 @@ function load_widgets(){
     })
 }
 
+function load_api_list (){
+    $.ajax({
+        url: "/GetAPIList",
+        method: "POST",
+        success: function(api){
+            $("#model_type_add").empty()
+            $("#model_type_edit").empty()
+            for (i in api){
+                $("#model_type_add").append('\
+                    <option value="'+ api[i].requestFunctionName +'" >'+ api[i].requestFunctionName +'</option>\
+                ')
+                $("#model_type_edit").append('\
+                    <option value="'+ api[i].requestFunctionName +'" >'+ api[i].requestFunctionName +'</option>\
+                ')
+            }
+        }
+    })
+}
+
 function load_api(){
     $.ajax({
         url: "/GetAPIs",
@@ -1179,6 +1210,7 @@ function load_api(){
         }
     })
 }
+
 
 function switch_load(id){
     var now_value = $("#"+id).val()
