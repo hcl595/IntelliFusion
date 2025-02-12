@@ -57,11 +57,11 @@ class Sessions(BaseModel):
 def SetupDatabase():
     db.create_tables([Models,Widgets,History,Sessions,APIs])
     BasicModel = Models(
-        apiType="ollama",
-        modelName="deepseek-r1:7b",
-        requestUrl="http://ollama.test.argonserver.net/",
-        lunaBool=True,
-        stream=True,
+        apiType="json",
+        modelName="Luna",
+        requestUrl="http://127.0.0.1:4230/",
+        lunaBool=False,
+        stream=False,
     )
     BasicModel.save()
     DefaultSession = Sessions(
