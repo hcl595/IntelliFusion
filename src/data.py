@@ -19,13 +19,15 @@ class BaseModel(Model):
         database = db
 
 class Models(BaseModel):
-    api_key = IntegerField(column_name="APIkey", null=True, default="/")#To request Model
-    # display = CharField(column_name="Display", null=True, default="/")
-    launch_compiler = CharField(column_name="LaunchCompiler", null=True, default="/")#To start model
-    launch_path = CharField(column_name="LaunchPath", null=True, default="/")#To start model
-    name = CharField()#Default Comment
-    type = CharField()#To request Model
-    url = CharField()#To request Model
+    apiKey = IntegerField(null=True, default="not_required")#To request Model
+    launchCommand = CharField(null=True, default="")#To start model
+    stream = BooleanField(null=True, default=True)#whether stream
+    lunaBool = BooleanField(null=True, default=True)#whether participant luna model
+    ollamaBool = BooleanField(null=True  , default=False)#whether add from ollama
+    modelName = CharField()#Default Comment
+    modelRemark = CharField(null=True  , default="")#Default Comment
+    apiType = CharField()#To request Model
+    requestUrl = CharField()#To request Model
 
     class Meta:
         table_name = 'models'
@@ -49,31 +51,36 @@ class Sessions(BaseModel):
     #Session.id To History.session_id
     order = IntegerField(null=True) #Ordered Sessions
     model_id = CharField() #From Models.id
-    comment = CharField() #To Tab's Text
-    model_url = CharField() #From Models.url
-    model_type = CharField() #From Models.type
+    comment = CharField(default="comment") #To Tab's Text
+    modelSummary = BooleanField(default=True) #To Tab's Text
 
 def SetupDatabase():
     db.create_tables([Models,Widgets,History,Sessions,APIs])
-    BaseModel = Models(
-        order=1,
-        type="openai",
-        name="gpt-3.5-turbo",
-        url="https://ai.fakeopen.com/v1",
-        api_key="/",
-        launch_compiler="/",
-        launch_path="/",
+    BasicModel = Models(
+        apiType="json",
+        modelName="Luna",
+        requestUrl="http://127.0.0.1:4230/",
+        lunaBool=False,
+        stream=False,
     )
-    BaseModel.save()
+    BasicModel.save()
     DefaultSession = Sessions(
+        order = 1,
         model_id = 1,
         comment = "DefaultSession",
-        model_url = "https://ai.fakeopen.com/v1",
-        model_type = "openai",
+        modelSummary=True,
     )
     DefaultSession.save()
     DefaultAPI = APIs(
         requestFunctionName = "openai",
+    )
+    DefaultAPI.save()
+    DefaultAPI = APIs(
+        requestFunctionName = "ollama",
+    )
+    DefaultAPI.save()
+    DefaultAPI = APIs(
+        requestFunctionName = "json",
     )
     DefaultAPI.save()
     BaseWidgets = Widgets(

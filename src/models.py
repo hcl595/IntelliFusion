@@ -12,32 +12,25 @@ class Message(TypedDict):
     role: str
     content: str
 
-def create_session(comment:str, model_id:int):
+def create_session(model_id:int, model_summary:bool = True,):
     '''
     comment是输入时的备注 用于给会话命名
     model_id是输入会话所使用的模型在数据库中的ID
     '''
-    if comment is None or model_id is None:
+    if model_id is None:
         raise ValueError
-    try:
-        # 创建会话
-        Sessions.create(
-            comment = comment,
-            model_id = model_id,
-            model_type = Models.get(Models.id == model_id).type,
-            model_url = Models.get(Models.id == model_id).url,
-            )
-        return Sessions.get(fn.MAX(Sessions.id)).id
-    except:
-        try:
-            # Sessions数据库出现错误
-            try:
-                Models.get(Models.id == model_id).type
-            except:
-                raise Sessions.DoesNotExist
-        except:
-            # Models数据库出现错误
-            raise Models.DoesNotExist
+    if model_summary:
+        model_comment = "model generated comment"
+        model_summary = False
+    else:
+        model_comment = Models.get(Models.id == model_id).modelName
+    # 创建会话
+    Sessions.create(
+        model_id = model_id,
+        modelSummary = model_summary,
+        comment = model_comment,
+        )
+    return Sessions.get(fn.MAX(Sessions.id)).id
 
 def request_OpenAI(SessionID: int, Userinput: str,stream: bool = True):
     '''
@@ -235,14 +228,14 @@ def request_Ollama(SessionID: int, Userinput: str,stream: bool = True):
                 yield response_out
             else:
                 yield "I'm a chat robot, How can I assist you today?"
-        # else:
-        #     if hasattr(chunk.choices[0].delta, "content"):
-        #         print(chunk.choices[0].delta.content, end="", flush=True)
-        #         response = chunk.choices[0].delta.content
-        #         response = mistune.html(response)
-        #         return response
-        #     else:
-        #         return "I'm a chat robot, How can I assist you today?"
+        else:
+            if hasattr(chunk.choices[0].delta, "content"):
+                print(chunk.choices[0].delta.content, end="", flush=True)
+                response = chunk.choices[0].delta.content
+                response = mistune.html(response)
+                return response
+            else:
+                return "I'm a chat robot, How can I assist you today?"
 
     #Save conversation
     History.create(

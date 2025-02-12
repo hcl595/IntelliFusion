@@ -55,18 +55,24 @@ pmt = Prompt()
 # main
 @app.route("/")  # 根目录
 def root():
-    for om in ollama.list().models:
-        if  [model_to_dict(models) for models in Models.select().where(Models.api_key == om.size)] != []:
-            logger.debug("test", )
-        else:
-            Models.create(
-            type='Ollama',
-            name=om.model,
-            url='http://127.0.0.1:11434',
-            api_key=om.size,
-            launch_compiler="localhost",
-            launch_path="localhost",
-            )
+    # TODO update database
+    try:
+        for om in ollama.list().models:
+            if  [model_to_dict(models) for models in Models.select().where(Models.ollamaBool == True and Models.modelName == om.model)] != []:
+                pass
+            else:
+                Models.create(
+                apiType='ollama',
+                modelName=om.model,
+                requestUrl='http://127.0.0.1:11434',
+                apiKey='not required',
+                launchCommand="",
+                lunaBool=True,
+                stream=True,
+                ollamaBool=True,
+                )
+    except:
+        pass
     return render_template("main.html")
 
 
@@ -75,25 +81,25 @@ def root():
 def request_models_stream():
     InputInfo = request.form["userinput"]
     InputModel = request.form["modelinput"]
-    if Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).type == "OpenAI":
+    if Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).apiType == "OpenAI":
         try:
-            Model_response = request_OpenAI(SessionID=InputModel, Userinput=InputInfo, stream=True)
+            Model_response = request_OpenAI(SessionID=InputModel, Userinput=InputInfo, stream=Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).stream)
             for r in Model_response:
                 yield r
         except:
             raise
-    elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).type == "ZhipuAI":
+    elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).apiType == "ZhipuAI":
         try:
-            Model_response = request_ZhipuAI(SessionID=InputModel, Userinput=InputInfo, stream=True)
+            Model_response = request_ZhipuAI(SessionID=InputModel, Userinput=InputInfo, stream=Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).stream)
             for r in Model_response:
                 yield r
         except ZhipuAIError.AuthenticationError:
             yield "Check Your API Key"
         except:
             raise
-    elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).type == "Ollama":
+    elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).apiType == "Ollama":
         try:
-            Model_response = request_Ollama(SessionID=InputModel, Userinput=InputInfo, stream=True)
+            Model_response = request_Ollama(SessionID=InputModel, Userinput=InputInfo, stream=Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).stream)
             for r in Model_response:
                 yield r
         except:
@@ -111,16 +117,6 @@ def GetModelList():
         ModelList = {}
         
     ModelList_json = [model_to_dict(Model) for Model in ModelList]
-    # for m in ollama.list().models:
-    #     m_json={"id":m.size, 
-    #             "api_key":"not_required",
-    #             "launch_compiler":"localhost",
-    #             'launch_path': 'localhost',
-    #             'name': m.model,
-    #             'type': 'Ollama',
-    #             'url': 'http://127.0.0.1:11434'
-    #             }
-    #     ModelList_json.append(m_json)
     logger.info("{}", ModelList_json)
     return jsonify(ModelList_json)
 
@@ -132,14 +128,14 @@ def GetActiveModels():
     ActiveSessions = []
     if cfg.read("BaseConfig","ActiveExamine") == "True":
         for i in ModelList:
-            if validators.url(i.url):
-                host = urlparse(i.url).hostname
+            if validators.url(i.requestUrl):
+                host = urlparse(i.requestUrl).hostname
                 logger.info("{}",host)
                 try:
                     ipaddress.ip_address(host)
                 except:
                     ActiveModels_ID.append(i.id)
-        model_ports = {port: m for m in ModelList if (port := urlparse(m.url).port)}
+        model_ports = {port: m for m in ModelList if (port := urlparse(m.requestUrl).port)}
         try:
             for conn in psutil.net_connections():
                 port = conn.laddr.port
@@ -174,7 +170,7 @@ def GetModelForSession():
     ModelList = []
     ModelDict = []
     for m in Model:
-        ModelList.append(m.name)
+        ModelList.append(m.modelName)
     for i in Model:
         ModelDict.append(i.id)
     logger.info("{},{}",ModelDict,ModelList)
@@ -184,10 +180,9 @@ def GetModelForSession():
 
 @app.post("/AddSession")
 def add_Session():
-    create_session(comment= request.form["comment"],model_id= request.form["model_id"])
+    create_session(model_id=request.form["model_id"])
     return jsonify({"response": True,
                     "message": "添加成功"})
-
 
 @app.post("/EditSessionOrder")
 def EditSessionOrder():
@@ -198,7 +193,6 @@ def EditSessionOrder():
     }).where(Sessions.id == input_id)
     s.execute()
     return jsonify({"response": True})
-
 
 @app.post("/CloseSession")
 def Close_Session():
@@ -217,10 +211,11 @@ def AddModel():
     InputID = request.form.get("number")
     InputType = request.form.get("type")
     InputComment = request.form.get("comment")
+    InputRemark = request.form.get("remark")
     InputUrl = request.form.get("url")
     InputAPIkey = request.form.get("APIkey")
-    LaunchCompiler = request.form.get("LcCompiler")
-    LaunchPath = request.form.get("LcUrl")
+    LaunchCommand = request.form.get("LcCompiler")
+    LunaBool = request.form.get("Luna")
     try:
         port = int(urlparse(InputUrl).port)
     except:
@@ -228,13 +223,15 @@ def AddModel():
     if InputState == "edit":
         try:
             logger.info("User Inputs: {}, {}, {}", InputType, InputID,InputAPIkey)
+            #TODO update database
             u = Models.update({
-                Models.name: InputComment,
-                Models.url: InputUrl,
-                Models.api_key: InputAPIkey,
-                Models.launch_compiler: LaunchCompiler,
-                Models.launch_path: LaunchPath,
-                Models.type: InputType,
+                Models.modelName: InputComment,
+                Models.modelRemark: InputComment,
+                Models.requestUrl: InputUrl,
+                Models.apiKey: InputAPIkey,
+                Models.launchCommand: LaunchCommand,
+                Models.apiType: InputType,
+                Models.lunaBool: LunaBool,
             }).where(Models.id == InputID)
             u.execute()
             return jsonify({"response": True,
@@ -275,8 +272,7 @@ def AddModel():
                         "Model: {} launch maybe failed,because of Time Out({}),LaunchCompilerPath: {},LaunchFile: {}",
                         InputComment,
                         cfg.read("BaseConfig", "TimeOut"),
-                        LaunchCompiler,
-                        LaunchPath,
+                        LaunchCommand,
                     )
                     return jsonify({"response": False,
                                     "message":"运行失败,原因:超时",})
@@ -295,13 +291,15 @@ def AddModel():
                             "message":"停止失败成功",})
     elif InputState == "add":
         try:
+            #TODO update database
             Models.create(
-                type=InputType,
-                name=InputComment,
-                url=InputUrl,
-                api_key=InputAPIkey,
-                launch_compiler=LaunchCompiler,
-                launch_path=LaunchPath,
+                apiType=InputType,
+                modelName=InputComment,
+                modelRemark=InputRemark,
+                requestUrl=InputUrl,
+                apiKey=InputAPIkey,
+                launchCommand=LaunchCommand,
+                lunaBool=LunaBool,
             )
             return jsonify({"response": True,
                             "message": "添加成功"})
@@ -390,6 +388,14 @@ def GetAPIs():
     logger.debug(APIJson)
     return jsonify(APIJson)
 
+@app.post("/GetAPIList")
+def GetAPIList():
+    Apis = APIs.select()
+    APIJson = [model_to_dict(r) for r in Apis]
+    logger.debug(APIJson)
+    return jsonify(APIJson)
+
+
 @app.post("/editAPIs")
 def edit_APIs():
     APIs_id = request.form.get("id")
@@ -411,7 +417,6 @@ def edit_APIs():
             return jsonify({"response": True, "message": "删除成功"})
         except:
             return jsonify({"response": False, "message": "删除失败"})
-
 
 @app.post("/AddAPIs")
 def add_APIs():

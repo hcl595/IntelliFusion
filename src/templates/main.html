@@ -110,28 +110,41 @@
             <p>名称：</p>
             <input type="name" id="model_name_edit" class="model_name_edit" placeholder="名称" />
             <br>
+            <p>备注：</p>
+            <input type="name" id="model_remark_edit" class="model_name_edit" placeholder="备注(可选)" />
+            <br>
             <p>调用地址：</p>
             <input type="url" id="model_url_edit" class="model_url_edit" placeholder="调用地址" />
             <br>
             <p>调用方式:</p>
+            <p>
             <select id="model_type_edit" class="model_type_edit" name="type">
-                <option selected>OpenAI</option>
-                <option>ZhipuAI</option>
-                <option>WebUI</option>
-                <option>Ollama</option>
-                <option>API</option>
             </select>
-            <br>
-            <p>密钥：</p>
             <input type="url" id="model_key_edit" class="model_key_edit" placeholder="密钥" />
-            <br>
-            <p>高级设置<i class="fa fa-caret-square-o-down" id="model_details_button"></i></p>
-            <div id="model_details" class="" status="off" style="display: none;">
-                <input type="url" id="launch_comp_edit" class="launch_comp_edit" placeholder="调用地址" />
-                <button class="edit_wjj" onclick="ReadFile(`launch_comp_edit`)"><i class="fa fa-folder-open-o"></i></button>
-                <br>
-                <input type="url" id="launch_path_edit" class="launch_path_edit" placeholder="调用地址" />
-                <button class="edit_wjj" onclick="ReadFile(`launch_path_edit`)"><i class="fa fa-folder-open-o"></i></button>
+            </p>
+            <p>高级设置<i class="fa fa-caret-square-o-down" id="model_details_button_add"></i></p>
+            <div id="model_details_add" class="" status="off" style="display: none;">
+                <input type="url" id="launch_command_edit" class="launch_command_edit" placeholder="调用命令行" />
+                <button class="edit_wjj" onclick="ReadFile(`launch_command_edit`)"><i class="fa fa-folder-open-o"></i></button>
+                <br>            
+                <p>Luna调用:</p>
+                <p>
+                    <div class="switch-container">
+                        <input id="luna_edit" type="hidden" value="True">
+                        <input id="luna_edit_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('luna_add')">
+                        <span class="switch-area"></span>
+                        <span class="switch-toggle"></span>
+                    </div>
+                </p>
+                <p>流式传输:</p>
+                <p>
+                    <div class="switch-container">
+                        <input id="stream_edit" type="hidden" value="True">
+                        <input id="stream_edit_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('stream_add')">
+                        <span class="switch-area"></span>
+                        <span class="switch-toggle"></span>
+                    </div>
+                </p>
             </div>
         </div>
         <div class="model_edit_box2">
@@ -145,31 +158,40 @@
         <input type="hidden" id="model_id_edit" value="-1" />
         <br>
         <div class="model_edit_box1">
-            <p>名称：</p>
-            <input type="name" id="model_name_add" class="model_name_edit" placeholder="名称" />
+            <p>*模型名称*</p>
+            <input type="name" id="model_name_add" class="model_name_edit" placeholder="模型名称" />
+            <br>
+            <p>备注(可选)</p>
+            <input type="name" id="model_name_add" class="model_name_edit" placeholder="备注可以为空" />
             <br>
             <p>调用地址：</p>
             <input type="url" id="model_url_add" class="model_url_edit" placeholder="调用地址" />
             <br>
+            <p>
             <p>调用方式:</p>
             <select id="model_type_add" class="model_type_edit" name="type">
-                <option selected>OpenAI</option>
-                <option>ZhipuAI</option>
-                <option>Ollama</option>
-                <option>WebUI</option>
-                <option>API</option>
             </select>
-            <br>
-            <p>密钥：</p>
             <input type="url" id="model_key_add" class="model_key_add" placeholder="密钥" />
+            </p>
             <br>
             <p>高级设置<i class="fa fa-caret-square-o-down" id="model_details_button"></i></p>
             <div id="model_details" class="" status="off" style="display: none;">
-                <input type="url" id="launch_comp_add" class="launch_comp_add" placeholder="调用地址" />
+                <input type="url" id="launch_command_add" class="launch_command_add" placeholder="调用命令" />
                 <button class="edit_wjj" onclick="ReadFile(`launch_comp_add`)"><i class="fa fa-folder-open-o"></i></button>
                 <br>
-                <input type="url" id="launch_path_add" class="launch_path_edit" placeholder="调用地址" />
-                <button class="edit_wjj" onclick="ReadFile(`launch_path_add`)"><i class="fa fa-folder-open-o"></i></button>
+            <p>Luna调用:</p>
+            <div class="switch-container">
+                <input id="luna_add" type="hidden" value="True">
+                <input id="luna_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('luna_add')" checked>
+                <span class="switch-area"></span>
+                <span class="switch-toggle"></span>
+            </div>
+            <p>流式传输:</p>
+            <div class="switch-container">
+                <input id="stream_add" type="hidden" value="True">
+                <input id="stream_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('stream_add')" checked>
+                <span class="switch-area"></span>
+                <span class="switch-toggle"></span>
             </div>
         </div>
         <div class="model_edit_box2">
@@ -177,6 +199,7 @@
             <button class="add_beyond" onclick="upload_model_add()">add</button>
         </div>
     </div>
+</div>
     <!-- TODO: Finish Here -->
 </div>
 
