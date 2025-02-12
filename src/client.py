@@ -56,20 +56,23 @@ pmt = Prompt()
 @app.route("/")  # 根目录
 def root():
     # TODO update database
-    for om in ollama.list().models:
-        if  [model_to_dict(models) for models in Models.select().where(Models.ollamaBool == True and Models.modelName == om.model)] != []:
-            pass
-        else:
-            Models.create(
-            apiType='Ollama',
-            modelName=om.model,
-            requestUrl='http://127.0.0.1:11434',
-            apiKey=om.size,
-            launchCommand="",
-            lunaBool=True,
-            stream=True,
-            ollamaBool=True,
-            )
+    try:
+        for om in ollama.list().models:
+            if  [model_to_dict(models) for models in Models.select().where(Models.ollamaBool == True and Models.modelName == om.model)] != []:
+                pass
+            else:
+                Models.create(
+                apiType='ollama',
+                modelName=om.model,
+                requestUrl='http://127.0.0.1:11434',
+                apiKey='not required',
+                launchCommand="",
+                lunaBool=True,
+                stream=True,
+                ollamaBool=True,
+                )
+    except:
+        pass
     return render_template("main.html")
 
 

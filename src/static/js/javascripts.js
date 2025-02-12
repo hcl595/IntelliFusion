@@ -14,10 +14,14 @@ function ChangeToMainA(){
 }
 function ChangeToModelA(){
     Refresh_ModelList()
+    load_api_list()
     $("#model-box").fadeIn(200)
 }
+// 定义一个函数，用于将设置框显示出来
 function ChangeToSetA(){
+    // 加载设置
     load_settings()
+    // 将设置框淡入显示
     $("#setting-box").fadeIn(200)
 }
 function ChangeToAPIA(){
@@ -162,7 +166,8 @@ function show_model_edit(id) {
     var launchCommand = $("#model_"+id).attr("model_launchcommand")
     var LunaBool = $("#model_"+id).attr("lunaBool")
     var StreamBool = $("#model_"+id).attr("streamBool")
-    $("#model_type_edit").val(type)
+    alert(""+LunaBool)
+    $("#model_type_edit").val(""+type)
     // $("#apiType_edit_"+type).selected = true
     $("#model_id_edit").val(id)
     $("#model_name_edit").val(name)
@@ -175,7 +180,6 @@ function show_model_edit(id) {
     if (StreamBool == "true"){
         $("#stream_edit_Checkbox").attr("checked",true)
     }
-    load_api_list()
 }
 function show_model_add() {
     $("#model_edit").fadeOut(100)
@@ -248,6 +252,23 @@ $(document).ready(function(){
             now = $('#model_details').attr('status',"off")
             $('#model_details_button').removeClass("fa fa-caret-square-o-up")
             $("#model_details_button").addClass("fa fa-caret-square-o-down")
+        }
+    })
+    $("#model_details_button_add").click(function(){
+        now = $('#model_details_add').attr('status')
+        if (now == "off"){
+            $('#model_details_add').fadeIn(300);
+            now = $('#model_details_add').removeAttr('status')
+            now = $('#model_details_add').attr('status',"on")
+            $("#model_details_button_add").removeClass("fa fa-caret-square-o-down")
+            $('#model_details_button_add').addClass("fa fa-caret-square-o-up")
+        }
+        if (now == "on"){
+            $('#model_details_add').fadeOut(300);
+            now = $('#model_details_add').removeAttr('status')
+            now = $('#model_details_add').attr('status',"off")
+            $('#model_details_button_add').removeClass("fa fa-caret-square-o-up")
+            $("#model_details_button_add").addClass("fa fa-caret-square-o-down")
         }
     })
     $("#session_close").click(function(){
@@ -1028,7 +1049,7 @@ function Refresh_Tabs(){
                 if (data[i].model_type == "WebUI"){
                     $("#Contents").append('\
                     <div id='+ data[i].id +'">\
-                        <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].model_url +'"></iframe>\
+                        <iframe allow="autoplay *; encrypted-media *;" src="'+ $("#model_"+data[i].id).attr() +'"></iframe>\
                     </div>')
                 }
                 count = 0
