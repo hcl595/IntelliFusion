@@ -57,7 +57,7 @@ pmt = Prompt()
 def root():
     # TODO update database
     try:
-        for om in ollama.list().models:
+        for om in ollama.Client("127.0.0.1").list().models:
             if  [model_to_dict(models) for models in Models.select().where(Models.ollamaBool == True and Models.modelName == om.model)] != []:
                 pass
             else:
@@ -72,7 +72,7 @@ def root():
                 ollamaBool=True,
                 )
     except:
-        pass
+        raise
     return render_template("main.html")
 
 
@@ -519,28 +519,6 @@ def getfile():
         r = p.submit(askopenfilename)
     str(r)
     return r.result()
-
-if cfg.read("BaseConfig", "Develop") == "True":
-    try:
-        id = Widgets.get(Widgets.widgets_name == "test").id
-    except:
-        w = Widgets(
-            order = 4,
-            widgets_name = "test",
-            widgets_url = "/widgets/test",
-            available = "true",
-        )
-        w.save()
-    
-    @app.route("/test")
-    def getfile_test():
-        out = getfile()
-        logger.debug("{}", out)
-        return render_template("./test.html")
-    
-    @app.route("/offline")
-    def offline():
-        return render_template("offline.html")
 
 # launch
 if __name__ == "__main__":
