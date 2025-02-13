@@ -20,17 +20,26 @@ def create_session(model_id:int, model_summary:bool = True,):
     if model_id is None:
         raise ValueError
     if model_summary:
-        model_comment = "model generated comment"
-        model_summary = False
-    else:
         model_comment = Models.get(Models.id == model_id).modelName
-    # 创建会话
-    Sessions.create(
-        model_id = model_id,
-        modelSummary = model_summary,
-        comment = model_comment,
-        )
-    return Sessions.get(fn.MAX(Sessions.id)).id
+        # 创建会话
+        Sessions.create(
+            model_id = model_id,
+            modelSummary = model_summary,
+            comment = model_comment,
+            )
+        return "Succeed"
+    else:
+        model_comment = "model generated comment"
+        # 创建会话
+        Sessions.create(
+            model_id = model_id,
+            modelSummary = model_summary,
+            comment = model_comment,
+            )
+        model_summary = False
+        return "Succeed"
+
+        
 
 def request_OpenAI(SessionID: int, Userinput: str,stream: bool = True):
     '''

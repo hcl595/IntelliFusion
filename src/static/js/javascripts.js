@@ -528,11 +528,12 @@ function upload_widgets_add(){
 
 
 function Add_session() {
-    if ($("#session_comment").val() == ""){
-        alert('内容不能为空',"warning");
-        return;
-    }
-    $("#session_comment").val("")
+    // if ($("#session_comment").val() == ""){
+    //     alert('内容不能为空',"warning");
+    //     return;
+    // }
+    // $("#session_comment").val("")
+    alert($("#session_model").val())
     $.ajax({
         url: "/AddSession",
         method: "POST",
