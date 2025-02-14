@@ -166,7 +166,6 @@ function show_model_edit(id) {
     var launchCommand = $("#model_"+id).attr("model_launchcommand")
     var LunaBool = $("#model_"+id).attr("lunaBool")
     var StreamBool = $("#model_"+id).attr("streamBool")
-    alert(""+LunaBool)
     $("#model_type_edit").val(""+type)
     // $("#apiType_edit_"+type).selected = true
     $("#model_id_edit").val(id)
@@ -371,7 +370,6 @@ function change_tab(id){
     $("#Tab"+id).addClass("current")
     $('#'+now).fadeOut(1)
     $('#'+id).fadeIn(1)
-    alert(id)
     smoothScroll("output-"+id);
 }
 
@@ -528,12 +526,6 @@ function upload_widgets_add(){
 
 
 function Add_session() {
-    // if ($("#session_comment").val() == ""){
-    //     alert('内容不能为空',"warning");
-    //     return;
-    // }
-    // $("#session_comment").val("")
-    alert($("#session_model").val())
     $.ajax({
         url: "/AddSession",
         method: "POST",
@@ -1014,6 +1006,7 @@ function Refresh_ModelList(){
 }
 
 function Refresh_Tabs(){ 
+    Refresh_ModelList()
     $.ajax({
         url: "/GetActiveModels",
         method: "POST",
@@ -1022,13 +1015,13 @@ function Refresh_Tabs(){
             $("#Contents").empty()
             var count = 1
             for (i in data){
+                alert($("#model_"+data[i].model_id).attr("model_type"),"warning")
                 if (count == 1){
                 $("#tabs").append('<li draggable="true" class="li current" id="Tab'+ data[i].id +'" value='+ data[i].id +' onclick="change_tab('+ data[i].id +')">\
                 <span>'+ data[i].comment +'</span>\
                 <i class="fa fa-close close" onclick="Close_session('+ data[i].id +')"></i>\
                 </li>')
-                if (data[i].model_type != "WebUI"){
-                    alert(data[i].model_type)
+                if ($("#model_"+data[i].model_id).attr("model_type") != "WebUI"){
                     $("#Contents").append('\
                     <div class="dialogbox_container" id='+ data[i].id +'>\
                         <div class="content" id="output-'+ data[i].id +'"></div>\
@@ -1047,10 +1040,10 @@ function Refresh_Tabs(){
                         </div>\
                     </div>')
                 }
-                if (data[i].model_type == "WebUI"){
-                    $("#Contents").append('\
-                    <div id='+ data[i].id +'">\
-                        <iframe allow="autoplay *; encrypted-media *;" src="'+ $("#model_"+data[i].id).attr() +'"></iframe>\
+                if ($("#model_"+data[i].model_id).attr("model_type") == "WebUI"){
+                $("#Contents").append('\
+                    <div id='+ data[i].model_id +'">\
+                        <iframe allow="autoplay *; encrypted-media *;" src="'+ $("#model_"+data[i].model_id).attr("model_url") +'"></iframe>\
                     </div>')
                 }
                 count = 0
@@ -1060,7 +1053,7 @@ function Refresh_Tabs(){
                     <span>'+ data[i].comment +'</span>\
                     <i class="fa fa-close close" onclick="Close_session('+ data[i].id +')"></i>\
                     </li>')
-                    if (data[i].model_type != "WebUI"){
+                    if ($("#model_"+data[i].model_id).attr("model_type") != "WebUI"){
                         $("#Contents").append('\
                         <div class="dialogbox_container" id='+ data[i].id +' style="display: none;">\
                             <div class="content" id="output-'+ data[i].id +'"></div>\
@@ -1078,13 +1071,13 @@ function Refresh_Tabs(){
                             </div>\
                         </div>')
                     }
-                    if (data[i].model_type == "WebUI"){
+                    else {
                         $("#Contents").append('\
                         <div id='+ data[i].id +' style="display: none;" class="iframe_container">\
-                            <iframe allow="autoplay *; encrypted-media *;" src="'+ data[i].model_url +'"></iframe>\
+                            <iframe allow="autoplay *; encrypted-media *;" src="'+ $("#model_"+data[i].model_id).attr("model_url") +'"></iframe>\
                         </div>')
                     }
-                }
+            }
                 load_history(data[i].id)
             }
             $("#session_model").empty()
