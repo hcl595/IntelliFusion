@@ -24,16 +24,16 @@ def setup():
                 },
                 "BaseConfig": {
                     "Theme": "light",
-                    "Develop": "False",
+                    "Develop": "True",
                     "ActiveExamine": "True",
                     "TimeOut": 60, 
                     "Language":"Chinese",
                     },
                 "RemoteConfig": {
                     "Host": "127.0.0.1",
-                    "Port": "0"},
+                    "Port": "5000"},
                 "AdvancedConfig": {
-                    "Luna": "False",
+                    "Luna": "True",
                 },
             }
             with CONFIG_FILE.open("w", encoding="utf-8") as f:

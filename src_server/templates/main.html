@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="static\css\bootstrap.min.css"> <!-- bootstrap.css -->
+<link rel="stylesheet" href="static\css\font-awesome.css"> <!-- font-awesome.css -->
+<script src="..\static\highlight\highlight.min.js"></script>
+<link rel="stylesheet" href="/static/highlight/styles/hightlight.css" />
+<script src="/static/highlight/highlight.min.js"></script>
+<!-- <script src="../static/highlight/languages/python.min.js"></script> -->
+<link rel="stylesheet" href="static\css\style.css"><!-- [ style.css ] -->
+<link rel="shortcut icon" href="/static/res/intellifusion_sketch_1.ico">
+<script src="..\static\js\bootstrap.min.js" charset="utf-8"></script> <!-- jquery.js -->
+<script src="..\static\js\jquery.min.js" charset="utf-8"></script> <!-- jquery.js -->
+<script src="..\static\js\javascripts.js" charset="utf-8"></script> <!-- javascripts.js -->
+<script>hljs.highlightAll();</script>
+<body class="light" onload="setup_website()">
+<div class="icon-bar">
+    <nav>
+        <!-- 头像 -->
+        <div class="brand">
+            <img src="/static/res/intellifusion_sketch_1_o.ico" alt="CircleiCon">
+            <p>
+                Let's Create!
+            </p>
+        </div>
+        <el-divider></el-divider>
+        <!-- 分割线 -->
+        <ul class="list">
+            <li class="active" id="main" onclick="ChangeToMain()">
+                <i class="fa fa-home" href="/"></i>
+                <span>主页</span>
+            </li>
+            <li class="" id="acc" onclick="ChangeToAcc()">
+                <i class="fa fa-server"></i>
+                <span>模型管理</span>
+            </li>
+            <li class="" id="wig" onclick="ChangeToWdg()">
+                <i class="fa fa-bars"></i>
+                <span>插件中心</span>
+            </li>
+            <li class="" id="mod" onclick="ChangeToMdl()">
+                <i class="fa fa-inbox" id="api"></i>
+                <span>模型安装</span>
+            </li>
+            <li class="" id="set" onclick="ChangeToSet()">
+                <i class="fa fa-wrench" id="settings"></i>
+                <span>设置</span>
+            </li>
+            <hr class="line">
+            <a>
+            <li>
+                <i class="fa fa-folder-open-o" id="logout"></i>
+                <span>敬请期待</span>
+            </li>
+            </a>
+            <a>
+            <li class="" id="rts" onclick="ChangeToRts()">
+                <i class="fa fa-copyright"></i>
+                <span id="IconBarVersion">Model Assistant v0.5.1</span>
+            </li>
+            </a>
+            </ul>
+    </nav>
+    </div>
+<div class="main" id="main-box">
+    <div class="chat">
+        <div id="contentwrap"  class="contentwrap">
+            <ul class="tab" id="tabs">
+            </ul>
+            <div id="Contents">
+            </div>
+        </div>
+    </div>
+    <div class="expand" id="widgets" style="display: none;">
+        <div id="widgets_container_live" class="widgets_container">
+        </div>
+    </div>
+    <div class="session_add" id="session_add" style="display: none;">
+        <button class="btn" id="session_close"><i class="fa fa-close"></i></button>
+        <br>
+        <h4 style="margin-left: 30px;">添加标签页</h4>
+        <br>
+        <p class="p_widgets_comment">选择模型: 
+        <select id="session_model">
+        </select>
+        </p>
+        <br>
+        <input type="hidden" id="widgets_id_edit" value=""/>
+        <button id="session_cancel" class="widgets_edit_commit deny" value="">取消</button>
+        <button id="session_cmt" class="widgets_edit_commit run"  onclick="Add_session()" value="">新建</button>
+    </div>
+</div>
+
+<div class="model_box" id="model-box" style="display: none;">
+    <h3 style="margin: auto;">模型管理</h3>
+    <!-- TODO: Finish Here -->
+    <div id="model_container" class="model_container">
+        <ul id="model_container_table">
+        </ul>
+        <button class="btn_expand" onclick="show_model_add()"><i class="fa fa-plus"></i></button>
+    </div>
+
+    <div class="model_edit" id="model_edit" style="display: none;">
+        <button class="btn" id="model_close"><i class="fa fa-close"></i></button>
+        <input type="hidden" id="model_id_edit" value="-1" />
+        <br>
+        <div class="model_edit_box1">
+            <p>名称：</p>
+            <input type="name" id="model_name_edit" class="model_name_edit" placeholder="名称" />
+            <br>
+            <p>备注：</p>
+            <input type="name" id="model_remark_edit" class="model_name_edit" placeholder="备注(可选)" />
+            <br>
+            <p>调用地址：</p>
+            <input type="url" id="model_url_edit" class="model_url_edit" placeholder="调用地址" />
+            <br>
+            <p>调用方式:</p>
+            <p>
+            <select id="model_type_edit" class="model_type_edit" name="type">
+            </select>
+            <input type="url" id="model_key_edit" class="model_key_edit" placeholder="密钥" />
+            </p>
+            <p>高级设置<i class="fa fa-caret-square-o-down" id="model_details_button_add"></i></p>
+            <div id="model_details_add" class="" status="off" style="display: none;">
+                <input type="url" id="launch_command_edit" class="launch_command_edit" placeholder="调用命令行" />
+                <button class="edit_wjj" onclick="ReadFile(`launch_command_edit`)"><i class="fa fa-folder-open-o"></i></button>
+                <br>            
+                <p>Luna调用:</p>
+                <p>
+                    <div class="switch-container">
+                        <input id="luna_edit" type="hidden" value="True">
+                        <input id="luna_edit_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('luna_add')">
+                        <span class="switch-area"></span>
+                        <span class="switch-toggle"></span>
+                    </div>
+                </p>
+                <p>流式传输:</p>
+                <p>
+                    <div class="switch-container">
+                        <input id="stream_edit" type="hidden" value="True">
+                        <input id="stream_edit_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('stream_add')">
+                        <span class="switch-area"></span>
+                        <span class="switch-toggle"></span>
+                    </div>
+                </p>
+            </div>
+        </div>
+        <div class="model_edit_box2">
+            <button class="deny" onclick="commit_model('del')">删除</button>
+            <button class="edit" onclick="commit_model('edit')">确认</button>
+        </div>
+    </div>
+
+    <div class="model_edit" id="model_add" style="display: none;">
+        <button class="btn" id="model_close_add"><i class="fa fa-close"></i></button>
+        <input type="hidden" id="model_id_edit" value="-1" />
+        <br>
+        <div class="model_edit_box1">
+            <p>*模型名称*</p>
+            <input type="name" id="model_name_add" class="model_name_edit" placeholder="模型名称" />
+            <br>
+            <p>备注(可选)</p>
+            <input type="name" id="model_name_add" class="model_name_edit" placeholder="备注可以为空" />
+            <br>
+            <p>调用地址：</p>
+            <input type="url" id="model_url_add" class="model_url_edit" placeholder="调用地址" />
+            <br>
+            <p>
+            <p>调用方式:</p>
+            <select id="model_type_add" class="model_type_edit" name="type">
+            </select>
+            <input type="url" id="model_key_add" class="model_key_add" placeholder="密钥" />
+            </p>
+            <br>
+            <p>高级设置<i class="fa fa-caret-square-o-down" id="model_details_button"></i></p>
+            <div id="model_details" class="" status="off" style="display: none;">
+                <input type="url" id="launch_command_add" class="launch_command_add" placeholder="调用命令" />
+                <button class="edit_wjj" onclick="ReadFile(`launch_comp_add`)"><i class="fa fa-folder-open-o"></i></button>
+                <br>
+            <p>Luna调用:</p>
+            <div class="switch-container">
+                <input id="luna_add" type="hidden" value="True">
+                <input id="luna_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('luna_add')" checked>
+                <span class="switch-area"></span>
+                <span class="switch-toggle"></span>
+            </div>
+            <p>流式传输:</p>
+            <div class="switch-container">
+                <input id="stream_add" type="hidden" value="True">
+                <input id="stream_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('stream_add')" checked>
+                <span class="switch-area"></span>
+                <span class="switch-toggle"></span>
+            </div>
+        </div>
+        <div class="model_edit_box2">
+            <button class="deny_beyond" onclick="">cancel</button>
+            <button class="add_beyond" onclick="upload_model_add()">add</button>
+        </div>
+    </div>
+</div>
+    <!-- TODO: Finish Here -->
+</div>
+
+<div class="widgets_box" id="widgets-box" style="display: none;">
+    <h3 style="margin: auto;">插件管理</h3>
+    <div class="widgets_container">
+        <ul id="widgets_container">
+        </ul>
+        <button class="btn_expand" onclick="show_widgets_add()"><i class="fa fa-plus"></i></button>
+    </div>
+    <div class="widgets_edit" id="widgets_edit" style="display: none;">
+        <button class="btn" id="widgets_close"><i class="fa fa-close"></i></button>
+        <br>
+        <div class="widgets_container_pre">
+            <div id="widgets_contentbox_pre_edit" class="widgets_contentbox_pre medium">
+                <div class="widgets_bar">
+                    <i class="fa fa-minus" onclick="change_widgets_pre('widgets_contentbox_pre_edit',`small`)"></i>
+                    <i class="fa fa-window-maximize" onclick="change_widgets_pre('widgets_contentbox_pre_edit',`medium`)"></i>
+                    <i class="fa fa-plus" onclick="change_widgets_pre('widgets_contentbox_pre_edit',`large`)"></i>
+                </div>
+                <div style="height: 90%;">
+                    <iframe id="preview_widgets_edit" src='' frameborder=0></iframe>
+                </div>
+            </div>
+        </div>
+        <p class="p_widgets_comment">备注: <input type="name" class="widgets_name" id="widgets_name_edit" value="" /></p>
+        <p class="p_widgets_comment">地址: <input
+            type="url" class="widgets_url" id="widgets_url_edit" value="" placeholder="/widgets/your_widgets"
+            oninput="preview_widgets('preview_widgets_edit','widgets_url_edit')"
+            /></p>
+        <p class="p_widgets_comment" style="display: inline-block">是否启用:</p>
+        <div class="switch-container" style="display: inline-block">
+            <input id="widgets_available_edit" type="hidden" value="True">
+            <input id="widgets_available_edit_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('widgets_available_edit')">
+            <span class="switch-area"></span>
+            <span class="switch-toggle"></span>
+        </div>
+        <br>
+        <div>
+            <p class="p_widgets_comment">
+            大小: 
+            <input type="hidden" id="widgets_contentbox_pre_edit_val" value="" />
+            <button id="widgets_contentbox_pre_edit_button_small" class="widgets_size"
+            onclick="change_widgets_pre('widgets_contentbox_pre_edit',`small`)">小</button>
+            <button id="widgets_contentbox_pre_edit_button_medium" class="widgets_size"
+            onclick="change_widgets_pre('widgets_contentbox_pre_edit',`medium`)">中</button>
+            <button id="widgets_contentbox_pre_edit_button_large" class="widgets_size"
+            onclick="change_widgets_pre('widgets_contentbox_pre_edit',`large`)">大</button>
+            </p>
+        </div>
+        <br>
+        <input type="hidden" id="widgets_id_edit" value=""/>
+        <button id="widgets_commit_del" class="widgets_edit_commit deny" onclick="upload_widgets_del()" value="">删除</button>
+        <button id="widgets_commit_cmt" class="widgets_edit_commit edit"  onclick="upload_widgets_edit()" value="">更新</button>
+    </div>
+    <div class="widgets_edit" id="widgets_add" style="display: none;">
+        <button class="btn" id="widgets_close_add"><i class="fa fa-close"></i></button>
+        <br>
+        <span>
+            <div style="float: 1;">
+                <div class="widgets_container_pre">
+                    <div id="widgets_contentbox_pre" class="widgets_contentbox_pre medium">
+                        <div class="widgets_bar">
+                            <i class="fa fa-minus" onclick="change_widgets_pre('widgets_contentbox_pre',`small`)"></i>
+                            <i class="fa fa-window-maximize" onclick="change_widgets_pre('widgets_contentbox_pre',`medium`)"></i>
+                            <i class="fa fa-plus" onclick="change_widgets_pre('widgets_contentbox_pre',`large`)"></i>
+                        </div>
+                        <div style="height: 90%;">
+                            <iframe id="preview_widgets" src='/widgets/CPU_Percent' frameborder=0></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="float: 2;">
+                <p class="p_widgets_comment">备注: <input type="name" class="widgets_name" id="widgets_name_add" value="" /></p>
+                <p class="p_widgets_comment">地址: <input
+                    type="url" class="widgets_url" id="widgets_url_add" value="" placeholder="/widgets/your_widgets"
+                    oninput="preview_widgets('preview_widgets','widgets_url_add')"
+                    /></p>
+                <p class="p_widgets_comment" style="display: inline-block">是否启用:</p>
+                <div class="switch-container" style="display: inline-block">
+                    <input id="widgets_available_add" type="hidden" value="True">
+                    <input id="widgets_available_add_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('widgets_available_add')">
+                    <span class="switch-area"></span>
+                    <span class="switch-toggle"></span>
+                </div>
+                <br>
+                <div>
+                    <p class="p_widgets_comment">
+                        大小: 
+                        <input type="hidden" id="widgets_contentbox_pre_val" value="" />
+                        <button id="widgets_contentbox_pre_button_small" class="widgets_size"
+                        onclick="change_widgets_pre('widgets_contentbox_pre',`small`)">小</button>
+                        <button id="widgets_contentbox_pre_button_medium" class="widgets_size"
+                        onclick="change_widgets_pre('widgets_contentbox_pre',`medium`)">中</button>
+                        <button id="widgets_contentbox_pre_button_large" class="widgets_size"
+                        onclick="change_widgets_pre('widgets_contentbox_pre',`large`)">大</button>
+                        </p>
+                </div>
+                <br>
+                <button id="widgets_close_add_1" class="widgets_edit_commit deny">取消</button>
+                <button id="widgets_edit" class="widgets_edit_commit run" onclick="upload_widgets_add()">提交</button>
+            </div>
+        </span>
+    </div>
+</div>
+
+<div class="models" id="api-box" style="display: none;">
+    <h3 style="margin: auto;">接口管理</h3>
+    <!-- TODO: Finish Here -->
+    <div class="api_container">
+        <ul id="api_container">
+        </ul>
+        <button class="btn_expand" onclick="show_api_add()"><i class="fa fa-plus"></i></button>
+    </div>
+    <div class="api_edit" id="api_edit" style="display: none;">
+        <button class="btn" id="api_close_edit"><i class="fa fa-close"></i></button>
+        <br>
+        <p class="p_api_comment">备注: <input type="name" class="api_name" id="api_name_edit" value="" /></p>
+        <p class="p_api_comment">地址: <input
+            type="url" class="api_url" id="api_url_edit" value="" placeholder="https://www.example.com/api/your_api"
+            /></p>
+        <br>
+        <input type="hidden" id="api_id_edit" value=""/>
+        <button id="api_commit_del" class="api_edit_commit deny" onclick="upload_api_del()" value="">删除</button>
+        <button id="api_commit_cmt" class="api_edit_commit edit"  onclick="upload_api_edit()" value="">更新</button>
+    </div>
+    <div class="api_edit" id="api_add" style="display: none;">
+        <button class="btn" id="api_close_add"><i class="fa fa-close"></i></button>
+        <br>
+        <span>
+            <div style="float: 2;">
+                <p class="p_api_comment">备注: <input type="name" class="api_name" id="api_name_add" value="" /></p>
+                <p class="p_api_comment">地址: <input
+                    type="url" class="api_url" id="api_url_add" value="" placeholder="http://www.example.com/api/your_api"
+                    /></p>
+                <button id="api_close_add_1" class="api_edit_commit deny">取消</button>
+                <button id="api_edit" class="api_edit_commit run" onclick="upload_api_add()">提交</button>
+            </div>
+        </span>
+    </div>
+    <!-- TODO: Finish Here -->
+</div>
+
+<div class="settings" id="setting-box" style="display: none;">
+    <div style="margin-left:20px" class="content">
+        <hr class="line">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <h3>外观设置  </h3>
+                    </th>
+                    <th>
+                        <h3>UI Settings</h3>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>深色模式</p>
+                    </td>
+                    <td>
+                        <p><i class="fa fa-adjust" id="change-adjust"></i></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="line">
+        <table>
+            <tr>
+                <th>
+                    <h3>基础设置  </h3>
+                </th>
+                <th>
+                    <h3>Base Settings</h3>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>语言设置</p>
+                    </td>
+                    <td>
+                        <select id="Language">
+                            <option id="Chinese">Chinese</option>
+                            <option id="Japanese">Japanese</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>活跃检测</p>
+                    </td>
+                    <td>
+                        <div class="switch-container">
+                            <input id="ActiveExamine" type="hidden" value="False">
+                            <input id="ActiveExamine_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('ActiveExamine')">
+                            <span class="switch-area"></span>
+                            <span class="switch-toggle"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>启动超时限制</p>
+                    </td>
+                    <td>
+                        <input type="number" id="Timeout" placeholder="60" value="" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="line">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <h3>分享设置</h3>
+                    </th>
+                    <th>
+                        <h3>Share Setting</h3>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>远程地址</p>
+                    </td>
+                    <td>
+                        <input type="text" id="Host" placeholder="127.0.0.1" value="" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>端口</p>
+                    </td>
+                    <td>
+                        <input type="number" id="Port" placeholder="5000" value="" />
+                    </td>
+                </tr>
+            </thead>
+        </table>
+        <hr class="line">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <h3>开发者设置  </h3>
+                    </th>
+                    <th>
+                        <h3>Developer Settings</h3>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>DeBug模式</p>
+                    </td>
+                    <td>
+                        <div class="switch-container">
+                            <input id="Develop" type="hidden" value="False">
+                            <input id="Develop_Checkbox" type="checkbox" class="hidden-checkbox" onclick="switch_load('Develop')">
+                            <span class="switch-area"></span>
+                            <span class="switch-toggle"></span>
+                        </div>
+                    </td>
+                </tr>
+            </thead>
+        </table>
+        <hr class="line">
+    </div>
+    <button type="submit" class="save" onclick="save_settings()"><i class="fa fa-edit"></i>更改</button>
+</div>
+
+<div class="copyright" id="rights-box" style="display: none;" type="checkbox">
+    <button class="btn"><i class="fa fa-close"></i></button>
+    <div id="box">
+        <img style="margin-top: 30px; margin-left: 40px ;width: 150px;height: 150px;" src="/static/res/intellifusion_sketch_1_o.ico" alt="iF">
+        <h3 style="margin: 50px;">inteliFusi0n Version <p id="Version"></p></h3>
+        <h5 style="margin: 50px;width: 100px;">use bootstrap5 framework<br>use E charts</h4>
+        <a style="width: 100px;height: 50px;" href="https://www.github.com/hcl595/intellifusion/">
+            <button class="Hyperlink">learn more...</button>
+        </a>
+        <h5  style="margin: 30px;">
+        </h5>
+    </div>
+</div>
+
+<div class="loadingOne" id="loading" style="display: none;">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<div class="AlertPlaceholder" id="liveAlertPlaceholder">
+</div>
+</body>
+<script type="text/javascript">
+//alert message
+var alertId = 0;
+
+const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+
+const alert = (message, type) => {
+    alertId++;
+    const wrapper = document.createElement('div')
+    wrapper.innerHTML = [
+    `<div class="alert alert-${type} alert-dismissible fade show" role="alert">`,
+    `   <div>${message}</div>`,
+    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+    '</div>'
+    ].join('')
+    alertPlaceholder.append(wrapper)
+    setTimeout(function(){
+    wrapper.remove()
+    },501)
+}
+
+
+
+
+
+var widegts_judger = setInterval(
+    function(){
+        var widgets_window = document.getElementById("main-box");
+        var width = widgets_window.offsetWidth;
+        if (width < 900) {
+            $("#widgets").fadeOut(200);
+        }
+        if (width >= 900) {
+            $("#widgets").fadeIn(200);
+        }
+    },100
+)
+
+
+var int = setInterval(function(){
+    refresh_website()
+  },100000)
+</script>
+
+</html>

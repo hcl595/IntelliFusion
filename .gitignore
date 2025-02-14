@@ -183,6 +183,10 @@ stable-diffusion-webui
 tmp
 src/data/*
 src/templates/test.html
+src_server/data/*
+src_server/templates/test.html
+src_server/LunaAutoSetup.py
+src_server/LunaModel/*
 release/
 exe.json
 setup.iss

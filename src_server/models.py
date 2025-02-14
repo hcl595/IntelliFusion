@@ -1,9 +1,8 @@
 from data import Models, Sessions, History
-from peewee import fn
 import subprocess
 import psutil
 from concurrent.futures import ProcessPoolExecutor
-from typing import Literal, TypedDict
+from typing import TypedDict
 import mistune
 import requests
 import json
