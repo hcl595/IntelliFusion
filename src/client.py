@@ -42,7 +42,7 @@ from setup import APP_DIR
 DATA_DIR = APP_DIR / "data"
 DICT_DIR = APP_DIR / "dicts" / "dict.txt"
 LOG_FILE = DATA_DIR / "models.log"
-LUNA_FILE = APP_DIR / "LunaAutoSetup.py"
+LUNA_FILE = APP_DIR / "LunaModel" / "luna.py"
 
 # setup
 jieba.set_dictionary(DICT_DIR)
