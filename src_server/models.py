@@ -1,15 +1,18 @@
 from data import Models, Sessions, History
-from peewee import fn
 import subprocess
 import psutil
 from concurrent.futures import ProcessPoolExecutor
-from typing import Literal, TypedDict
+from typing import TypedDict
 import mistune
 import requests
 import json
 
 from config import Settings
 setting = Settings()
+Version = setting.read("package","Version")
+
+if setting.read("AdvancedConfig","Luna") == "True":
+    from LunaModel.luna import summary
 
 class Message(TypedDict):
     role: str
@@ -48,12 +51,10 @@ def update_session(SessionID: int):
     if SessionID is None:
         raise ValueError
 
-    if setting.read("AdvancedConfig","Luna") == "True":
-        from LunaModel.luna import summary
-        model_comment = summary(getHistory(SessionID))
-        # model_comment = summary(History.select().where(History.session_id == Sessions.get(Sessions.id == SessionID).id))
-        Sessions.update(comment = model_comment).where(Sessions.id == SessionID).execute()
-        return "Succeed"
+    model_comment = summary(getHistory(SessionID))
+    # model_comment = summary(History.select().where(History.session_id == Sessions.get(Sessions.id == SessionID).id))
+    Sessions.update(comment = model_comment).where(Sessions.id == SessionID).execute()
+    return "Succeed"
 
 
 def getHistory(SessionID: int) -> list[Message]:
@@ -281,39 +282,3 @@ def request_Json(SessionID: int, Userinput: str):
     return response_out
 
 
-def request_Luna(SessionID: int, Userinput: str,stream: bool = True):
-    '''
-    SessionID 会话在数据库中的ID
-    Userinput 用户输入的内容
-    stream    是否需要流式传输
-    '''
-    if setting.read("AdvancedConfig","Luna") == "True":
-        from LunaModel.luna import mergeMessages
-        #Setup
-        messages = getHistory(SessionID)
-        # messages = []
-        response = ""
-        if SessionID is None or Userinput is None:
-            raise ValueError("SessionID Error")
-        response = []
-        for m in Models.get(Models.lunaBool == True).apiType:
-            if m == "json":
-                response.append(request_Json(SessionID, Userinput))
-            if m == "openai":
-                response.append(request_OpenAI(SessionID, Userinput))
-            if m == "zhipuai":
-                response.append(request_ZhipuAI(SessionID, Userinput))
-            if m == "ollama":
-                response.append(request_Ollama(SessionID, Userinput))
-        response_out = mergeMessages(response)
-        #Save conversation
-        History.create(
-            session_id = SessionID,
-            UserInput = Userinput,
-            response = response_out,
-        )
-        update_session(SessionID)
-        return response_out
-    else:
-        raise ["Luna is not enabled"]
-        

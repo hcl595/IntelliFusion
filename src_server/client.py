@@ -21,8 +21,6 @@ from zhipuai import *
 import psutil
 import validators
 from flask import Flask, stream_with_context, json, jsonify, render_template, request
-# from flask_socketio import SocketIO
-from flaskwebgui import FlaskUI
 from loguru import logger
 from playhouse.shortcuts import model_to_dict
 from thefuzz import fuzz, process
@@ -42,7 +40,7 @@ from setup import APP_DIR
 DATA_DIR = APP_DIR / "data"
 DICT_DIR = APP_DIR / "dicts" / "dict.txt"
 LOG_FILE = DATA_DIR / "models.log"
-LUNA_FILE = APP_DIR / "LunaModel" / "luna.py"
+LUNA_FILE = APP_DIR / "LunaAutoSetup.py"
 
 # setup
 jieba.set_dictionary(DICT_DIR)
@@ -508,12 +506,6 @@ class Message(TypedDict):
     role: str
     content: str
 
-# functions
-def get_free_port():
-    with socketserver.TCPServer(("localhost", 0), None) as s:
-        free_port = s.server_address[1]
-    return free_port
-
 def getfile():
     with ProcessPoolExecutor() as p:
         r = p.submit(askopenfilename)
@@ -522,33 +514,12 @@ def getfile():
 
 # launch
 if __name__ == "__main__":
-    logger.info("Application(v0.2.0 ∂) Launched!")
+    logger.info("Server(v1.0.0) Launched!")
     pmt.get_json()
-    if cfg.read("RemoteConfig", "Port") == "0":
-        port=get_free_port()
-    else:
-        port=cfg.read("RemoteConfig", "Port")
-    if cfg.read("BaseConfig", "Develop") == "True":
-        logger.level("DEBUG")
-        logger.debug("running in debug mode")
-        app.run(
-            debug=cfg.read("BaseConfig", "Develop"),
-            port=port,
-            host=cfg.read("RemoteConfig", "Host"),
-        )
-    elif cfg.read("BaseConfig", "Develop") == "False" or cfg.read("BaseConfig", "Develop") == False:
-        logger.debug("run in GUI mode")
-        print(cfg.read("BaseConfig", "Develop"))
-        try:
-            ctypes.windll.user32.ShowWindow(
-                ctypes.windll.kernel32.GetConsoleWindow(), 0
-            )
-        except:
-            pass
-        FlaskUI(
-            app=app,
-            server="flask",
-            port=port,
-            width=1800,
-            height=1000,
-        ).run()
+    logger.level("DEBUG")
+    logger.debug("running in debug mode")
+    app.run(
+        debug=True,port=5000
+    )
+
+
