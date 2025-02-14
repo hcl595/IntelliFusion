@@ -81,14 +81,14 @@ def root():
 def request_models_stream():
     InputInfo = request.form["userinput"]
     InputModel = request.form["modelinput"]
-    if Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).apiType == "OpenAI":
+    if Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).apiType == "openAI":
         try:
             Model_response = request_OpenAI(SessionID=InputModel, Userinput=InputInfo, stream=Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).stream)
             for r in Model_response:
                 yield r
         except:
             raise
-    elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).apiType == "ZhipuAI":
+    elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).apiType == "zhipuAI":
         try:
             Model_response = request_ZhipuAI(SessionID=InputModel, Userinput=InputInfo, stream=Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).stream)
             for r in Model_response:
@@ -97,9 +97,16 @@ def request_models_stream():
             yield "Check Your API Key"
         except:
             raise
-    elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).apiType == "Ollama":
+    elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).apiType == "ollama":
         try:
             Model_response = request_Ollama(SessionID=InputModel, Userinput=InputInfo, stream=Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).stream)
+            for r in Model_response:
+                yield r
+        except:
+            raise
+    elif Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).modelName == "Luna":
+        try:
+            Model_response = request_Luna(SessionID=InputModel, Userinput=InputInfo, stream=Models.get(Models.id == Sessions.get(Sessions.id == InputModel).model_id).stream)
             for r in Model_response:
                 yield r
         except:

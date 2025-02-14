@@ -83,6 +83,10 @@ def SetupDatabase():
         requestFunctionName = "json",
     )
     DefaultAPI.save()
+    DefaultAPI = APIs(
+        requestFunctionName = "WebUI",
+    )
+    DefaultAPI.save()
     BaseWidgets = Widgets(
         order=1,
         widgets_name="内置核心小组件",

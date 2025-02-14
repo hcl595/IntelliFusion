@@ -49,11 +49,25 @@ def update_session(SessionID: int):
         raise ValueError
 
     if setting.read("AdvancedConfig","Luna") == "True":
-        from LunaModel.luna import summary
-        model_comment = summary(getHistory(SessionID))
-        # model_comment = summary(History.select().where(History.session_id == Sessions.get(Sessions.id == SessionID).id))
+        from LunaModel.luna import LunaKit
+        luna = LunaKit()
+        model_comment = luna.summary(getContent(SessionID)[0])
         Sessions.update(comment = model_comment).where(Sessions.id == SessionID).execute()
         return "Succeed"
+
+
+def getContent(SessionID: int) -> list[Message]:
+    '''
+    SessionID 会话在数据库中的ID
+    '''
+    messages = []
+    for r in History.select().where(History.session_id == SessionID):
+        r: History
+        assert isinstance(r.UserInput, str)
+        assert isinstance(r.response, str)
+        messages.append(r.UserInput)
+        messages.append(r.response)    
+    return messages
 
 
 def getHistory(SessionID: int) -> list[Message]:
@@ -106,8 +120,8 @@ def request_OpenAI(SessionID: int, Userinput: str,stream: bool = True):
     messages.append(question)
     # TODO: The 'openai.api_base' option isn't read in the client API. You will need to pass it when you instantiate the client, e.g. 'OpenAI(base_url=(Model_ID.url))'
     # openai.api_base = (Model_ID.url)
-    client = OpenAI(base_url=Model_ID.url,api_key=Model_ID.api_key)
-    for chunk in client.chat.completions.create(model=Model_ID.name,
+    client = OpenAI(base_url=Model_ID.requestUrl,api_key=Model_ID.api_key)
+    for chunk in client.chat.completions.create(model=Model_ID.modelName,
     messages=messages,
     stream=True,
     temperature=0):
@@ -167,7 +181,7 @@ def request_ZhipuAI(SessionID: int, Userinput: str,stream: bool = True):
     client = ZhipuAI(api_key = Model_ID.api_key)
     ZhipuAI.api_base = (Model_ID.url)
     for chunk in client.chat.completions.create(
-        model=Model_ID.name,
+        model=Model_ID.modelName,
         messages=messages,
         stream=True,
         temperature=0,
@@ -227,8 +241,8 @@ def request_Ollama(SessionID: int, Userinput: str,stream: bool = True):
     question: Message = {"role": "user", "content": Userinput}
     messages.append(question)
 
-    for chunk in Client(host=Models.get(Models.id == Model_ID).url).chat(
-        model=Model_ID.name,
+    for chunk in Client(host=Models.get(Models.id == Model_ID).requestUrl).chat(
+        model=Model_ID.modelName,
         messages=messages,
         stream=stream,
         ):
@@ -268,7 +282,7 @@ def request_Json(SessionID: int, Userinput: str):
     except:
         raise ValueError("SessionID Error")
     response = requests.post(
-        url=Models.get(Models.id == Model_ID).url,
+        url=Models.get(Models.id == Model_ID).requestUrl,
         data=json.dumps({"prompt": Userinput, "history": []}),
         headers={"Content-Type": "application/json"},
     )
@@ -288,7 +302,8 @@ def request_Luna(SessionID: int, Userinput: str,stream: bool = True):
     stream    是否需要流式传输
     '''
     if setting.read("AdvancedConfig","Luna") == "True":
-        from LunaModel.luna import mergeMessages
+        from LunaModel.luna import LunaKit
+        luna = LunaKit()
         #Setup
         messages = getHistory(SessionID)
         # messages = []
@@ -305,7 +320,7 @@ def request_Luna(SessionID: int, Userinput: str,stream: bool = True):
                 response.append(request_ZhipuAI(SessionID, Userinput))
             if m == "ollama":
                 response.append(request_Ollama(SessionID, Userinput))
-        response_out = mergeMessages(response)
+        response_out = luna.mergeMessages(response)
         #Save conversation
         History.create(
             session_id = SessionID,
