@@ -57,7 +57,7 @@ pmt = Prompt()
 def root():
     # TODO update database
     try:
-        for om in ollama.Client("127.0.0.1").list().models:
+        for om in ollama.Client("0.0.0.0").list().models:
             if  [model_to_dict(models) for models in Models.select().where(Models.ollamaBool == True and Models.modelName == om.model)] != []:
                 pass
             else:
